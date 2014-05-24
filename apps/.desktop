@@ -1,0 +1,18 @@
+{
+  {
+    "Time",
+	"Date",
+    "Chat",
+    "Update",
+	"Locate",
+    "Settings",
+    "Images",
+  },
+  {
+    "Shell",
+    "Notes",
+	"2048",
+	"Weather",
+	"Calculator",
+  },
+}

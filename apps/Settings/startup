@@ -1,0 +1,117 @@
+if http then sHttp="$5 On " else sHtpp="$e Off " end
+function getSize(path)
+  local size = 0
+  for _, file in ipairs(fs.list(path)) do
+  if file~="rom" then
+    if fs.isDir(fs.combine(path, file)) then
+      --# if it is a directory, recurse.
+      size = size + getSize(fs.combine(path, file))
+    else
+      size = size + fs.getSize(fs.combine(path, file))
+    end
+  end
+  end
+  return size
+end
+fs.getSpaceLimit = function(_path, _space, _final)
+local final = true
+if(_final ~= nil) then
+final = _final
+end 
+local space = 0
+if(_space ~= nil) then
+space = _space
+end
+local sDir = ""
+if _path ~= nil then sDir = _path end
+local tContent = fs.list( sDir )
+for i, j in pairs( tContent ) do
+local sPath = fs.combine( sDir, j )
+if fs.isDir( sPath ) then
+if(sPath ~= "rom") then
+space = space + 512
+space = fs.getSpaceLimit(sPath, space, false)
+end
+else
+space = space + fs.getSize(sPath)
+end 
+end
+if(final == true) then
+return space + fs.getFreeSpace(_path)
+else
+return space
+end
+end
+function getSpace(number,round)
+if number<1024 then
+unit=" B"
+else
+local units={" kB"," MB"," GB"," TB"," PB"}
+for i=1,5 do
+if number/1024^i < 768 then
+number=number/1024^i
+unit=units[i]
+break
+end
+end
+if round==true then
+number=tostring(number)
+num, dNum = number:match("(%d+).(%d)")
+dNum=tonumber(dNum)
+if dNum>=5 then number=math.ceil(number) else number=math.floor(number).."."..dNum end
+end
+end
+return number, unit
+end
+tData=getData()
+nUsed,sUsedUnit=getSpace(getSize("/"),true)
+nFree,sFreeUnit=getSpace(fs.getSpaceLimit("/")-getSize("/"),true)
+if tData["bTemp"] then sTemp="$5 Yes " else sTemp="$e No " end
+local settings=true
+paintutils.drawFilledBox(1,1,w,h,256)
+status(128,false)
+paintutils.drawLine(2,4,w-8,4,128)
+term.setCursorPos(3,4)
+print(os.getComputerLabel())
+term.setBackgroundColor(256)
+term.setCursorPos(2,3)
+print("Phone name")
+term.setCursorPos(1,6)
+cprint(" OS Version "..tData["version"].."\n &7Update&0")
+cprint("\n HTTP "..sHttp.."$8")
+cprint("\n Use Celsius "..sTemp.."$8")
+print("\n "..nFree..sFreeUnit.." Available")
+print(" "..nUsed..sUsedUnit.." Used")
+term.setCursorPos((w-4)/2,h)
+write("Back")
+os.startTimer(60/72)
+while settings do
+tEv={os.pullEvent()}
+if tEv[1]=="mouse_click" then
+if tEv[4]==4 then
+term.setCursorPos(3,4)
+label=read()
+os.setComputerLabel(label)
+term.setCursorPos(3,4)
+cprint(label.."$8")
+elseif tEv[4]==11 then
+if tData["bTemp"]==true then tData["bTemp"]=false sTemp="$e No $8 " else tData["bTemp"]=true sTemp="$5 Yes " end
+term.setCursorPos(1,10)
+cprint("\n$8 Use Celsius "..sTemp.."$8")
+f=fs.open("sys/config","w")
+f.write(textutils.serialize(tData))
+f.close()
+elseif tEv[4]==7 then
+shell.run("apps/Update/startup")
+elseif tEv[4]==h then
+settings=false
+f=fs.open("sys/config","w")
+f.write(textutils.serialize(tData))
+f.close()
+shell.run("sys/desktop")
+end
+elseif tEv[1]=="timer" then
+status(128,false)
+os.startTimer(60/72)
+end
+end

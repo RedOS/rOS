@@ -1,0 +1,5 @@
+term.setBackgroundColor(2^15)
+term.clear()
+term.setCursorPos(1,1)
+shell.run("rom/programs/shell")
+shell.run("sys/desktop")
