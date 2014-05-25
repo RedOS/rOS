@@ -1,2 +1,10 @@
-System/EN
-System/version
+{
+  "System/EN",
+  "System/boot",
+  "System/version",
+  "System/lock",
+  "System/controll",
+  "System/info",
+  "System/delete",
+  "System/desktop",
+}
