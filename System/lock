@@ -16,8 +16,8 @@ term.setCursorPos(math.ceil((w-#tData["time"])/2)+nW,3)
 term.write(tData["time"])
 term.setCursorPos(math.ceil((w-#tData["date"])/2)+nW,4)
 term.write(tData["date"])
-term.setCursorPos((w-#var22)/2+nW,h-3)
-term.write(var22)
+term.setCursorPos((w-17)/2+nW,h-3)
+term.write("> Slide to unlock")
 paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),-w+nW+8,5)
 term.setTextColor(2^15)
 local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
@@ -53,7 +53,7 @@ tEvent={os.pullEventRaw("mouse_drag")}
 end
 end
 os.startTimer(60/72)
-local nTime=os.startTimer((60/72)*30)
+local nTime=os.startTimer((60/72)*60)
 local function number()
 n=""
 if tEvent[3]>5 and tEvent[3]<9 and tEvent[4]>4 and tEvent[4]<8 then n=1 end
@@ -79,10 +79,9 @@ nCode=nCode..number()
 if #nCodeOld~=#nCode then
 try=try+1
 end
-local nTime=os.startTimer((60/72)*30)
 elseif tEvent[1]=="timer" then
 if tEvent[2]==nTime then
-wait()
+os.shutdown()
 else
 status(128,false)
 os.startTimer(60/72)

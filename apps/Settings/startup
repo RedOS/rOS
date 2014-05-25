@@ -1,4 +1,5 @@
 if http then sHttp="$5 On " else sHtpp="$e Off " end
+if tData["modemOn"] then sModem="$5 On " else sModem="$e Off " end
 function getSize(path)
   local size = 0
   for _, file in ipairs(fs.list(path)) do
@@ -80,6 +81,7 @@ term.setCursorPos(1,6)
 cprint(" OS Version "..tData["version"].."\n &7Update&0")
 cprint("\n HTTP "..sHttp.."$8")
 cprint("\n Use Celsius "..sTemp.."$8")
+cprint("\n Modem "..sModem.."$8")
 print("\n "..nFree..sFreeUnit.." Available")
 print(" "..nUsed..sUsedUnit.." Used")
 term.setCursorPos((w-4)/2,h)
@@ -98,6 +100,13 @@ elseif tEv[4]==11 then
 if tData["bTemp"]==true then tData["bTemp"]=false sTemp="$e No $8 " else tData["bTemp"]=true sTemp="$5 Yes " end
 term.setCursorPos(1,10)
 cprint("\n$8 Use Celsius "..sTemp.."$8")
+f=fs.open("System/config","w")
+f.write(textutils.serialize(tData))
+f.close()
+elseif tEv[4]==13 then
+if tData["modemOn"]==true then tData["modemOn"]=false sModem="$e Off " else tData["modemOn"]=true sModem="$5 On $8 " end
+term.setCursorPos(1,12)
+cprint("\n Modem "..sModem.."$8")
 f=fs.open("System/config","w")
 f.write(textutils.serialize(tData))
 f.close()
