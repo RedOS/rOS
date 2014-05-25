@@ -1,5 +1,5 @@
 tData=getData()
-if tData["modemOn"] and peripheral.find("back") then x,y,z=gps.locate() end
+if tData["modemOn"] and peripheral.isPresent("back") then x,y,z=gps.locate() end
 if x and y and z then
 x=math.floor(x)
 y=math.floor(y)

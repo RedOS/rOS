@@ -114,8 +114,8 @@ fs.delete(data[i])
 end
 end
 fs.delete("System/delete")
-end
 os.reboot()
+end
 end
 update=false
 shell.run("System/desktop")
