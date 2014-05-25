@@ -5,6 +5,7 @@ paintutils.drawFilledBox(w/2-5,h/2-1,w/2+5,h/2+2,128)
 for i=1,5 do
 paintutils.drawPixel(w/2-4+2*(i-1),h/2+1,256)
 end
+term.setCursorPos((w-4)/2,h/2)
 print("Updating")
 status(1,false)
 for i=1,5 do
