@@ -1,7 +1,7 @@
 local args = {"RedOS","rOS"}
 local function loading()
 local tTable={"\\","|","/","-",}
-for i,1,4 do
+for i=1,4 do
 term.setCursorPos(w/2,h/2+1)
 print(tTable[i])
 os.sleep(.01)
