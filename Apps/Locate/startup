@@ -1,4 +1,5 @@
-if modemOn and peripheral.find("back") then x,y,z=gps.locate() end
+tData=getData()
+if tData["modemOn"] and peripheral.find("back") then x,y,z=gps.locate() end
 if x and y and z then
 x=math.floor(x)
 y=math.floor(y)

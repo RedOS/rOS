@@ -1,7 +1,8 @@
 term.setBackgroundColor(1)
 term.setTextColor(2^15)
 local chat=true
-if modemOn and peripheral.find("back") then
+tData=getData()
+if tData["modemOn"] and peripheral.find("back") then
 local nChat=65533
 local function update(msg)
 local ox=term.getCursorPos()
