@@ -41,7 +41,7 @@ end
 else
 local function loading()
 local img=paintutils.loadImage("Apps/Update/load")
-paintutils.drawFilledBox(w/2-6,h/2-1,w/2+6,h/2+2,128)
+paintutils.drawFilledBox(w/2-7,h/2-1,w/2+7,h/2+2,128)
 paintutils.drawImage(img,w/2-4,h/2+1)
 term.setCursorPos((w-9)/2,h/2)
 term.setTextColor(1)
