@@ -1,21 +1,21 @@
 local args = {"RedOS","rOS"}
 term.setTextColor(1)
 local function loading()
-paintutils.drawFilledBox(w/2-5,h/2-1,w/2+5,h/2+2,128)
-for i=1,5 do
-paintutils.drawPixel(w/2-4+2*(i-1),h/2+1,256)
-end
-term.setCursorPos((w-4)/2,h/2)
-print("Updating")
+local img=paintutils.loadImage("apps/Update/load")
+paintutils.drawFilledBox(w/2-6,h/2-1,w/2+6,h/2+2,128)
+paintutils.drawImage(img,w/2-4,h/2+1)
+term.setCursorPos((w-9)/2,h/2)
+term.setTextColor(1)
+term.setBackgroundColor(128)
+print("Updating...")
 status(1,false)
 for i=1,5 do
+paintutils.drawImage(img,w/2-4,h/2+1)
 paintutils.drawPixel(w/2-4+2*(i-1),h/2+1,1)
-os.sleep(.01)
+os.sleep(.085)
 end
-paintutils.drawFilledBox(w/2-5,h/2,w/2+5,h/2+2,128)
-for i=1,5 do
-paintutils.drawPixel(w/2-4+2*(i-1,h/2+1,256)
-end
+status(1,false)
+paintutils.drawImage(img,w/2-4,h/2+1)
 end
 args[3] = args[3] or "master"
 args[4] = args[4] or ""
