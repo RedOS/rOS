@@ -69,7 +69,7 @@ oldx,oldy=x,y
 elseif tEvent[1]=="mouse_drag" then
 if y>h-3 and tEvent[4]<19 and tEvent[4]<y-3 then
 desktop=false
-shell.run("System/controll")
+shell.run("System/Controll.lua")
 end
 if tEvent[3]<x-5 and tEvent[1]=="mouse_drag" then
 if type(m)~="number" then m=1 end
