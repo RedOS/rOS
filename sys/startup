@@ -67,12 +67,15 @@ function getData()
 f=fs.open("sys/config","r")
 data=f.readAll()
 f.close()
+f=fs.open("sys/version","r")
+cver=f.readAll()
+f.close()
 tData=textutils.unserialize(data)
 if peripheral.find("modem") then tData["net"]=var20 else tData["net"]=var21 end
 tData=textutils.unserialize(data)
 tData["time"]=textutils.formatTime(os.time(),false)
 tData["date"]=date(os.day(),"data")
-tData["version"]="1.0"
+tData["version"]=tostring(cver)
 return tData
 end
 function cCode(h)

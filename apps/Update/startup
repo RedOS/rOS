@@ -1,5 +1,13 @@
 local args = {"RedOS","rOS"}
 term.setTextColor(1)
+tData=getData()
+if http.get("https://raw.githubusercontent.com/RedOS/rOS/master/sys/version")==tData["version"] then
+paintutils.drawFilledBox((w-9)/2,h/2-1,(w+9)/2,h/2+2,128)
+term.setCursorPos((w-9)/2,h/2)
+term.setTextColor(1)
+term.setBackgroundColor(128)
+print("No update found")
+else
 local function loading()
 local img=paintutils.loadImage("apps/Update/load")
 paintutils.drawFilledBox(w/2-6,h/2-1,w/2+6,h/2+2,128)
@@ -77,3 +85,5 @@ end
 fs.delete("sys/delete")
 end
 os.reboot()
+end
+shell.run("sys/desktop")
