@@ -2,7 +2,7 @@ for i=1,w/2 do
 paintutils.drawFilledBox((w-2*i)/2,(w-2*i)/2,(w+2*i)/2,(w+2*i)/2,256)
 end
 status(128,false)
-f=fs.open("apps/Clock/city","r")
+f=fs.open("Apps/Time/city","r")
 city=textutils.unserialize(f.readAll())
 f.close()
 for k,v in pairs(city) do
@@ -35,13 +35,13 @@ print("Back")
 term.setCursorPos((w+4)/2,h-1)
 print("Reload")
 while app do
-tE={os.pullEvent()}
+tE={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 if tE[4]==h-1 and tE[3]<w/2 and tE[3]>w/4 then
 app=false
-shell.run("sys/desktop")
+shell.run("System/desktop")
 elseif tE[4]==h-1 and tE[3]>w/2 and tE[3]<w/4*3 then
-shell.run("apps/Clock/startup")
+shell.run("Apps/Time/startup")
 end
 elseif tE[1]=="timer" then
 status(128,false)

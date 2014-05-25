@@ -19,10 +19,10 @@ end
 os.startTimer(60/72)
 local calc=true
 while calc do
-tE={os.pullEvent()}
+tE={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 calc=false
-shell.run("sys/desktop")
+shell.run("System/desktop")
 elseif tE[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)

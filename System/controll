@@ -11,10 +11,10 @@ term.setCursorPos(20,h-1)
 print("Reboot")
 local controll=true
 while controll do
-tEv={os.pullEvent()}
+tEv={os.pullEventRaw()}
 if tEv[1]=="mouse_click" then
 x,y=tEv[3],tEv[4]
-if x>2 and x<8 and y==h-1 then shell.run("sys/lock") end
+if x>2 and x<8 and y==h-1 then shell.run("System/lock") end
 if x>8 and x<17 and y==h-1 then os.shutdown() end
 if x>20 and x<27 and y==h-1 then os.reboot() end
 elseif tEv[1]=="mouse_drag" then
@@ -27,7 +27,7 @@ paintutils.drawLine(1,h-2+i,w,h-2+i,128)
 paintutils.drawLine(1,h-1+i,w,h-1+i,128)
 os.sleep(0.025)
 end
-shell.run("sys/desktop")
+shell.run("System/desktop")
 end
 elseif tEv[1]=="timer" then
 status(128,false)

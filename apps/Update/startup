@@ -23,15 +23,15 @@ if tE[4]==h/2+2 then
 if tE[3]>=w/2-8 and tE[3]<=w/2-4 then
 force=true
 update=false
-shell.run("apps/Update/startup")
+shell.run("Apps/Update/startup")
 else
 update=false
-shell.run("sys/desktop")
+shell.run("System/desktop")
 end
 end
 else
 update=false
-shell.run("sys/desktop")
+shell.run("System/desktop")
 end
 elseif tE[1]=="timer" then
 status(128,false)
@@ -40,7 +40,7 @@ end
 end
 else
 local function loading()
-local img=paintutils.loadImage("apps/Update/load")
+local img=paintutils.loadImage("Apps/Update/load")
 paintutils.drawFilledBox(w/2-6,h/2-1,w/2+6,h/2+2,128)
 paintutils.drawImage(img,w/2-4,h/2+1)
 term.setCursorPos((w-9)/2,h/2)
@@ -74,11 +74,11 @@ end
 local function download(url, file)
         save(http.get(url).readAll(),file)
 end
-if not fs.exists("apps/Update/json") then
+if not fs.exists("Apps/Update/json") then
         print("")
-        download("http://pastebin.com/raw.php?i=4nRg9CHU","apps/Update/json")
+        download("http://pastebin.com/raw.php?i=4nRg9CHU","Apps/Update/json")
 end
-os.loadAPI("apps/Update/json")
+os.loadAPI("Apps/Update/json")
 loading()
 if pre_dl then loadstring(pre_dl)() else print("") end
 local data = json.decode(http.get("https://api.github.com/repos/"..args[1].."/"..args[2].."/git/trees/"..args[3].."?recursive=1").readAll())
@@ -103,8 +103,8 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 	end
 end
 if post_dl then loadstring(post_dl)() end
-if fs.exists("sys/delete") then
-f=fs.open("sys/delete","w")
+if fs.exists("System/delete") then
+f=fs.open("System/delete","w")
 data=f.readAll()
 f.close()
 data=textutils.unserialize(data)
@@ -113,9 +113,9 @@ if fs.exists(data[i]) then
 fs.delete(data[i])
 end
 end
-fs.delete("sys/delete")
+fs.delete("System/delete")
 end
 os.reboot()
 end
 update=false
-shell.run("sys/desktop")
+shell.run("System/desktop")

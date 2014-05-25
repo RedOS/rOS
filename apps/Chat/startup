@@ -44,7 +44,7 @@ local function fRead( _sReplaceChar, _tHistory )
         term.setCursorPos( sx + nPos - nScroll, cy )
     end
     while true do
-        local sEvent, param, param2, param3, message = os.pullEvent()
+        local sEvent, param, param2, param3, message = os.pullEventRaw()
         if sEvent == "char" then
             sLine = string.sub( sLine, 1, nPos ) .. param .. string.sub( sLine, nPos + 1 )
             nPos = nPos + 1
@@ -174,7 +174,7 @@ term.setCursorPos(1,h)
 term.setTextColor(1)
 write("> ")
 msg = fRead()
-if msg=="/exit" then chat=false m.transmit(nChat,nChat,"&8"..user.." is now offline") shell.run("sys/desktop") end
+if msg=="/exit" then chat=false m.transmit(nChat,nChat,"&8"..user.." is now offline") shell.run("System/desktop") end
 if msg~="" or msg~=" " or msg~=nil then
 m.transmit(nChat,nChat,user..": "..msg)
 end

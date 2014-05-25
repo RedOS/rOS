@@ -2,7 +2,7 @@ w,h=term.getSize()
 if type(m)~="number" then m=1 end
 if type(oldm)~="number" then oldm=1 end
 oldx,oldy=1,1
-shell.run("sys/EN")
+shell.run("System/EN")
 function status(nColor, bLock)
 if nColor==1 then term.setTextColor(2^15) else term.setTextColor(1) end
 paintutils.drawLine(1,1,w,1,nColor)
@@ -58,16 +58,16 @@ term.clear()
 os.sleep(0.055)
 end
 os.sleep(1)
-tEvent={os.pullEvent()}
+tEvent={os.pullEventRaw()}
 print(tEvent[1])
 if tEvent then
 os.reboot() end
 end
 function getData()
-f=fs.open("sys/config","r")
+f=fs.open("System/config","r")
 data=f.readAll()
 f.close()
-f=fs.open("sys/version","r")
+f=fs.open("System/version","r")
 cver=f.readAll()
 f.close()
 tData=textutils.unserialize(data)

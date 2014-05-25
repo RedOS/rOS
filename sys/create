@@ -1,4 +1,0 @@
-fs.open("sys/settings","w")
-fs.open("sys/desktop","w")
-fs.open("sys/lock","w")
-fs.open("sys/startup","w")

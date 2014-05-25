@@ -1,7 +1,7 @@
-f=fs.open("apps/.desktop","r")
+f=fs.open("Apps/.desktop","r")
 sData=f.readAll()
 tApps=textutils.unserialize(sData)
-tApp=fs.list("apps")
+tApp=fs.list("Apps")
 tApp[#tApp]=nil
 f.close()
 tData=getData()
@@ -14,10 +14,10 @@ term.setTextColor(2^15)
 for n=1,3 do
 for i=1,3 do
 if tApps[m][(n-1)*3+i] then
-if fs.exists("apps/"..tApps[m][(n-1)*3+i].."/icon") then
-tIcon=loadIcon("apps/"..tApps[m][(n-1)*3+i].."/icon")
+if fs.exists("Apps/"..tApps[m][(n-1)*3+i].."/icon") then
+tIcon=loadIcon("Apps/"..tApps[m][(n-1)*3+i].."/icon")
 else
-tIcon=loadIcon("sys/images/default")
+tIcon=loadIcon("System/Images/default")
 end
 icon(tIcon,math.ceil(w/3)*(i-1)+3,n*5-2)
 if tApps[m][(n-1)*3+i]=="Date" then
@@ -63,13 +63,13 @@ if x>20 and x<25 and y>7 and y<11 then nP=6 end
 if x>2 and x<7 and y>12 and y<16 then nP=7 end
 if x>11 and x<16 and y>12 and y<16 then nP=8 end
 if x>20 and x<25 and y>12 and y<16 then nP=9 end
-if tApps[m][nP] then shell.run("apps/"..tApps[m][nP].."/startup") end
+if tApps[m][nP] then shell.run("Apps/"..tApps[m][nP].."/startup") end
 end
 oldx,oldy=x,y
 elseif tEvent[1]=="mouse_drag" then
 if y>h-3 and tEvent[4]<19 and tEvent[4]<y-3 then
 desktop=false
-shell.run("sys/controll")
+shell.run("System/controll")
 end
 if tEvent[3]<x-5 and tEvent[1]=="mouse_drag" then
 if type(m)~="number" then m=1 end

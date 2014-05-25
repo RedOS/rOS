@@ -18,7 +18,7 @@ term.setCursorPos(math.ceil((w-#tData["date"])/2)+nW,4)
 term.write(tData["date"])
 term.setCursorPos((w-#var22)/2+nW,h-3)
 term.write(var22)
-paintutils.drawImage(paintutils.loadImage("sys/images/keypad"),-w+nW+8,5)
+paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),-w+nW+8,5)
 term.setTextColor(2^15)
 local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
 for i=1,4 do
@@ -32,8 +32,8 @@ paintutils.drawPixel((i*2)-w+nW+9,3,128)
 end
 end
 screen(0)
-tEvent={os.pullEvent("mouse_drag")}
-while tEvent do
+tEvent={os.pullEventRaw("mouse_drag")}
+while tEvent[1]=="mouse_drag" do
 if nLast<tEvent[3] then
 nDrag=nDrag+1
 else
@@ -49,7 +49,7 @@ break
 else
 nLast=tEvent[3]
 screen(nDrag)
-tEvent={os.pullEvent("mouse_drag")}
+tEvent={os.pullEventRaw("mouse_drag")}
 end
 end
 os.startTimer(60/72)
@@ -72,7 +72,7 @@ local lock=true
 local nCode=""
 local try=0
 while lock do
-tEvent={os.pullEvent()}
+tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
 nCodeOld=nCode
 nCode=nCode..number()
@@ -103,7 +103,7 @@ term.setBackgroundColor(clrs[i])
 term.clear()
 os.sleep(0.055)
 end
-shell.run("sys/desktop")
+shell.run("System/desktop")
 else
 for i=1,5 do paintutils.drawPixel((i*2)+7,3,2^14) end
 os.sleep(.33)

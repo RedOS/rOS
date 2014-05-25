@@ -1,2 +1,16 @@
-shell.run("sys/startup")
-shell.run("sys/lock")
+shell.run("System/boot")
+shell.run("System/lock")
+if ok==false then
+w,h=term.getSize()
+term.setBackgroundColor(2^11)
+term.clear()
+paintutils.drawImage(paintutils.loadImage("System/Images/crash"),(w-11)/2,h/2-5)
+term.setBackgroundColor(2^11)
+term.setTextColor(1)
+term.setCursorPos((w-15)/2,h/2+4)
+print("rOS has crashed!")
+term.setCursorPos((w-18)/2,h/2+5)
+print("System will reboot")
+os.sleep(5)
+os.reboot()
+end
