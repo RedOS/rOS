@@ -69,7 +69,7 @@ f=fs.open("sys/delete","w")
 data=f.readAll()
 f.close()
 data=textutils.unserialize(data)
-for i=,1#data do
+for i=1,#data do
 if fs.exists(data[i]) then
 fs.delete(data[i])
 end
