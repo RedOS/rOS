@@ -102,7 +102,6 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 		end
 	end
 end
-if post_dl then loadstring(post_dl)() end
 if fs.exists("System/delete") then
 f=fs.open("System/delete","r")
 data=f.readAll()
