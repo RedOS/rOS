@@ -39,7 +39,6 @@ os.startTimer(60/72)
 end
 end
 else
-if force and not settings then drawApp(m) end
 local function loading()
 local img=paintutils.loadImage("apps/Update/load")
 paintutils.drawFilledBox(w/2-6,h/2-1,w/2+6,h/2+2,128)
@@ -54,7 +53,7 @@ paintutils.drawImage(img,w/2-4,h/2+1)
 paintutils.drawPixel(w/2-4+2*(i-1),h/2+1,1)
 os.sleep(.085)
 end
-status(1,false)
+status(128,false)
 paintutils.drawImage(img,w/2-4,h/2+1)
 end
 args[3] = args[3] or "master"
