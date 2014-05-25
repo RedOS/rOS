@@ -5,6 +5,6 @@
   "System/lock",
   "System/controll",
   "System/info",
-  "System/delete",
   "System/desktop",
+  "System/delete",
 }
