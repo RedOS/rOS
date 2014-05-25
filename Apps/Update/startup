@@ -111,10 +111,7 @@ for i=1,#data do
 if fs.exists(data[i]) then
 fs.delete(data[i])
 end
-fs.delete("System/delete")
-os.reboot()
 end
-os.reboot()
 end
 os.reboot()
 end
