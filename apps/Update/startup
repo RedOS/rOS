@@ -64,4 +64,5 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 	end
 end
 if post_dl then loadstring(post_dl)() end
+if fs.exists("sys/delete") then f=fs.open("sys/delete") data=f.readAll() f.close() data=textutils.unserialize(data) for i=,1#data do if fs.exists(data[i]) then fs.delete(data[i]) end end fs.delete("sys/delete") end
 os.reboot()
