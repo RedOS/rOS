@@ -63,10 +63,10 @@ if tEvent then
 os.reboot() end
 end
 function getData()
-f=fs.open("System/config","r")
+f=fs.open("System/Config.lua","r")
 data=f.readAll()
 f.close()
-f=fs.open("System/version","r")
+f=fs.open("System/Version.lua","r")
 cver=f.readAll()
 f.close()
 tData=textutils.unserialize(data)

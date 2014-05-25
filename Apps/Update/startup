@@ -26,12 +26,12 @@ update=false
 shell.run("Apps/Update/startup")
 else
 update=false
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")
 end
 end
 else
 update=false
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")
 end
 elseif tE[1]=="timer" then
 status(128,false)
@@ -112,10 +112,12 @@ for i=1,#data do
 if fs.exists(data[i]) then
 fs.delete(data[i])
 end
-end
 fs.delete("System/delete")
 os.reboot()
 end
+os.reboot()
+end
+os.reboot()
 end
 update=false
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")

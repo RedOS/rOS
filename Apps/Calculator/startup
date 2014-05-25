@@ -22,7 +22,7 @@ while calc do
 tE={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 calc=false
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")
 elseif tE[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)

@@ -1,6 +1,0 @@
-{
-  [ 2 ] = "Do it",
-  [ 3 ] = "Buy stone (128x)",
-  [ 4 ] = "Repair broken wall",
-  [ 5 ] = "Call home",
-}

@@ -102,7 +102,7 @@ term.setBackgroundColor(clrs[i])
 term.clear()
 os.sleep(0.055)
 end
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")
 else
 for i=1,5 do paintutils.drawPixel((i*2)+7,3,2^14) end
 os.sleep(.33)

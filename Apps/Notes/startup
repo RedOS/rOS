@@ -64,7 +64,7 @@ saveAll()
 elseif string.sub(input,0,4) == "exit" then
 notes=false
 saveAll()
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")
 end
 drawScreen()
 end

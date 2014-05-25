@@ -62,7 +62,7 @@ while weather do
 tE={os.pullEventRaw()}
 if tE[1]=="mouse_click" and tE[4]==h then
 weather=false
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")
 elseif tE[1]=="timer" then
 status(1,false)
 os.startTimer(60/72)

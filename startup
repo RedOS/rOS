@@ -1,5 +1,5 @@
-shell.run("System/boot")
-shell.run("System/lock")
+shell.run("System/Boot.lua")
+shell.run("System/Lock.lua")
 if ok==false then
 w,h=term.getSize()
 term.setBackgroundColor(2^11)

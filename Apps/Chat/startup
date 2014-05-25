@@ -176,7 +176,7 @@ term.setCursorPos(1,h)
 term.setTextColor(1)
 write("> ")
 msg = fRead()
-if msg=="/exit" then chat=false m.transmit(nChat,nChat,"&8"..user.." is now offline") shell.run("System/desktop") end
+if msg=="/exit" then chat=false m.transmit(nChat,nChat,"&8"..user.." is now offline") shell.run("System/Desktop.lua") end
 if msg~="" or msg~=" " or msg~=nil then
 m.transmit(nChat,nChat,user..": "..msg)
 end
@@ -193,7 +193,7 @@ term.setCursorPos((w-24)/2,h/2)
 print("Chat needs rednet to run")
 while chat do
 local tE={os.pullEventRaw()}
-if tE[1]=="mouse_click" then chat=false shell.run("System/desktop")
+if tE[1]=="mouse_click" then chat=false shell.run("System/Desktop.lua")
 elseif tE[1]=="timer" then status(1,false) os.startTimer(60/72) end
 end
 end

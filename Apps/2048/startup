@@ -254,7 +254,7 @@ while true do
 f=fs.open("Apps/2048/hiscore","w")
 f.write(hiscore)
 f.close()
-shell.run("System/desktop")
+shell.run("System/Desktop.lua")
     break
   end
 end
