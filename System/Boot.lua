@@ -13,6 +13,58 @@ term.setCursorPos(math.ceil((w-#tData["time"]+1)/2),1)
 print(tData["time"])
 end
 end
+local function setup()
+if not fs.exists("System/config") then
+local setup=true
+local tData={}
+local tLines = {
+	'Welcome to rOS!\n Please enter name of this phone',
+	'Enter city to use in weather app',
+	'Use Celsius or not?',
+	'All done!\n System will now rest to apply settings'
+}
+f=fs.open("System/Version.lua","r")
+f.close()
+tData["version"]=f.readAll()
+local function drawBg(text)
+term.setBackgroundColor(1)
+term.clear()
+paintutils.drawLine(1,1,w,h,128)
+term.setBackgroundColor(1)
+term.setCursorPos(2,3)
+print(text)
+end
+drawBg(tLines[1])
+paintutils.drawLine(2,6,w-8,6,128)
+term.setCursorPos(3,6)
+label=read()
+os.setComputerLabel(label)
+drawBg(tLines[2])
+paintutils.drawLine(2,6,w-8,6,128)
+term.setCursorPos(3,6)
+tData["city"]=read()
+drawBg(tLines[3])
+term.setCursorPos(3,6)
+term.setBackgroundColor(32)
+write(" Yes ")
+term.setCursorPos(9,6)
+term.setBackgroundColor(2^14)
+write(" No ")
+while setup do
+local tEvent={os.pullEvent("mouse_click")}
+if tEvent[4]==6 then
+if tEvent[3]>=3 and tEvent[3]<=8 then tData["bTemp"]=true end
+if tEvent[3]>=9 and tEvent[3]<=13 then tData["bTemp"]=false end
+end
+end
+f=fs.open("System/config","w")
+f.write(textutils.serialize(tData))
+f.close()
+drawBg(tLines[4])
+os.sleep(3)
+os.reboot()
+end
+end
 function date(days,string)
 day={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}
 _mon={"Janurary","February","March","April","May","June","July","August","September","October","November","December"}
@@ -63,6 +115,7 @@ if tEvent then
 os.reboot() end
 end
 function getData()
+if not fs.exists("System/config") then setup() end
 f=fs.open("System/config","r")
 data=f.readAll()
 f.close()
