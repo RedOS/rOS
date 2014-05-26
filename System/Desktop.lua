@@ -63,7 +63,7 @@ if x>20 and x<25 and y>7 and y<11 then nP=6 end
 if x>2 and x<7 and y>12 and y<16 then nP=7 end
 if x>11 and x<16 and y>12 and y<16 then nP=8 end
 if x>20 and x<25 and y>12 and y<16 then nP=9 end
-if tApps[m][nP] then shell.run("Apps/"..tApps[m][nP].."/startup") end
+if tApps[m][nP] then shell.run("Apps/"..tApps[m][nP].."/Startup.lua") end
 end
 oldx,oldy=x,y
 elseif tEvent[1]=="mouse_drag" then
