@@ -55,8 +55,8 @@ drawBg(tLines[3])
 paintutils.drawLine(2,6,w-8,6,128)
 term.setCursorPos(3,6)
 term.setTextColor(1)
-tData["city"]=tonumber(read())
-if #tostring(tData["city"])~=5 then code() end
+tData["code"]=tonumber(read())
+if #tostring(tData["code"])~=5 then code() end
 end
 code()
 drawBg(tLines[4])
