@@ -104,28 +104,28 @@ term.setCursorPos(3,7)
 tData["city"]=read()
 term.setCursorPos(3,7)
 cprint(tData["city"].."$8")
-f=fs.open("System/config","w")
+f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
 elseif tEvent[4]==14 then
 if tData["bTemp"]==true then tData["bTemp"]=false sTemp="$e No $8 " else tData["bTemp"]=true sTemp="$5 Yes " end
 term.setCursorPos(1,11)
 cprint("$8 Use Celsius "..sTemp.."$8")
-f=fs.open("System/config","w")
+f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
 elseif tEvent[4]==13 then
 if tData["modemOn"]==true then tData["modemOn"]=false sModem="$e Off " else tData["modemOn"]=true sModem="$5 On $8 " end
 term.setCursorPos(1,10)
 cprint("$8 Modem "..sModem.."$8")
-f=fs.open("System/config","w")
+f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
 elseif tEvent[4]==10 then
 shell.run("Apps/Update/Startup.lua")
 elseif tEvent[4]==h then
 settings=false
-f=fs.open("System/config","w")
+f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
 shell.run("System/Desktop.lua")

@@ -22,7 +22,7 @@ local tLines = {
 	"Enter city to use in\n weather app",
 	"Enter your five-digit code",
 	"Use Celsius or not?",
-	"All done!\n System will now rest to apply settings"
+	"All done!\n System will now reboot"
 }
 f=fs.open("System/Version.lua","r")
 f.close()
@@ -73,7 +73,7 @@ if tEvent[3]>=3 and tEvent[3]<=8 then tData["bTemp"]=true setup=false end
 if tEvent[3]>=9 and tEvent[3]<=13 then tData["bTemp"]=false setup=false end
 end
 end
-f=fs.open("System/config","w")
+f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
 drawBg(tLines[5])
@@ -131,8 +131,8 @@ if tEvent then
 os.reboot() end
 end
 function getData()
-if not fs.exists("System/config") then setup() end
-f=fs.open("System/config","r")
+if not fs.exists("System/Config.lua") then setup() end
+f=fs.open("System/Config.lua","r")
 data=f.readAll()
 f.close()
 f=fs.open("System/Version.lua","r")
