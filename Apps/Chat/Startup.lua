@@ -193,7 +193,7 @@ term.setCursorPos((w-24)/2,h/2)
 print("Chat needs rednet to run")
 while chat do
 local tEvent={os.pullEventRaw()}
-if tE[1]=="mouse_click" then chat=false shell.run("System/Desktop.lua")
-elseif tE[1]=="timer" then status(1,false) os.startTimer(60/72) end
+if tEvent[1]=="mouse_click" then chat=false shell.run("System/Desktop.lua")
+elseif tEvent[1]=="timer" then status(1,false) os.startTimer(60/72) end
 end
 end

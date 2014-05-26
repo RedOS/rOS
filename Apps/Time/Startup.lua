@@ -36,14 +36,14 @@ term.setCursorPos((w+4)/2,h-1)
 print("Reload")
 while app do
 tEvent={os.pullEventRaw()}
-if tE[1]=="mouse_click" then
-if tE[4]==h-1 and tE[3]<w/2 and tE[3]>w/4 then
+if tEvent[1]=="mouse_click" then
+if tEvent[4]==h-1 and tEvent[3]<w/2 and tEvent[3]>w/4 then
 app=false
 shell.run("System/Desktop.lua")
-elseif tE[4]==h-1 and tE[3]>w/2 and tE[3]<w/4*3 then
+elseif tEvent[4]==h-1 and tEvent[3]>w/2 and tEvent[3]<w/4*3 then
 shell.run("Apps/Time/startup")
 end
-elseif tE[1]=="timer" then
+elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
 end

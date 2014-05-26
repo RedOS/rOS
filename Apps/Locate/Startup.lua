@@ -22,11 +22,11 @@ os.startTimer(60/72)
 local app=true
 while app do
 tEvent={os.pullEventRaw()}
-if tE[1]=="mouse_click" then
+if tEvent[1]=="mouse_click" then
 drawApps(m)
 app=false
 shell.run("System/Desktop.lua")
-elseif tE[1]=="timer" then
+elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
 end

@@ -1,7 +1,7 @@
 local args = {"RedOS","rOS"}
 term.setTextColor(1)
 tData=getData()
-if http.get("https://raw.githubusercontent.com/RedOS/rOS/master/System/version").readAll()==tData["version"] and not force then
+if http.get("https://raw.githubusercontent.com/RedOS/rOS/master/System/Version.lua").readAll()==tData["version"] and not force then
 paintutils.drawFilledBox(w/2-9,h/2-1,w/2+9,h/2+2,128)
 term.setCursorPos(w/2-7,h/2)
 term.setTextColor(1)
@@ -17,13 +17,13 @@ local update=true
 os.startTimer(60/72)
 while update do
 local tEvent={os.pullEventRaw()}
-if tE[1]=="mouse_click" then
-if tE[4]>=h/2-1 and tE[4]<=h/2+2 then
-if tE[4]==h/2+2 then
-if tE[3]>=w/2-8 and tE[3]<=w/2-4 then
+if tEvent[1]=="mouse_click" then
+if tEvent[4]>=h/2-1 and tEvent[4]<=h/2+2 then
+if tEvent[4]==h/2+2 then
+if tEvent[3]>=w/2-8 and tEvent[3]<=w/2-4 then
 force=true
 update=false
-shell.run("Apps/Update/startup")
+shell.run("Apps/Update/Startup.lua")
 else
 update=false
 shell.run("System/Desktop.lua")
@@ -33,7 +33,7 @@ else
 update=false
 shell.run("System/Desktop.lua")
 end
-elseif tE[1]=="timer" then
+elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
 end

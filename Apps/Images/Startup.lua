@@ -25,19 +25,19 @@ print("Edit")
 local app=true
 while app do
 tEvent={os.pullEventRaw()}
-if tE[1]=="mouse_click" then
-if tE[4]==h-1 and tE[3]>9 and tE[3]<15 then
+if tEvent[1]=="mouse_click" then
+if tEvent[4]==h-1 and tEvent[3]>9 and tEvent[3]<15 then
 app=false
 images=false
 shell.run("System/Desktop.lua")
-elseif tE[4]==h-1 and tE[3]>3 and tE[3]<9 then
+elseif tEvent[4]==h-1 and tEvent[3]>3 and tEvent[3]<9 then
 shell.run("paint","Apps/Images/gallery/"..tostring(#tImgs+1))
 shell.run("Apps/Images/startup")
-elseif tE[4]==h-1 and tE[3]>15 and tE[3]<23 then
+elseif tEvent[4]==h-1 and tEvent[3]>15 and tEvent[3]<23 then
 shell.run("paint","Apps/Images/gallery/"..cImg)
 shell.run("Apps/Images/startup")
 end
-elseif tE[1]=="key" and tE[2]==205 then
+elseif tEvent[1]=="key" and tEvent[2]==205 then
 cImg=cImg+1
 if cImg>#tImgs-1 then cImg=#tImgs-1 end
 paintutils.drawFilledBox(1,1,w,h,256)
@@ -52,7 +52,7 @@ print("Back")
 term.setCursorPos(16,h-1)
 print("Reload")
 paintutils.drawImage(paintutils.loadImage("Apps/Images/gallery/"..cImg),2,2)
-elseif tE[1]=="key" and tE[2]==203 then
+elseif tEvent[1]=="key" and tEvent[2]==203 then
 cImg=cImg-1
 if cImg<0 then cImg=0 end
 paintutils.drawFilledBox(1,1,w,h,256)
@@ -67,7 +67,7 @@ print("Back")
 term.setCursorPos(16,h-1)
 print("Reload")
 paintutils.drawImage(paintutils.loadImage("Apps/Images/gallery/"..cImg),2,2)
-elseif tE[1]=="timer" then
+elseif tEvent[1]=="timer" then
 paintutils.drawBox(1,1,w,h,128)
 status(128,false)
 os.startTimer(60/72)

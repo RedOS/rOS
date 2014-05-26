@@ -12,13 +12,13 @@ print("Reboot")
 local controll=true
 while controll do
 tEvent={os.pullEventRaw()}
-if tEv[1]=="mouse_click" then
-x,y=tEv[3],tEv[4]
+if tEvent[1]=="mouse_click" then
+x,y=tEvent[3],tEvent[4]
 if x>2 and x<8 and y==h-1 then shell.run("System/Lock.lua") end
 if x>8 and x<17 and y==h-1 then os.shutdown() end
 if x>20 and x<27 and y==h-1 then os.reboot() end
-elseif tEv[1]=="mouse_drag" then
-if y>h-5 and tEv[4]>h-2 then
+elseif tEvent[1]=="mouse_drag" then
+if y>h-5 and tEvent[4]>h-2 then
 controll=false
 for i=1,4 do
 drawApps(m)
@@ -29,7 +29,7 @@ os.sleep(0.025)
 end
 shell.run("System/Desktop.lua")
 end
-elseif tEv[1]=="timer" then
+elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
 end
