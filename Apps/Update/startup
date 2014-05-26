@@ -113,6 +113,7 @@ fs.delete(data[i])
 end
 end
 end
+os.sleep(0.01)
 os.reboot()
 end
 update=false
