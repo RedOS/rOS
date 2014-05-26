@@ -21,7 +21,7 @@ end
 os.startTimer(60/72)
 local app=true
 while app do
-tE={os.pullEventRaw()}
+tEvent={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 drawApps(m)
 app=false

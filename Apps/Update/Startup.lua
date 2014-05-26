@@ -16,7 +16,7 @@ print("No")
 local update=true
 os.startTimer(60/72)
 while update do
-local tE={os.pullEventRaw()}
+local tEvent={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 if tE[4]>=h/2-1 and tE[4]<=h/2+2 then
 if tE[4]==h/2+2 then

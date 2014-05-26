@@ -11,7 +11,7 @@ term.setCursorPos(20,h-1)
 print("Reboot")
 local controll=true
 while controll do
-tEv={os.pullEventRaw()}
+tEvent={os.pullEventRaw()}
 if tEv[1]=="mouse_click" then
 x,y=tEv[3],tEv[4]
 if x>2 and x<8 and y==h-1 then shell.run("System/Lock.lua") end

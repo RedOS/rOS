@@ -24,7 +24,7 @@ term.setCursorPos(16,h-1)
 print("Edit")
 local app=true
 while app do
-tE={os.pullEventRaw()}
+tEvent={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 if tE[4]==h-1 and tE[3]>9 and tE[3]<15 then
 app=false

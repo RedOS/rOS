@@ -1,7 +1,6 @@
 paintutils.drawFilledBox(1,1,w,h,1)
 status(1,false)
 tData=getData()
-tData["city"]="London"
 wTData=http.get("http://api.worldweatheronline.com/free/v1/weather.ashx?q="..tData["city"].."&format=xml&num_of_days=1&key=yzz7n8unxjwjvpxqzdmj77nc")
 if wTData then
 wData=wTData.readAll()
@@ -59,7 +58,7 @@ cwrite("$0&fBack")
 os.startTimer(60/72)
 local weather=true
 while weather do
-tE={os.pullEventRaw()}
+tEvent={os.pullEventRaw()}
 if tE[1]=="mouse_click" and tE[4]==h then
 weather=false
 shell.run("System/Desktop.lua")

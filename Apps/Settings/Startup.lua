@@ -72,10 +72,15 @@ status(128,false)
 paintutils.drawLine(2,4,w-8,4,128)
 term.setCursorPos(3,4)
 print(os.getComputerLabel())
+paintutils.drawLine(2,7,w-8,7,128)
+term.setCursorPos(3,7)
+print(tData["city"])
 term.setBackgroundColor(256)
 term.setCursorPos(2,3)
 print("Phone name")
-term.setCursorPos(1,6)
+term.setCursorPos(2,7)
+print("City")
+term.setCursorPos(1,9)
 cprint(" OS Version "..tData["version"].."\n &7Update&0")
 cprint("\n HTTP "..sHttp.."$8")
 cprint(" Modem "..sModem.."$8")
@@ -86,38 +91,46 @@ term.setCursorPos((w-4)/2,h)
 write("Back")
 os.startTimer(60/72)
 while settings do
-tEv={os.pullEventRaw()}
-if tEv[1]=="mouse_click" then
-if tEv[4]==4 then
+tEvent={os.pullEventRaw()}
+if tEvent[1]=="mouse_click" then
+if tEvent[4]==4 then
 term.setCursorPos(3,4)
 label=read()
 os.setComputerLabel(label)
 term.setCursorPos(3,4)
 cprint(label.."$8")
-elseif tEv[4]==11 then
+elseif tEvent[4]==7 then
+term.setCursorPos(3,7)
+tData["city"]=read()
+term.setCursorPos(3,4)
+cprint(tData["city"].."$8")
+f=fs.open("System/config","w")
+f.write(textutils.serialize(tData))
+f.close()
+elseif tEvent[4]==14 then
 if tData["bTemp"]==true then tData["bTemp"]=false sTemp="$e No $8 " else tData["bTemp"]=true sTemp="$5 Yes " end
 term.setCursorPos(1,11)
 cprint("$8 Use Celsius "..sTemp.."$8")
 f=fs.open("System/config","w")
 f.write(textutils.serialize(tData))
 f.close()
-elseif tEv[4]==10 then
+elseif tEvent[4]==13 then
 if tData["modemOn"]==true then tData["modemOn"]=false sModem="$e Off " else tData["modemOn"]=true sModem="$5 On $8 " end
 term.setCursorPos(1,10)
 cprint("$8 Modem "..sModem.."$8")
 f=fs.open("System/config","w")
 f.write(textutils.serialize(tData))
 f.close()
-elseif tEv[4]==7 then
-shell.run("Apps/Update/startup")
-elseif tEv[4]==h then
+elseif tEvent[4]==10 then
+shell.run("Apps/Update/Startup.lua")
+elseif tEvent[4]==h then
 settings=false
 f=fs.open("System/config","w")
 f.write(textutils.serialize(tData))
 f.close()
 shell.run("System/Desktop.lua")
 end
-elseif tEv[1]=="timer" then
+elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
 end

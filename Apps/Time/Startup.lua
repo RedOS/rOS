@@ -35,7 +35,7 @@ print("Back")
 term.setCursorPos((w+4)/2,h-1)
 print("Reload")
 while app do
-tE={os.pullEventRaw()}
+tEvent={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 if tE[4]==h-1 and tE[3]<w/2 and tE[3]>w/4 then
 app=false

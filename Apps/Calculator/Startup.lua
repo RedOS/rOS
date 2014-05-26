@@ -19,7 +19,7 @@ end
 os.startTimer(60/72)
 local calc=true
 while calc do
-tE={os.pullEventRaw()}
+tEvent={os.pullEventRaw()}
 if tE[1]=="mouse_click" then
 calc=false
 shell.run("System/Desktop.lua")
