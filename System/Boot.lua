@@ -18,10 +18,11 @@ if not fs.exists("System/config") then
 local setup=true
 local tData={}
 local tLines = {
-	'Welcome to rOS!\n Please enter name of this phone',
-	'Enter city to use in weather app',
-	'Use Celsius or not?',
-	'All done!\n System will now rest to apply settings'
+	"Welcome to rOS!\n Please name your phone",
+	"Enter city to use in\n weather app",
+	"Enter your five-digit code",
+	"Use Celsius or not?",
+	"All done!\n System will now rest to apply settings"
 }
 f=fs.open("System/Version.lua","r")
 f.close()
@@ -29,21 +30,36 @@ tData["version"]=f.readAll()
 local function drawBg(text)
 term.setBackgroundColor(1)
 term.clear()
-paintutils.drawLine(1,1,w,h,128)
+paintutils.drawLine(1,1,w,1,128)
+term.setCursorPos((w-5)/2,1)
+term.setTextColor(1)
+print("Setup")
 term.setBackgroundColor(1)
+term.setTextColor(2^15)
 term.setCursorPos(2,3)
 print(text)
 end
 drawBg(tLines[1])
 paintutils.drawLine(2,6,w-8,6,128)
 term.setCursorPos(3,6)
+term.setTextColor(1)
 label=read()
 os.setComputerLabel(label)
 drawBg(tLines[2])
 paintutils.drawLine(2,6,w-8,6,128)
 term.setCursorPos(3,6)
+term.setTextColor(1)
 tData["city"]=read()
+local function code()
 drawBg(tLines[3])
+paintutils.drawLine(2,6,w-8,6,128)
+term.setCursorPos(3,6)
+term.setTextColor(1)
+tData["city"]=tonumber(read())
+if #tostring(tData["city"])~=5 then code() end
+end
+code()
+drawBg(tLines[4])
 term.setCursorPos(3,6)
 term.setBackgroundColor(32)
 write(" Yes ")
@@ -53,14 +69,14 @@ write(" No ")
 while setup do
 local tEvent={os.pullEvent("mouse_click")}
 if tEvent[4]==6 then
-if tEvent[3]>=3 and tEvent[3]<=8 then tData["bTemp"]=true end
-if tEvent[3]>=9 and tEvent[3]<=13 then tData["bTemp"]=false end
+if tEvent[3]>=3 and tEvent[3]<=8 then tData["bTemp"]=true setup=false end
+if tEvent[3]>=9 and tEvent[3]<=13 then tData["bTemp"]=false setup=false end
 end
 end
 f=fs.open("System/config","w")
 f.write(textutils.serialize(tData))
 f.close()
-drawBg(tLines[4])
+drawBg(tLines[5])
 os.sleep(3)
 os.reboot()
 end
