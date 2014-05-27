@@ -6,9 +6,9 @@ tApp[#tApp]=nil
 f.close()
 tData=getData()
 if type(m)~="number" then m=1 end
+function drawApps(m)
 local nIcon=1
 tIcons={}
-function drawApps(m)
 term.setBackgroundColor(1)
 term.clear()
 status(128,false)
