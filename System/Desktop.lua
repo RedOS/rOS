@@ -1,3 +1,4 @@
+bEnd=false
 f=fs.open("Apps/.desktop","r")
 sData=f.readAll()
 tApps=textutils.unserialize(sData)
@@ -73,14 +74,15 @@ if y>h-3 and tEvent[4]<19 and tEvent[4]<y-3 then
 desktop=false
 shell.run("System/Controll.lua")
 end
-if tEvent[3]<x-5 and tEvent[1]=="mouse_drag" then
+if tEvent[3]<x-5 then
 if type(m)~="number" then m=1 end
 m=m+1
 if m>#tApps then m=#tApps end
 if m~=oldm then drawApps(m) end
 oldm=m
 x,y=tEvent[3],tEvent[4]
-elseif tEvent[3]>x+5 and tEvent[1]=="mouse_drag" then
+end
+if tEvent[3]>x+5 then
 if type(m)~="number" then m=1 end
 m=m-1
 if m<1 then m=1 end
@@ -88,7 +90,8 @@ if m~=oldm then drawApps(m) end
 oldm=m
 x,y=tEvent[3],tEvent[4]
 end
-elseif tEvent[1]=="terminate" then
+elseif tEvent[1]=="key" and tEvent[2]==keys.f1 then
+bEnd=true
 desktop=false
 elseif tEvent[1]=="timer" then
 status(128,false)
