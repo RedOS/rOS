@@ -34,7 +34,7 @@ term.setCursorPos(math.ceil(w/3)*(i-1)+4,n*5-1)
 local _y,_m,nD=date(os.day())
 term.setTextColor(1)
 term.setBackgroundColor(2^14)
-if #tostring(nD)==1 then nD="O"..nD end
+if #tostring(nD)==1 then nD=0..nD end
 print(nD)
 end
 term.setTextColor(2^15)
