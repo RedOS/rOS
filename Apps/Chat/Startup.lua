@@ -2,8 +2,7 @@ term.setBackgroundColor(1)
 term.setTextColor(2^15)
 local chat=true
 tData=getData()
-if tData["modemOn"] and peripheral.isPresent("back") then
-local nChat=65533
+if modem and modem.isWireless() then
 local function update(msg)
 local ox=term.getCursorPos()
 term.setBackgroundColor(1)
@@ -15,7 +14,6 @@ tChatHistory[17]=msg
 for i=1,17 do
 term.setCursorPos(2,i+1)
 term.clearLine()
-tChatHistory[i]:gsub("&0","&f")
 cprint(tChatHistory[i])
 end
 term.setCursorPos(ox,h)
@@ -139,15 +137,13 @@ local function fRead( _sReplaceChar, _tHistory )
 end
 status(1,false)
 paintutils.drawFilledBox(1,1,w,h,1)
-if type(tChatHistory)~="table" or #tChatHistory==0 then
+--[[if type(tChatHistory)~="table" or #tChatHistory==0 then
 tChatHistory={}
 for i=1,17 do
 tChatHistory[i]=""
 end
-end
+end]]
 os.startTimer(60/72)
-m=peripheral.wrap("back")
-m.open(nChat)
 if not user then
 term.setCursorPos(1,h)
 paintutils.drawLine(1,h+1,w,h+1,256)
@@ -156,12 +152,13 @@ term.setTextColor(1)
 write("Nickname: ")
 user = fRead()
 end
-m.transmit(nChat,nChat,"&8"..user.." is now online")
+modem.transmit(65533,65533,"&8"..user.." is now online")
 paintutils.drawFilledBox(1,1,w,h,1)
-for i=1,17 do
-term.setCursorPos(2,i+1)
+for o=1,17 do
+term.setTextColor(2^15)
+term.setCursorPos(2,o+1)
 term.clearLine()
-cprint(tChatHistory[i])
+cprint(tChatHistory[o])
 end
 while chat do
 term.setCursorPos(1,h-1)
@@ -176,12 +173,12 @@ term.setCursorPos(1,h)
 term.setTextColor(1)
 write("> ")
 msg = fRead()
-if msg=="/exit" then chat=false m.transmit(nChat,nChat,"&8"..user.." is now offline") shell.run("System/Desktop.lua") end
-if msg~="" or msg~=" " or msg~=nil then
-m.transmit(nChat,nChat,user..": "..msg)
-end
+if msg=="/exit" then chat=false modem.transmit(65533,65533,"&8"..user.." is now offline") shell.run("System/Desktop.lua") end
+if msg~="" or msg~=" " or msg~=nil or msg~="/exit" then
+modem.transmit(65533,65533,user..": "..msg)
 msg="&fYou: ".."&5"..msg
 update(msg)
+end
 end
 else
 os.startTimer(60/72)

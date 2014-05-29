@@ -2,15 +2,33 @@ w,h=term.getSize()
 if type(m)~="number" then m=1 end
 if type(oldm)~="number" then oldm=1 end
 oldx,oldy=1,1
-function status(nColor, bLock)
+tChatHistory={}
+nCount=0
+for i=1,17 do
+tChatHistory[i]=""
+end
+function status(nColor, bLock, sMessage)
+if sMessage then nCount=10 sLocalMessage=sMessage end
 if nColor==1 then term.setTextColor(2^15) else term.setTextColor(1) end
 paintutils.drawLine(1,1,w,1,nColor)
 tData=getData()
 term.setCursorPos(1,1)
+if nCount<1 then
 print(tData["net"])
 if not bLock then
 term.setCursorPos(math.ceil((w-#tData["time"]+1)/2),1)
 print(tData["time"])
+end
+else
+if #sLocalMessage>w-6 then sLocalMessage=sLocalMessage:sub(1,w-6).."..." end
+sLocalMessage=sLocalMessage:gsub("&%d","")
+sLocalMessage=sLocalMessage:gsub("$%d","")
+print(sLocalMessage)
+nCount=nCount-1
+end
+if tData["modemOn"] and peripheral.isPresent("back") then
+if not modem then modem=peripheral.find("modem") end
+if not modem.isOpen(65533) then modem.open(65533) end
 end
 end
 local function setup()

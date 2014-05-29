@@ -65,6 +65,7 @@ end
 os.startTimer(60/72)
 end
 end
+os.startTimer(60/72)
 local nTime=os.startTimer((60/72)*60)
 local function number()
 n=""
