@@ -1,5 +1,4 @@
-local nDrag=0
-local nLast=3
+local nDrag,nLast,lock,kpad=0,3,true,false
 local function screen(nW)
 if nW==nil or nW<0 then nW=0 end
 if nW>24 then nW=24 end
@@ -32,8 +31,10 @@ paintutils.drawPixel((i*2)-w+nW+9,3,128)
 end
 end
 screen(0)
-tEvent={os.pullEventRaw("mouse_drag")}
-while tEvent[1]=="mouse_drag" do
+os.startTimer(60/72)
+while lock do
+local tEvent={os.pullEventRaw()}
+if tEvent[1]=="mouse_drag" then
 if nLast<tEvent[3] then
 nDrag=nDrag+1
 else
@@ -44,15 +45,26 @@ for i=1,12 do
 screen(12+i)
 os.sleep(0.02)
 end
-tEvent=nil
+lock=false
+kpad=true
 break
 else
 nLast=tEvent[3]
 screen(nDrag)
-tEvent={os.pullEventRaw("mouse_drag")}
 end
+elseif tEvent[1]=="timer" then
+if nDrag>12 then
+status(128,false)
+else
+term.setBackgroundColor(256)
+term.setTextColor(1)
+term.setCursorPos(math.ceil((w-#tData["time"])/2)+nDrag,3)
+term.write(tData["time"])
+status(128,true)
 end
 os.startTimer(60/72)
+end
+end
 local nTime=os.startTimer((60/72)*60)
 local function number()
 n=""
@@ -68,10 +80,9 @@ if tEvent[3]>17 and tEvent[3]<21 and tEvent[4]>12 and tEvent[4]<16 then n=9 end
 if tEvent[3]>11 and tEvent[3]<15 and tEvent[4]>16 and tEvent[4]<20 then n=0 end
 return tostring(n)
 end
-local lock=true
 local nCode=""
 local try=0
-while lock do
+while kpad do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
 nCodeOld=nCode
@@ -95,12 +106,12 @@ end
 end
 if try==5 then
 if tonumber(nCode)==tData["code"] then
-lock=false
+kpad=false
 local clrs={2^15,128,256}
 for i=1,3 do
 term.setBackgroundColor(clrs[i])
 term.clear()
-os.sleep(0.055)
+os.sleep(.055)
 end
 shell.run("System/Desktop.lua")
 else
