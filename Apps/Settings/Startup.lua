@@ -1,5 +1,6 @@
 if http then sHttp="$5 On " else sHtpp="$e Off " end
 if tData["modemOn"] then sModem="$5 On " else sModem="$e Off " end
+if tData["notice"] then sNotice="$5 On " else sNotice="$e Off " end
 local function round(num, idp)
   local mult = 10^(idp or 0)
   return math.floor(num * mult + 0.5) / mult
@@ -85,6 +86,7 @@ cprint(" OS Version "..tData["version"].."\n &7Update&0")
 cprint("\n HTTP "..sHttp.."$8")
 cprint(" Modem "..sModem.."$8")
 cprint(" Use Celsius "..sTemp.."$8")
+cprint(" Notifications "..sNotice.."$8")
 print("\n "..round(nFree,2)..sFreeUnit.." Available")
 print(" "..round(nUsed,2)..sUsedUnit.." Used")
 term.setCursorPos((w-4)/2,h)
@@ -118,6 +120,13 @@ elseif tEvent[4]==13 then
 if tData["modemOn"]==true then tData["modemOn"]=false sModem="$e Off " else tData["modemOn"]=true sModem="$5 On $8 " end
 term.setCursorPos(1,13)
 cprint("$8 Modem "..sModem.."$8")
+f=fs.open("System/Config.lua","w")
+f.write(textutils.serialize(tData))
+f.close()
+elseif tEvent[4]==14 then
+if tData["notice"]==true then tData["notice"]=false sNotice="$e Off " else tData["notice"]=true sNotice="$5 On $8 " end
+term.setCursorPos(1,14)
+cprint("$8 Notifications "..sNotice.."$8")
 f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()

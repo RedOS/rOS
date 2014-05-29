@@ -98,7 +98,7 @@ status(128,false)
 os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==65533 then
-status(128,false,tEvent[5],32)
+if tData["notice"] then status(128,false,tEvent[5],32) end
 for i=2,17 do
 tChatHistory[i-1]=tChatHistory[i]
 end

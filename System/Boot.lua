@@ -93,6 +93,7 @@ if tEvent[3]>=3 and tEvent[3]<=8 then tData["bTemp"]=true setup=false end
 if tEvent[3]>=9 and tEvent[3]<=13 then tData["bTemp"]=false setup=false end
 end
 end
+tData["notice"]=true
 f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
