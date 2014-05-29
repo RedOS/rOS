@@ -7,19 +7,21 @@ nCount=0
 for i=1,17 do
 tChatHistory[i]=""
 end
-function status(nColor, bLock, sMessage)
-if sMessage then nCount=10 sLocalMessage=sMessage end
+function status(nColor, bLock, sMessage, nColor2)
+if sMessage then nCount=6 sLocalMessage=sMessage nLocalColor=nColor2 end
 if nColor==1 then term.setTextColor(2^15) else term.setTextColor(1) end
-paintutils.drawLine(1,1,w,1,nColor)
 tData=getData()
-term.setCursorPos(1,1)
 if nCount<1 then
+paintutils.drawLine(1,1,w,1,nColor)
+term.setCursorPos(1,1)
 print(tData["net"])
 if not bLock then
 term.setCursorPos(math.ceil((w-#tData["time"]+1)/2),1)
 print(tData["time"])
 end
 else
+paintutils.drawLine(1,1,w,1,nLocalColor)
+term.setCursorPos(1,1)
 if #sLocalMessage>w-6 then sLocalMessage=sLocalMessage:sub(1,w-6).."..." end
 sLocalMessage=sLocalMessage:gsub("&%d","")
 sLocalMessage=sLocalMessage:gsub("$%d","")
