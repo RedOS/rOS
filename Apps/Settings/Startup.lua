@@ -1,5 +1,4 @@
 if http then sHttp="$5 On " else sHtpp="$e Off " end
-
 if tData["modemOn"] then sModem="$5 On " else sModem="$e Off " end
 if tData["notice"] then sNotice="$5 On " else sNotice="$e Off " end
 local function round(num, idp)
