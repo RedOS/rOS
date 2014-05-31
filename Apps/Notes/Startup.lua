@@ -7,7 +7,7 @@ function listtomon()
 		term.setTextColor(2^15)
         term.setCursorPos(2,3)
                 for k,v in pairs(list) do
-                        print(k..". "..v)
+                        cprint("&b"..k.."&f "..v)
                         x,y = term.getCursorPos()
                         term.setCursorPos(x+1,y)
                 end
