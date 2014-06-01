@@ -30,16 +30,6 @@ for i=1,5 do
 paintutils.drawPixel((i*2)-w+nW+9,3,128)
 end
 end
-local tClr={2^15,128,256}
-for i=1,3 do term.setBackgroundColor(tClr[i]) term.clear() os.sleep(.1) end
-paintutils.drawImage(paintutils.loadImage("System/Images/boot"),math.ceil((w-9)/2),math.ceil((h-9)/2))
-term.setBackgroundColor(256)
-term.setTextColor(1)
-term.setCursorPos((w-16)/2,h/2+5)
-print("rOS by NEOparmen")
-term.setCursorPos((w-8)/2,h/2+6)
-print("(c) 2014")
-os.sleep(1.5)
 screen(0)
 os.startTimer(60/72)
 while lock do
