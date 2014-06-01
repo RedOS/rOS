@@ -3,8 +3,25 @@ f=fs.open("Apps/.desktop","r")
 sData=f.readAll()
 tApps=textutils.unserialize(sData)
 tApp=fs.list("Apps")
-tApp[#tApp]=nil
+table.remove(tApp,1)
 f.close()
+for i=1,3 do
+for k=1,#tApp do
+for n=1,#tApps do
+for i=1,#tApps[n] do
+if tApp[k]==tApps[n][i] then table.remove(tApp,k) end
+end
+end
+end
+end
+if tApp then
+for i=1,math.ceil(#tApp/9) do
+tApps[i+2]={}
+for n=1,9 do
+tApps[i+2][n]=tApp[(i-1)*9+n]
+end
+end
+end
 tData=getData()
 if type(m)~="number" then m=1 end
 function drawApps(m)

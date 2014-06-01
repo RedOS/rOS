@@ -8,7 +8,7 @@ for i=1,17 do
 tChatHistory[i]=""
 end
 function status(nColor, bLock, sMessage, nColor2)
-if sMessage then nCount=6 sLocalMessage=sMessage nLocalColor=nColor2 end
+if sMessage then nCount=8 sLocalMessage=sMessage nLocalColor=nColor2 end
 if nColor==1 then term.setTextColor(2^15) else term.setTextColor(1) end
 tData=getData()
 if nCount<1 then
@@ -137,6 +137,19 @@ return string
 else
 return year,mont,days+1,dayName,dNum,mon
 end
+end
+function wait()
+local clrs={1,256,128,2^15}
+for i=1,4 do
+term.setBackgroundColor(clrs[i])
+term.clear()
+os.sleep(0.055)
+end
+os.sleep(1)
+tEvent={os.pullEventRaw()}
+print(tEvent[1])
+if tEvent then
+os.reboot() end
 end
 function getData()
 if not fs.exists("System/Config.lua") then setup() end
