@@ -211,6 +211,26 @@ function cwrite(text)
         end
         return
 end
+--[[function term.twrite(text,tImage,defClr)
+x,y=term.getCursorPos()
+        text = tostring(text)
+        local i = 0
+        while true do
+                i = i + 1
+                if i > #text then break end
+                local c = text:sub(i,i)
+				if tImage[x] and tImage[x][y] then
+				if type(tImage[x][y])=="number" then
+				if tImage[x][y]>0 and tImage[x][y]<=32768 then clr=tImage[x][y]
+				else clr=defClr end
+				else clr=defClr end
+				else clr=defClr end
+				term.setBackgroundColor(clr)
+                term.write(c)
+				x=x+1
+        end
+        return
+end]]
 function cprint(text)
 cwrite(text.."\n")
 end

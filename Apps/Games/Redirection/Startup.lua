@@ -1,0 +1,1 @@
+shell.run("rom/programs/fun/advanced/redirection")

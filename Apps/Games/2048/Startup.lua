@@ -26,8 +26,8 @@ tiles[19] = {"262k", 16}
 tiles[20] = {"524k", 32}
 size = 4
 score = 0
-if fs.exists("Apps/2048/hiscore") then
-f=fs.open("Apps/2048/hiscore","r")
+if fs.exists("Apps/Games/2048/hiscore") then
+f=fs.open("Apps/Games/2048/hiscore","r")
 hiscore = tonumber(f.readAll())
 f.close()
 else
@@ -168,7 +168,7 @@ end
 
 function drawHome()
   term.clear()
-  paintutils.drawImage(paintutils.loadImage("Apps/2048/bg"),2,2)
+  paintutils.drawImage(paintutils.loadImage("Apps/Games/2048/bg"),2,2)
 end
 
 function table.reverse(tab)
@@ -251,10 +251,10 @@ while true do
   end
   drawBoard()
   if not newGame() then
-f=fs.open("Apps/2048/hiscore","w")
+f=fs.open("Apps/Games/2048/hiscore","w")
 f.write(hiscore)
 f.close()
-shell.run("System/Desktop.lua")
+shell.run("Apps/Games/Startup.lua")
     break
   end
 end
