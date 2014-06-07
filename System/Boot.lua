@@ -11,7 +11,7 @@ function status(nColor, bLock, sMessage, nColor2)
 if sMessage then nCount=8 sLocalMessage=sMessage nLocalColor=nColor2 end
 if nColor==1 then term.setTextColor(2^15) else term.setTextColor(1) end
 tData=getData()
-if tData["modemOn"] then sModem="M " else sModem="" end
+if tData["modemOn"] and peripheral.isPresent("back") then sModem="M " else sModem="" end
 if tData["btooth"] then sBtooth="B " else sBtooth="" end
 if tData["notice"] then sNotice="N " else sNotice="" end
 if nCount<1 then
