@@ -33,6 +33,15 @@ else
 update=false
 shell.run("System/Desktop.lua")
 end
+elseif tEvent[1]=="char" then
+if tEvent[2]==keys.y then
+force=true
+update=false
+shell.run("Apps/Update/Startup.lua")
+else
+update=false
+shell.run("System/Desktop.lua")
+end
 elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
