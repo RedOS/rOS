@@ -1,7 +1,7 @@
 paintutils.drawFilledBox(1,1,w,h,1)
 status(1,false)
 tData=getData()
-wTData=http.get("http://api.worldweatheronline.com/free/v1/weather.ashx?q="..tData["city"].."&format=xml&num_of_days=1&key=yzz7n8unxjwjvpxqzdmj77nc")
+wTData=http.get("http://api.worldweatheronline.com/free/v1/weather.ashx?q="..textutils.urlEncode(tData["city"]).."&format=xml&num_of_days=1&key=yzz7n8unxjwjvpxqzdmj77nc")
 if wTData then
 wData=wTData.readAll()
 if wData:find("<error>") then
