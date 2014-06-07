@@ -1,16 +1,16 @@
 paintutils.drawFilledBox(1,1,w,h,1)
 status(1,false)
 tData=getData()
-wTData=http.get("http://api.worldweatheronline.com/free/v1/weather.ashx?q="..textutils.urlEncode(tData["city"]).."&format=xml&num_of_days=1&key=yzz7n8unxjwjvpxqzdmj77nc")
+wTData=http.get("http://api.worldweatheronline.com/free/v1/weather.ashx?q="..tData["city"]:gsub(" ","_").."&format=xml&num_of_days=1&key=yzz7n8unxjwjvpxqzdmj77nc")
 if wTData then
 wData=wTData.readAll()
 if wData:find("<error>") then
 errorMsg = wData:match("<msg>(.+)</msg")
 failed = true
-l=7
+l=4
 else
 failed = false
-l=10
+l=7
 end
 for i=1,l do paintutils.drawLine(3,2+i,w-3,2+i,128) end
 term.setTextColor(1)
@@ -29,16 +29,11 @@ u=" F."
 end
 term.setCursorPos(4,4)
 term.setTextColor(1)
-local x=tData["date"]:find(",")
-print(tData["date"]:sub(1,x+1))
-term.setCursorPos(4,5)
-print(tData["date"]:sub(x+2,#tData["date"]))
-term.setCursorPos(4,7)
 if #cWeather>18 then
 local x=cWeather:find(" ",15)
 b=cWeather:sub(1,x)
 print(b)
-term.setCursorPos(4,8)
+term.setCursorPos(4,5)
 local x=cWeather:find(" ",15)
 a=cWeather:sub(x+1,#cWeather)
 if a:find(" ")<2 then
