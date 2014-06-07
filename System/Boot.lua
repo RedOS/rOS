@@ -11,15 +11,15 @@ function status(nColor, bLock, sMessage, nColor2)
 if sMessage then nCount=8 sLocalMessage=sMessage nLocalColor=nColor2 end
 if nColor==1 then term.setTextColor(2^15) else term.setTextColor(1) end
 tData=getData()
-if tData["modemOn"] and peripheral.isPresent("back") then sModem="M " else sModem="" end
-if tData["btooth"] then sBtooth="B " else sBtooth="" end
-if tData["notice"] then sNotice="N " else sNotice="" end
+if tData["modemOn"] and peripheral.isPresent("back") then sTempModem="M " else sTempModem="" end
+if tData["btooth"] then sTempBtooth="B " else sTempBtooth="" end
+if tData["notice"] then sTempNotice="N " else sTempNotice="" end
 if nCount<1 then
 paintutils.drawLine(1,1,w,1,nColor)
 term.setCursorPos(1,1)
 print(tData["net"])
-term.setCursorPos(w-(#sModem+#sBtooth+#sNotice)+2,1)
-cprint(sModem..sNotice..sBtooth)
+term.setCursorPos(w-(#sTempModem+#sTempBtooth+#sTempNotice)+2,1)
+cprint(sTempModem..sTempNotice..sTempBtooth)
 if not bLock then
 term.setCursorPos(math.ceil((w-#tData["time"]+1)/2),1)
 print(tData["time"])

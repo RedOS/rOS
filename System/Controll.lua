@@ -7,12 +7,12 @@ if value==true then return false else return true end
 end
 local function draw()
 term.setBackgroundColor(256)
-if tData["modemOn"] then sModem="&0M " else sModem="&7M " end
-if tData["btooth"] then sBtooth="&0B " else sBtooth="&7B " end
-if tData["notice"] then sNotice="&0N&0" else sNotice="&7N&0" end
+if tData["modemOn"] and peripheral.isPresent("back") then sTempModem="M " else sTempModem="" end
+if tData["btooth"] then sTempBtooth="B " else sTempBtooth="" end
+if tData["notice"] then sTempNotice="N " else sTempNotice="" end
 term.setTextColor(1)
 term.setCursorPos(w/2-2,h-2)
-cprint(sModem..sBtooth..sNotice)
+cprint(sTempModem..sTempBtooth..sTempNotice)
 term.setCursorPos(2,h-1)
 print("Lock")
 term.setCursorPos(9,h-1)
