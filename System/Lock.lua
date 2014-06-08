@@ -40,9 +40,6 @@ nDrag=nDrag+1
 else
 nDrag=nDrag-1
 end
-if nDrag<0 then nDrag=0 end
-screen(nDrag)
-nLast=tEvent[3]
 if nDrag==12 then
 for i=1,12 do
 screen(12+i)
@@ -52,16 +49,10 @@ lock=false
 kpad=true
 break
 else
-lower=os.startTimer(60/72/6)
+nLast=tEvent[3]
+screen(nDrag)
 end
 elseif tEvent[1]=="timer" then
-if tEvent[2]==lower then
-nDrag=nDrag-1
-screen(nDrag)
-if nDrag>=1 then
-lower=os.startTimer(60/72/12)
-end
-else
 if nDrag>12 then
 status(128,false)
 else
@@ -74,9 +65,7 @@ end
 os.startTimer(60/72)
 end
 end
-end
 os.startTimer(60/72)
-local nTime=os.startTimer((60/72)*60)
 local function number()
 n=""
 if tEvent[3]>5 and tEvent[3]<9 and tEvent[4]>4 and tEvent[4]<8 then n=1 end
@@ -93,21 +82,38 @@ return tostring(n)
 end
 local nCode=""
 local try=0
+paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),6,5)
+term.setTextColor(2^15)
+local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
+for i=1,4 do
+for n=1,3 do
+term.setCursorPos((6*n)-1-2+4,(4*i)+2)
+term.write(numbers[(i*3)-3+n])
+end
+end
+for i=1,5 do
+paintutils.drawPixel((i*2)-2+9,3,128)
+end
 while kpad do
 tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then
+if tEvent[1]=="char" then
+tEvent[2]=tonumber(tEvent[2])
+if type(tEvent[2])=="number" then
+nCodeOld=nCode
+nCode=nCode..tEvent[2]
+if #nCodeOld~=#nCode then
+try=try+1
+end
+end
+elseif tEvent[1]=="mouse_click" then
 nCodeOld=nCode
 nCode=nCode..number()
 if #nCodeOld~=#nCode then
 try=try+1
 end
 elseif tEvent[1]=="timer" then
-if tEvent[2]==nTime then
-os.shutdown()
-else
 status(128,false)
 os.startTimer(60/72)
-end
 end
 if try then
 if try>5 then try=5 end
