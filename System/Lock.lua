@@ -66,7 +66,6 @@ os.startTimer(60/72)
 end
 end
 os.startTimer(60/72)
-local nTime=os.startTimer((60/72)*60)
 local function number()
 n=""
 if tEvent[3]>5 and tEvent[3]<9 and tEvent[4]>4 and tEvent[4]<8 then n=1 end
@@ -85,19 +84,24 @@ local nCode=""
 local try=0
 while kpad do
 tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then
+if tEvent[1]=="char" then
+tEvent[2]=tonumber(tEvent[2])
+if type(tEvent[2])=="number" then
+nCodeOld=nCode
+nCode=nCode..tEvent[2]
+if #nCodeOld~=#nCode then
+try=try+1
+end
+end
+elseif tEvent[1]=="mouse_click" then
 nCodeOld=nCode
 nCode=nCode..number()
 if #nCodeOld~=#nCode then
 try=try+1
 end
 elseif tEvent[1]=="timer" then
-if tEvent[2]==nTime then
-os.shutdown()
-else
 status(128,false)
 os.startTimer(60/72)
-end
 end
 if try then
 if try>5 then try=5 end
