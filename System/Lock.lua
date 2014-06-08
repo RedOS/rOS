@@ -40,6 +40,9 @@ nDrag=nDrag+1
 else
 nDrag=nDrag-1
 end
+if nDrag<0 then nDrag=0 end
+screen(nDrag)
+nLast=tEvent[3]
 if nDrag==12 then
 for i=1,12 do
 screen(12+i)
@@ -49,10 +52,16 @@ lock=false
 kpad=true
 break
 else
-nLast=tEvent[3]
-screen(nDrag)
+lower=os.startTimer(60/72/6)
 end
 elseif tEvent[1]=="timer" then
+if tEvent[2]==lower then
+nDrag=nDrag-1
+screen(nDrag)
+if nDrag>=1 then
+lower=os.startTimer(60/72/12)
+end
+else
 if nDrag>12 then
 status(128,false)
 else
@@ -63,6 +72,7 @@ term.write(tData["time"])
 status(128,true)
 end
 os.startTimer(60/72)
+end
 end
 end
 os.startTimer(60/72)
