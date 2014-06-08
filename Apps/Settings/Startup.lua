@@ -1,6 +1,9 @@
-if http then sHttp="$5 On " else sHtpp="$e Off " end
-if tData["modemOn"] then sModem="$5 On " else sModem="$e Off " end
-if tData["notice"] then sNotice="$5 On " else sNotice="$e Off " end
+local on="$5 I$8"
+local off="$eI $8"
+if http then sHttp=on else sHtpp=off end
+if tData["modemOn"] then sModem=on else sModem=off end
+if tData["notice"] then sNotice=on else sNotice=off end
+if tData["bTemp"] then sTemp=on else sTemp=off end
 local function round(num, idp)
   local mult = 10^(idp or 0)
   return math.floor(num * mult + 0.5) / mult
@@ -66,7 +69,6 @@ end
 tData=getData()
 nUsed,sUsedUnit=getSpace(getSize("/"))
 nFree,sFreeUnit=getSpace(fs.getSpaceLimit("/")-getSize("/"))
-if tData["bTemp"] then sTemp="$5 Yes " else sTemp="$e No " end
 local settings=true
 paintutils.drawFilledBox(1,1,w,h,256)
 status(128,false)
@@ -83,10 +85,19 @@ term.setCursorPos(2,6)
 print("City")
 term.setCursorPos(1,9)
 cprint(" OS Version "..tData["version"].."\n &7Update&0")
-cprint("\n HTTP "..sHttp.."$8")
-cprint(" Modem "..sModem.."$8")
-cprint(" Use Celsius "..sTemp.."$8")
-cprint(" Notifications "..sNotice.."$8")
+term.setCursorPos(w-2,11)
+cprint("\n HTTP ")
+term.setCursorPos(w-2,12)
+cprint(sHttp.."$8")
+cprint(" Modem ")
+term.setCursorPos(w-2,13)
+cprint(sModem.."$8")
+cprint(" Use Celsius ")
+term.setCursorPos(w-2,14)
+cprint(sTemp.."$8")
+cprint(" Notifications ")
+term.setCursorPos(w-2,15)
+cprint(sNotice.."$8")
 print("\n "..round(nFree,2)..sFreeUnit.." Available")
 print(" "..round(nUsed,2)..sUsedUnit.." Used")
 term.setCursorPos((w-4)/2,h)
@@ -101,35 +112,34 @@ label=read()
 os.setComputerLabel(label)
 term.setCursorPos(3,4)
 cprint(label.."$8")
+change=true
 elseif tEvent[4]==7 then
 term.setCursorPos(3,7)
 tData["city"]=read()
 term.setCursorPos(3,7)
 cprint(tData["city"].."$8")
-f=fs.open("System/Config.lua","w")
-f.write(textutils.serialize(tData))
-f.close()
+change=true
 elseif tEvent[4]==14 then
-if tData["bTemp"]==true then tData["bTemp"]=false sTemp="$e No $8 " else tData["bTemp"]=true sTemp="$5 Yes " end
+if tData["bTemp"]==true then tData["bTemp"]=false sTemp=off else tData["bTemp"]=true sTemp=on end
 term.setCursorPos(1,14)
-cprint("$8 Use Celsius "..sTemp.."$8")
-f=fs.open("System/Config.lua","w")
-f.write(textutils.serialize(tData))
-f.close()
+cprint("$8 Use Celsius ")
+term.setCursorPos(w-2,14)
+cprint(sTemp.."$8")
+change=true
 elseif tEvent[4]==13 then
-if tData["modemOn"]==true then tData["modemOn"]=false sModem="$e Off " else tData["modemOn"]=true sModem="$5 On $8 " end
+if tData["modemOn"]==true then tData["modemOn"]=false sModem=off else tData["modemOn"]=true sModem=on end
 term.setCursorPos(1,13)
-cprint("$8 Modem "..sModem.."$8")
-f=fs.open("System/Config.lua","w")
-f.write(textutils.serialize(tData))
-f.close()
+cprint("$8 Modem ")
+term.setCursorPos(w-2,13)
+cprint(sModem.."$8")
+change=true
 elseif tEvent[4]==15 then
-if tData["notice"]==true then tData["notice"]=false sNotice="$e Off " else tData["notice"]=true sNotice="$5 On $8 " end
+if tData["notice"]==true then tData["notice"]=false sNotice=off else tData["notice"]=true sNotice=on end
 term.setCursorPos(1,15)
-cprint("$8 Notifications "..sNotice.."$8")
-f=fs.open("System/Config.lua","w")
-f.write(textutils.serialize(tData))
-f.close()
+cprint("$8 Notifications ")
+term.setCursorPos(w-2,15)
+cprint(sNotice.."$8")
+change=true
 elseif tEvent[4]==10 then
 shell.run("Apps/Update/Startup.lua")
 elseif tEvent[4]==h then
@@ -139,6 +149,7 @@ f.write(textutils.serialize(tData))
 f.close()
 shell.run("System/Desktop.lua")
 end
+if change then f=fs.open("System/Config.lua","w") f.write(textutils.serialize(tData)) f.close() change=nil end
 elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
