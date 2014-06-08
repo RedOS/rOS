@@ -99,6 +99,7 @@ if tEvent[3]>=9 and tEvent[3]<=13 then tData["bTemp"]=false setup=false end
 end
 end
 tData["notice"]=true
+tData["tFormat"]=false
 f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
@@ -169,7 +170,7 @@ if peripheral.isPresent("back") and tData["modemOn"] then
 tData["net"]="Online" elseif peripheral.isPresent("back") and not tData["modemOn"] then
 tData["net"]="Offline" else
 tData["net"]="No modem" end
-tData["time"]=textutils.formatTime(os.time(),false)
+tData["time"]=textutils.formatTime(os.time(),tData["tFormat"])
 tData["date"]=date(os.day(),"data")
 tData["version"]=tostring(cver)
 return tData
