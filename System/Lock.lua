@@ -82,6 +82,18 @@ return tostring(n)
 end
 local nCode=""
 local try=0
+paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),6,5)
+term.setTextColor(2^15)
+local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
+for i=1,4 do
+for n=1,3 do
+term.setCursorPos((6*n)-1-2+4,(4*i)+2)
+term.write(numbers[(i*3)-3+n])
+end
+end
+for i=1,5 do
+paintutils.drawPixel((i*2)-2+9,3,128)
+end
 while kpad do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="char" then
