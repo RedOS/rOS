@@ -106,6 +106,8 @@ if not fs.isDir(sPath..tFiles[nScroll+y-4]) then
 shell.run(sPath..tFiles[nScroll+y-4])
 else
 sPath=sPath..tFiles[nScroll+y-4].."/"
+ x=0
+ y=0
 drawBrowser(sPath)
 end
 end

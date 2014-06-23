@@ -39,7 +39,6 @@ if x>8 and x<17 and y==h-1 then os.shutdown() end
 if x>20 and x<27 and y==h-1 then os.reboot() end
 elseif tEvent[1]=="mouse_drag" then
 if y>h-5 and tEvent[4]>y+2 then
-controll=false
 for i=1,5 do
 drawApps(m)
 paintutils.drawLine(1,h-1+i,w,h-4+i,256)
@@ -48,6 +47,7 @@ paintutils.drawLine(1,h-2+i,w,h-2+i,256)
 paintutils.drawLine(1,h-1+i,w,h-1+i,256)
 os.sleep(0.025)
 end
+controll=false
 shell.run("System/Desktop.lua")
 end
 elseif tEvent[1]=="timer" then

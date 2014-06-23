@@ -33,7 +33,7 @@ else
 update=false
 shell.run("System/Desktop.lua")
 end
-elseif tEvent[1]=="key" then
+elseif tEvent[1]=="char" then
 if tEvent[2]==keys.y then
 force=true
 update=false

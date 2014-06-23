@@ -152,7 +152,7 @@ term.setTextColor(1)
 write("Nickname: ")
 user = fRead()
 end
-modem.transmit(65533,65533,"&8"..user.." is now online")
+modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,"&8"..user.." is now online")
 paintutils.drawFilledBox(1,1,w,h,1)
 for o=1,17 do
 term.setTextColor(2^15)
@@ -173,9 +173,9 @@ term.setCursorPos(1,h)
 term.setTextColor(1)
 write("> ")
 msg = fRead()
-if msg=="/exit" then chat=false modem.transmit(65533,65533,"&8"..user.." is now offline") shell.run("System/Desktop.lua") end
+if msg=="/exit" then chat=false modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,"&8"..user.." is now offline") shell.run("System/Desktop.lua") end
 if msg~="" or msg~=" " or msg~=nil or msg~="/exit" then
-modem.transmit(65533,65533,user..": "..msg)
+modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,user..": "..msg)
 msg="&fYou: ".."&5"..msg
 update(msg)
 end

@@ -1,69 +1,24 @@
-local nDrag,nLast,lock,kpad=0,3,true,false
-local function screen(nW)
-if nW==nil or nW<0 then nW=0 end
-if nW>24 then nW=24 end
-term.setBackgroundColor(256)
+local nDrag,nLast,lock,kpad=0,3,true,true
+local clrs={2^15,128,256}
+for i=1,3 do
+term.setBackgroundColor(clrs[i])
 term.clear()
-if nW>12 then
-status(128,false)
-else
-status(128,true)
+os.sleep(.055)
 end
 term.setBackgroundColor(256)
-term.setTextColor(1)
-term.setCursorPos(math.ceil((w-#tData["time"])/2)+nW,3)
-term.write(tData["time"])
-term.setCursorPos(math.ceil((w-#tData["date"])/2)+nW,4)
-term.write(tData["date"])
-term.setCursorPos((w-17)/2+nW,h-3)
-term.write("> Slide to unlock")
-paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),-w+nW+8,5)
+term.clear()
+status(128,false)
+paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),6,5)
 term.setTextColor(2^15)
 local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
 for i=1,4 do
 for n=1,3 do
-term.setCursorPos((6*n)-1-w+nW+4,(4*i)+2)
+term.setCursorPos((6*n)-1+2,(4*i)+2)
 term.write(numbers[(i*3)-3+n])
 end
 end
 for i=1,5 do
-paintutils.drawPixel((i*2)-w+nW+9,3,128)
-end
-end
-screen(0)
-os.startTimer(60/72)
-while lock do
-local tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_drag" then
-if nLast<tEvent[3] then
-nDrag=nDrag+1
-else
-nDrag=nDrag-1
-end
-if nDrag==12 then
-for i=1,12 do
-screen(12+i)
-os.sleep(0.02)
-end
-lock=false
-kpad=true
-break
-else
-nLast=tEvent[3]
-screen(nDrag)
-end
-elseif tEvent[1]=="timer" then
-if nDrag>12 then
-status(128,false)
-else
-term.setBackgroundColor(256)
-term.setTextColor(1)
-term.setCursorPos(math.ceil((w-#tData["time"])/2)+nDrag,3)
-term.write(tData["time"])
-status(128,true)
-end
-os.startTimer(60/72)
-end
+paintutils.drawPixel((i*2)+7,3,128)
 end
 os.startTimer(60/72)
 local function number()
@@ -82,21 +37,16 @@ return tostring(n)
 end
 local nCode=""
 local try=0
-paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),6,5)
-term.setTextColor(2^15)
-local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
-for i=1,4 do
-for n=1,3 do
-term.setCursorPos((6*n)-1-2+4,(4*i)+2)
-term.write(numbers[(i*3)-3+n])
-end
-end
-for i=1,5 do
-paintutils.drawPixel((i*2)-2+9,3,128)
-end
 while kpad do
 tEvent={os.pullEventRaw()}
-if tEvent[1]=="char" then
+if tEvent[1]=="mouse_click" then
+nCodeOld=nCode
+nCode=nCode..number()
+os.sleep(.001)
+if #nCodeOld~=#nCode then
+try=try+1
+end
+elseif tEvent[1]=="char" then
 tEvent[2]=tonumber(tEvent[2])
 if type(tEvent[2])=="number" then
 nCodeOld=nCode
@@ -104,12 +54,6 @@ nCode=nCode..tEvent[2]
 if #nCodeOld~=#nCode then
 try=try+1
 end
-end
-elseif tEvent[1]=="mouse_click" then
-nCodeOld=nCode
-nCode=nCode..number()
-if #nCodeOld~=#nCode then
-try=try+1
 end
 elseif tEvent[1]=="timer" then
 status(128,false)
@@ -123,13 +67,12 @@ end
 end
 if try==5 then
 if tonumber(nCode)==tData["code"] then
-kpad=false
-local clrs={2^15,128,256}
 for i=1,3 do
 term.setBackgroundColor(clrs[i])
 term.clear()
 os.sleep(.055)
 end
+kpad=false
 shell.run("System/Desktop.lua")
 else
 for i=1,5 do paintutils.drawPixel((i*2)+7,3,2^14) end

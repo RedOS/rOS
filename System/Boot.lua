@@ -34,8 +34,8 @@ print(sLocalMessage)
 nCount=nCount-1
 end
 if tData["modemOn"] and peripheral.isPresent("back") then
-if not modem then modem=peripheral.find("modem") end
-if not modem.isOpen(65533) then modem.open(65533) end
+if not modem then modem=peripheral.find("modem") CHAT_CHANNEL=65530 end
+if not modem.isOpen(CHAT_CHANNEL) then modem.open(CHAT_CHANNEL) end
 end
 end
 local function setup()
