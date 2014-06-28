@@ -1,50 +1,230 @@
-for i=1,w/2 do
-paintutils.drawFilledBox((w-2*i)/2,(w-2*i)/2,(w+2*i)/2,(w+2*i)/2,256)
+if not fs.exists("Apps/Time/Table.lua") then
+file=fs.open("Apps/Time/Table.lua","w")
+file.write(textutils.serialize({["Alarms"]={["Times"]={},["Active"]={}},["Stopwatch"]=0,["Timer"]=0,["Menu"]={"Alarm","Stopwatch","Timer"},["Selected"]=1,Buttons={}}))
+file.close()
 end
-status(128,false)
-f=fs.open("Apps/Time/city","r")
-city=textutils.unserialize(f.readAll())
-f.close()
-for k,v in pairs(city) do
-paintutils.drawLine(1,1+k,w,1+k,1)
-term.setTextColor(2^15)
-term.setCursorPos(2,1+k)
-print(v)
-end
-tTime={}
-tTimeMin={}
-for k,v in pairs(city) do
-if v=="Los Angels" then v="LA" end
-if v=="New York" then v="NY" end
-address=textutils.urlEncode(v)
-wData=http.get("http://api.worldweatheronline.com/free/v1/tz.ashx?key=yzz7n8unxjwjvpxqzdmj77nc&q="..address.."&format=xml")
-if wData then
-wData=wData.readAll()
-tTime[k],tTimeMin[k]=wData:match(" (%d+):(%d+)</localtime>")
-tTime[k]=tonumber(tTime[k])
-tTimeMin[k]=tonumber(tTimeMin[k])
-if tTime[k]>12 then tTime[k]=tTime[k]-12 t=" &8PM&f" else t=" &8AM&f" end
-term.setCursorPos(w-7,1+k)
-cwrite(tTime[k]..":"..tTimeMin[k]..t)
+file=fs.open("Apps/Time/Table.lua","r")
+Time=textutils.unserialize(file.readAll())
+file.close()
+file=nil
+activeStwatch=false
+local function drawTimeMenu()
+paintutils.drawFilledBox(1,1,w,h,1)
+status(1,false)
+term.setTextColor(256)
+for i=1,#Time.Menu do
+term.setCursorPos((((w-#Time.Menu[i])/#Time.Menu)*(i-1))+3*(i-1)+1,h)
+Time.Buttons[i]={}
+Time.Buttons[i][1]=math.floor((((w-#Time.Menu[i])/#Time.Menu)*(i-1))+3*(i-1)+1)
+Time.Buttons[i][2]=math.ceil(Time.Buttons[i][1]+#Time.Menu[i])
+term.setTextColor(256)
+if i==Time.Selected then term.setTextColor(16384) end
+term.write(Time.Menu[i])
 end
 end
+local function drawButton(state)
+x,y=term.getCursorPos()
+term.setCursorPos(w-4,y)
+if state then
+cwrite("&0$5 I$0")
+else
+cwrite("&0$eI $0")
+end
+end
+local function drawAlarms(table)
+Time.Selected=1
+drawTimeMenu()
+term.setCursorPos(w-1,2)
+if not edit then
+cwrite("&e+&0")
+else
+cwrite("&8+&0")
+end
+if #table.Alarms.Times>0 then
+term.setCursorPos(1,3)
+for i=1,#table.Alarms.Times do
+term.setCursorPos(w-1,i+2)
+cwrite("$e&0X$0")
+if table.Alarms.Active[i] then drawButton(true) term.setTextColor(16384) else drawButton(false) term.setTextColor(256) end
+term.setCursorPos(1,i+2)
+write(string.format(" %02d:%02d",table.Alarms.Times[i]:sub(1,2),table.Alarms.Times[i]:sub(4,5)))
+end
+end
+end
+local function drawStwatch(table)
+Time.Selected=2
+drawTimeMenu()
+term.setCursorPos(math.ceil((w-7)/2),5)
+term.setTextColor(16384)
+minutes,seconds,mseconds=0,0,0
+function parse(number)
+if number>599 then
+minutes=minutes+1
+number=number-600
+parse(number)
+elseif number>9 and number<600 then
+seconds=seconds+1
+number=number-10
+parse(number)
+else
+mseconds=number
+end
+end
+parse(Time.Stopwatch)
+print(string.format("%02d:%02d:%d",tostring(minutes),tostring(seconds),tostring(mseconds)))
+if activeStwatch then
+paintutils.drawFilledBox(w/2-7,7,w/2-1,9,16384)
+term.setCursorPos(w/2-6,8)
+cwrite("$e&0Stop")
+else
+paintutils.drawFilledBox(w/2-7,7,w/2-1,9,32)
+term.setCursorPos(w/2-6,8)
+cwrite("$5&0Start")
+end
+paintutils.drawFilledBox(w/2+1,7,w/2+7,9,256)
+term.setCursorPos(w/2+2,8)
+cwrite("$8&0Reset")
+end
+local function drawTimer(table)
+Time.Selected=3
+drawTimeMenu()
+end
+local function getMenu()
+if Time.Selected==1 then drawAlarms(Time) end
+if Time.Selected==2 then drawStwatch(Time) end
+if Time.Selected==3 then drawTimer(Time) end
+end
+local function setAlarm(number,oldTime)
+n,o=1,1
+hours={}
+for i=0,23 do
+hours[i+1]=i
+end
+minutes={}
+for i=0,59 do
+minutes[i+1]=i
+end
+slct=1
+enter=true
+hour,minute=0,0
+while enter do
+term.setCursorPos(2,y)
+term.setCursorBlink(true)
+event={os.pullEventRaw("key")}
+if slct==1 then
+if event[2]==keys.up then
+n=n+1
+if n>24 then n=1 end
+elseif event[2]==keys.down then
+n=n-1
+if n<1 then n=24 end
+elseif event[2]==keys.right then
+slct=2
+elseif event[2]==keys.enter then
+enter=false
+end
+hour=hours[n]
+term.setCursorPos(2,y)
+write(string.format("%2d",hour))
+elseif slct==2 then
+if event[2]==keys.up then
+o=o+1
+if o>60 then o=1 end
+elseif event[2]==keys.down then
+o=o-1
+if o<1 then o=60 end
+elseif event[2]==keys.left then
+slct=1
+elseif event[2]==keys.enter then
+enter=false
+end
+minute=minutes[o]
+term.setCursorPos(5,y)
+write(string.format("%2d",minute))
+end
+if not enter then
+nTime=string.format("%2d:%2d",hour,minute)
+Time.Alarms.Times[number]=nTime
+Time.Alarms.Active[number]=true
+os.setAlarm(tonumber(hour.."."..tonumber(minute)*60))
+term.setCursorBlink(false)
+end
+end
+end
+getMenu()
 os.startTimer(60/72)
-local app=true
-term.setCursorPos((w-4)/2-4,h-1)
-print("Back")
-term.setCursorPos((w+4)/2,h-1)
-print("Reload")
-while app do
+timeApp=true
+while timeApp do
 tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then
-if tEvent[4]==h-1 and tEvent[3]<w/2 and tEvent[3]>w/4 then
-app=false
-shell.run("System/Desktop.lua")
-elseif tEvent[4]==h-1 and tEvent[3]>w/2 and tEvent[3]<w/4*3 then
-shell.run("Apps/Time/startup")
+if tEvent[1]=="timer" then
+if tEvent[2]==stWatch and activeStwatch then
+Time.Stopwatch=Time.Stopwatch+1
+stWatch=os.startTimer(60/72/10)
+if Time.Selected==2 then
+minutes,seconds,mseconds=0,0,0
+parse(Time.Stopwatch)
+term.setTextColor(16384)
+term.setBackgroundColor(1)
+term.setCursorPos(math.ceil((w-7)/2),5)
+print(string.format("%02d:%02d:%d",tostring(minutes),tostring(seconds),tostring(mseconds)))
 end
-elseif tEvent[1]=="timer" then
-status(128,false)
+else
+status(1,false)
 os.startTimer(60/72)
+end
+elseif tEvent[1]=="mouse_click" then
+x,y=tEvent[3],tEvent[4]
+if y==h then
+for i=1,#Time.Buttons do if x>=Time.Buttons[i][1] and x<=Time.Buttons[i][2] then Time.Selected=i getMenu() end end
+else
+if Time.Selected==2 then
+if x>=w/2-7 and y>= 7 and x<= w/2-1 and y<=9 then
+if activeStwatch then activeStwatch=false else activeStwatch=true stWatch=os.startTimer(60/72/10) end
+drawStwatch(Time)
+elseif x>=w/2+1 and y>=7 and x<=w/2+7 and y<=9 then
+activeStwatch=false
+Time.Stopwatch=0
+paintutils.drawFilledBox(w/2-7,7,w/2-1,9,32)
+term.setCursorPos(w/2-6,8)
+cwrite("$5&0Start")
+term.setTextColor(16384)
+term.setBackgroundColor(1)
+term.setCursorPos(math.ceil((w-13)/2),5)
+print("   00:00:0   ")
+end
+elseif Time.Selected==1 then
+if y==2 then
+if edit==true then edit=false else edit=true end
+term.setCursorPos(w-1,2)
+if not edit then
+cwrite("&e+&0")
+else
+cwrite("&8+&0")
+end
+else
+if x<w-2 then
+if edit then
+if Time.Alarms.Times[y-2] then nAlarm=y-2 else nAlarm=#Time.Alarms.Times+1 end
+term.setCursorPos(2,nAlarm)
+setAlarm(nAlarm)
+else
+if Time.Alarms.Active[y-2]==true and Time.Alarms.Times[y-2] then Time.Alarms.Active[y-2]=false elseif Time.Alarms.Active[y-2]==false and Time.Alarms.Times[y-2] then Time.Alarms.Active[y-2]=true end
+end
+drawAlarms(Time)
+elseif x==w-1 then
+table.remove(Time.Alarms.Active,y-2)
+table.remove(Time.Alarms.Times,y-2)
+drawAlarms(Time)
+end
+end
+end
+end
+elseif tEvent[1]=="key" then
+if tEvent[2]==keys.f1 then
+timeApp=nil
+file=fs.open("Apps/Time/Table.lua","w")
+file.write(textutils.serialize(Time))
+file.close()
+end
 end
 end
