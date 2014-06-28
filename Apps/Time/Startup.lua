@@ -34,11 +34,11 @@ end
 local function drawAlarms(table)
 Time.Selected=1
 drawTimeMenu()
-term.setCursorPos(w-1,2)
+term.setCursorPos(w-6,2)
 if not edit then
-cwrite("&e+&0")
+cwrite("&8   Edit&0")
 else
-cwrite("&8+&0")
+cwrite("&eEditing&0")
 end
 if #table.Alarms.Times>0 then
 term.setCursorPos(1,3)
@@ -86,13 +86,80 @@ term.setCursorPos(w/2+2,8)
 cwrite("$8&0Reset")
 end
 local function drawTimer(table)
+minutes,seconds=0,0
+function parseTimer(number)
+if number>59 then
+minutes=minutes+1
+number=number-60
+parse(number)
+else
+seconds=number
+end
+end
 Time.Selected=3
 drawTimeMenu()
+term.setCursorPos(w/2-2,5)
+parseTimer(Time.Timer)
+write(string.format("%02d:%02d",tonumber(minutes),tonumber(seconds)))
+if activeCountdown then
+paintutils.drawFilledBox(w/2-7,7,w/2-1,9,16384)
+term.setCursorPos(w/2-6,8)
+cwrite("$e&0Stop")
+else
+paintutils.drawFilledBox(w/2-7,7,w/2-1,9,32)
+term.setCursorPos(w/2-6,8)
+cwrite("$5&0Start")
+end
+paintutils.drawFilledBox(w/2+1,7,w/2+7,9,256)
+term.setCursorPos(w/2+2,8)
+cwrite("$8&0Cancel")
+paintutils.drawLine(w/2-5,12,w/2+5,12,256)
 end
 local function getMenu()
 if Time.Selected==1 then drawAlarms(Time) end
 if Time.Selected==2 then drawStwatch(Time) end
 if Time.Selected==3 then drawTimer(Time) end
+end
+local function getTimer()
+mins,secs=0,0
+enter=true
+while enter do
+term.setCursorPos(w/2-2,5)
+term.setCursorBlink(true)
+event={os.pullEventRaw("key")}
+if slct==1 then
+if event[2]==keys.up then
+mins=mins+1
+if mins>60 then mins=60 end
+elseif event[2]==keys.down then
+mins=mins-1
+if mins<0 then mins=0 end
+elseif event[2]==keys.right then
+slct=2
+elseif event[2]==keys.enter then
+term.setCursorBlink(false)
+enter=false
+end
+term.setCursorPos(w/2-2,5)
+write(string.format("%2d",mins))
+elseif slct==2 then
+if event[2]==keys.up then
+secs=secs+1
+if secs>59 then secs=59 end
+elseif event[2]==keys.down then
+secs=secs-1
+if secs<0 then secs=0 end
+elseif event[2]==keys.left then
+slct=1
+elseif event[2]==keys.enter then
+term.setCursorBlink(false)
+enter=false
+end
+term.setCursorPos(w/2+1,5)
+write(string.format("%2d",secs))
+end
+return mins*60+secs
+end
 end
 local function setAlarm(number,oldTime)
 n,o=1,1
@@ -175,7 +242,7 @@ end
 elseif tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if y==h then
-for i=1,#Time.Buttons do if x>=Time.Buttons[i][1] and x<=Time.Buttons[i][2] then Time.Selected=i getMenu() end end
+for i=1,#Time.Buttons do if x>=Time.Buttons[i][1] and x<=Time.Buttons[i][2] then Time.Selected=i getMenu() x,y=0,0 end end
 else
 if Time.Selected==2 then
 if x>=w/2-7 and y>= 7 and x<= w/2-1 and y<=9 then
@@ -195,11 +262,11 @@ end
 elseif Time.Selected==1 then
 if y==2 then
 if edit==true then edit=false else edit=true end
-term.setCursorPos(w-1,2)
+term.setCursorPos(w-6,2)
 if not edit then
-cwrite("&e+&0")
+cwrite("&8   Edit&0")
 else
-cwrite("&8+&0")
+cwrite("&eEditing&0")
 end
 else
 if x<w-2 then
@@ -217,6 +284,19 @@ table.remove(Time.Alarms.Times,y-2)
 drawAlarms(Time)
 end
 end
+elseif Time.Selected==3 then
+if y==5 then
+Time.Timer=getTimer()
+drawTimer(Time)
+end
+if x>=w/2-7 and y>= 7 and x<= w/2-1 and y<=9 then
+if activeCountdown then activeCountdown=false else activeCountdown=true count=os.startTimer(60/72) end
+drawTimer(Time)
+elseif x>=w/2+1 and y>= 7 and x<= w/2+7 and y<=9 then
+activeCountdown=false
+Time.Timer=0
+drawTimer(Time)
+end
 end
 end
 elseif tEvent[1]=="key" then
@@ -225,6 +305,14 @@ timeApp=nil
 file=fs.open("Apps/Time/Table.lua","w")
 file.write(textutils.serialize(Time))
 file.close()
+elseif tEvent[2]==keys.right then
+Time.Selected=Time.Selected+1
+if Time.Selected>#Time.Menu then Time.Selected=#Time.Menu end
+getMenu()
+elseif tEvent[2]==keys.left then
+Time.Selected=Time.Selected-1
+if Time.Selected<1 then Time.Selected=1 end
+getMenu()
 end
 end
 end
