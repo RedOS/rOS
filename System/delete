@@ -1,4 +1,6 @@
 {
   "System/delete",
+  "Apps/Weather",
+  "Apps/Time/city",
   "README.md",
 }
