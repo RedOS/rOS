@@ -2,7 +2,7 @@ term.setBackgroundColor(1)
 term.setTextColor(2^15)
 local chat=true
 tData=getData()
-if modem and modem.isWireless() then
+if tData["modemOn"] and modem and modem.isWireless() then
 local function update(msg)
 local ox=term.getCursorPos()
 term.setBackgroundColor(1)

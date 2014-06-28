@@ -1,4 +1,5 @@
 tData=getData()
+x,y,z=nil,nil,nil
 if tData["modemOn"] and peripheral.isPresent("back") then x,y,z=gps.locate() end
 if x and y and z then
 x=math.floor(x)

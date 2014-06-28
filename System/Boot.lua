@@ -44,7 +44,6 @@ local setup=true
 local tData={}
 local tLines = {
 	"Welcome to rOS!\n Please name your phone",
-	"Enter city to use in\n weather app",
 	"Enter your five-digit code",
 	"Use Celsius or not?",
 	"All done!\n System will now reboot"
@@ -70,13 +69,8 @@ term.setCursorPos(3,6)
 term.setTextColor(1)
 label=read()
 os.setComputerLabel(label)
-drawBg(tLines[2])
-paintutils.drawLine(2,6,w-8,6,128)
-term.setCursorPos(3,6)
-term.setTextColor(1)
-tData["city"]=read()
 local function code()
-drawBg(tLines[3])
+drawBg(tLines[2])
 paintutils.drawLine(2,6,w-8,6,128)
 term.setCursorPos(3,6)
 term.setTextColor(1)
@@ -84,7 +78,7 @@ tData["code"]=tonumber(read())
 if #tostring(tData["code"])~=5 then code() end
 end
 code()
-drawBg(tLines[4])
+drawBg(tLines[3])
 term.setCursorPos(3,6)
 term.setBackgroundColor(32)
 write(" Yes ")
@@ -103,7 +97,7 @@ tData["tFormat"]=false
 f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
-drawBg(tLines[5])
+drawBg(tLines[4])
 os.sleep(3)
 os.reboot()
 end
