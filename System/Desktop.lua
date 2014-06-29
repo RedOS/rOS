@@ -2,7 +2,7 @@ bEnd=false
 f=fs.open(tData["path"].."Apps/.desktop","r")
 sData=f.readAll()
 tApps=textutils.unserialize(sData)
-tApp=fs.list("Apps")
+tApp=fs.list(tData["path"].."Apps")
 table.remove(tApp,1)
 f.close()
 for i=1,3 do
