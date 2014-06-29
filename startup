@@ -1,9 +1,10 @@
 if term.isColor() and term.isColor then
-tPath=shell.getRunningProgram():sub(1,-8).."/"
-shell.run(tPath.."System/Boot.lua")
-shell.run(tPath.."System/Lock.lua")
+tData["path"]=shell.getRunningProgram():sub(1,-8).."/"
+tPath=tData["path"]
+shell.run(tData["path"].."System/Boot.lua")
+shell.run(tData["path"].."System/Lock.lua")
 term.setTextColor(colors.yellow)
 print("rOS has crashed!")
 else
-print("rOS is only for Advanced (Pocket) Computers")
+print("rOS is only for Advanced Pocket Computers, but you can run it also on Advanced Computers")
 end
