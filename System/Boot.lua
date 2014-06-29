@@ -1,4 +1,5 @@
 w,h=term.getSize()
+if fs.exists("Apps/Time/Table.lua") then
 f=fs.open("Apps/Time/Table.lua","r")
 tTime=textutils.unserialize(f.readAll())
 Alarms=tTime.Alarms
@@ -9,6 +10,7 @@ if Alarms.Active[i] then
 hour=string.sub(Alarms.Times[i],1,2)
 minute=string.sub(Alarms.Times[i],4,5)
 os.setAlarm(tonumber(hour.."."..math.ceil(tonumber(minute)*100/60)))
+end
 end
 end
 if type(m)~="number" then m=1 end
