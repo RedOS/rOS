@@ -1,4 +1,6 @@
 w,h=term.getSize()
+tData={}
+tData["path"]=tPath
 if fs.exists(tData["path"].."Apps/Time/Table.lua") then
 f=fs.open(tData["path"].."Apps/Time/Table.lua","r")
 tTime=textutils.unserialize(f.readAll())
@@ -186,7 +188,6 @@ if tEvent then
 os.reboot() end
 end
 function getData()
-tData["path"]=tPath or ""
 if not fs.exists(tData["path"].."System/Config.lua") then setup() end
 f=fs.open(tData["path"].."System/Config.lua","r")
 data=f.readAll()
@@ -195,6 +196,7 @@ f=fs.open(tData["path"].."System/Version.lua","r")
 cver=f.readAll()
 f.close()
 tData=textutils.unserialize(data)
+tData["path"]=tPath or ""
 if peripheral.isPresent("back") and tData["modemOn"] then
 tData["net"]="Online" elseif peripheral.isPresent("back") and not tData["modemOn"] then
 tData["net"]="Offline" else
