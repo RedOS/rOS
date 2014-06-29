@@ -11,7 +11,8 @@ activeStwatch=false
 local function drawTimeMenu()
 paintutils.drawFilledBox(1,1,w,h,1)
 status(1,false)
-term.setTextColor(256)
+term.setCursorPos(1,h-1)
+cwrite("$0&eExit")
 for i=1,#Time.Menu do
 term.setCursorPos((((w-#Time.Menu[i])/#Time.Menu)*(i-1))+3*(i-1)+1,h)
 Time.Buttons[i]={}
@@ -88,13 +89,8 @@ end
 local function drawTimer(table)
 minutes,seconds=0,0
 function parseTimer(number)
-if number>59 then
-minutes=minutes+1
-number=number-60
-parse(number)
-else
-seconds=number
-end
+minutes=math.floor(number/60)
+seconds=number-minutes*60
 end
 Time.Selected=3
 drawTimeMenu()
@@ -114,6 +110,7 @@ paintutils.drawFilledBox(w/2+1,7,w/2+7,9,256)
 term.setCursorPos(w/2+2,8)
 cwrite("$8&0Cancel")
 paintutils.drawLine(w/2-5,12,w/2+5,12,256)
+paintutils.drawLine(w/2-5,12,(w/2-5)+(10-math.ceil((Time.Timer/Time.TimerStart)*10)),12,16384)
 end
 local function getMenu()
 if Time.Selected==1 then drawAlarms(Time) end
@@ -121,6 +118,7 @@ if Time.Selected==2 then drawStwatch(Time) end
 if Time.Selected==3 then drawTimer(Time) end
 end
 local function getTimer()
+slct=1
 mins,secs=0,0
 enter=true
 while enter do
@@ -130,7 +128,7 @@ event={os.pullEventRaw("key")}
 if slct==1 then
 if event[2]==keys.up then
 mins=mins+1
-if mins>60 then mins=60 end
+if mins>23 then mins=23 end
 elseif event[2]==keys.down then
 mins=mins-1
 if mins<0 then mins=0 end
@@ -141,7 +139,7 @@ term.setCursorBlink(false)
 enter=false
 end
 term.setCursorPos(w/2-2,5)
-write(string.format("%2d",mins))
+write(string.format("%02d",mins))
 elseif slct==2 then
 if event[2]==keys.up then
 secs=secs+1
@@ -156,10 +154,14 @@ term.setCursorBlink(false)
 enter=false
 end
 term.setCursorPos(w/2+1,5)
-write(string.format("%2d",secs))
+write(string.format("%02d",secs))
 end
-return mins*60+secs
 end
+times=(mins*60)+secs
+if times==0 then times=1 end
+Time.TimerStart=times
+os.startTimer(60/72)
+return times
 end
 local function setAlarm(number,oldTime)
 n,o=1,1
@@ -213,8 +215,9 @@ if not enter then
 nTime=string.format("%2d:%2d",hour,minute)
 Time.Alarms.Times[number]=nTime
 Time.Alarms.Active[number]=true
-os.setAlarm(tonumber(hour.."."..tonumber(minute)*60))
+os.setAlarm(tonumber(hour.."."..math.floor(tonumber(minute)*100/60)))
 term.setCursorBlink(false)
+os.startTimer(60/72)
 end
 end
 end
@@ -235,6 +238,21 @@ term.setBackgroundColor(1)
 term.setCursorPos(math.ceil((w-7)/2),5)
 print(string.format("%02d:%02d:%d",tostring(minutes),tostring(seconds),tostring(mseconds)))
 end
+elseif tEvent[2]==count and activeCountdown then
+Time.Timer=Time.Timer-1
+if Time.Timer<=0 then activeCountdown=false Time.Timer=Time.TimerStart drawTimer(Time) else
+count=os.startTimer(60/72)
+if Time.Selected==3 then
+minutes,seconds=0,0
+parseTimer(Time.Timer)
+term.setTextColor(16384)
+term.setBackgroundColor(1)
+term.setCursorPos(w/2-2,5)
+print(string.format("%02d:%02d",tostring(minutes),tostring(seconds)))
+paintutils.drawLine(w/2-5,12,w/2+5,12,256)
+paintutils.drawLine(w/2-5,12,(w/2-5)+(10-math.ceil((Time.Timer/Time.TimerStart)*10)),12,16384)
+end
+end
 else
 status(1,false)
 os.startTimer(60/72)
@@ -243,6 +261,14 @@ elseif tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if y==h then
 for i=1,#Time.Buttons do if x>=Time.Buttons[i][1] and x<=Time.Buttons[i][2] then Time.Selected=i getMenu() x,y=0,0 end end
+elseif y==h-1 then
+timeApp=false
+activeCountdown=false
+activeStwatch=false
+file=fs.open("Apps/Time/Table.lua","w")
+file.write(textutils.serialize(Time))
+file.close()
+shell.run("System/Desktop.lua")
 else
 if Time.Selected==2 then
 if x>=w/2-7 and y>= 7 and x<= w/2-1 and y<=9 then
@@ -299,12 +325,6 @@ drawTimer(Time)
 end
 end
 end
-elseif tEvent[1]=="key" then
-if tEvent[2]==keys.f1 then
-timeApp=nil
-file=fs.open("Apps/Time/Table.lua","w")
-file.write(textutils.serialize(Time))
-file.close()
 elseif tEvent[2]==keys.right then
 Time.Selected=Time.Selected+1
 if Time.Selected>#Time.Menu then Time.Selected=#Time.Menu end
@@ -313,6 +333,5 @@ elseif tEvent[2]==keys.left then
 Time.Selected=Time.Selected-1
 if Time.Selected<1 then Time.Selected=1 end
 getMenu()
-end
 end
 end

@@ -1,4 +1,16 @@
 w,h=term.getSize()
+f=fs.open("Apps/Time/Table.lua","r")
+tTime=textutils.unserialize(f.readAll())
+Alarms=tTime.Alarms
+tTime=nil
+f.close()
+for i=1,#Alarms.Times do
+if Alarms.Active[i] then
+hour=string.sub(Alarms.Times[i],1,2)
+minute=string.sub(Alarms.Times[i],4,5)
+os.setAlarm(tonumber(hour.."."..math.ceil(tonumber(minute)*100/60)))
+end
+end
 if type(m)~="number" then m=1 end
 if type(oldm)~="number" then oldm=1 end
 oldx,oldy=1,1
@@ -6,6 +18,26 @@ tChatHistory={}
 nCount=0
 for i=1,17 do
 tChatHistory[i]=""
+end
+function textutils.formatTime( nTime, bTwentyFourHour )
+    local sTOD = nil
+    if not bTwentyFourHour then
+        if nTime >= 12 then
+            sTOD = "PM"
+        else
+            sTOD = "AM"
+        end
+        if nTime >= 13 then
+            nTime = nTime - 12
+        end
+    end
+    local nHour = math.floor(nTime)
+    local nMinute = math.floor((nTime - nHour)*60)
+    if sTOD then
+        return string.format( "%02d:%02d %s", nHour, nMinute, sTOD )
+    else
+        return string.format( "%02d:%02d", nHour, nMinute )
+    end
 end
 function status(nColor, bLock, sMessage, nColor2)
 if sMessage then nCount=8 sLocalMessage=sMessage nLocalColor=nColor2 end

@@ -82,7 +82,7 @@ if tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if oldx==x and oldy==y then
 for i=1,#tIcons do
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/"..tIcons[i][5].."/Startup.lua") end
+if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/"..tIcons[i][5].."/Startup.lua") drawApp(m) end
 end
 end
 oldx,oldy=x,y
@@ -91,7 +91,7 @@ if y>h-3 and tEvent[4]<19 and tEvent[4]<y-3 then
 desktop=false
 shell.run("System/Controll.lua")
 end
-if tEvent[3]<x-5 then
+if tEvent[3]<x-7 then
 if type(m)~="number" then m=1 end
 m=m+1
 if m>#tApps then m=#tApps end
@@ -99,7 +99,7 @@ if m~=oldm then drawApps(m) end
 oldm=m
 x,y=tEvent[3],tEvent[4]
 end
-if tEvent[3]>x+5 then
+if tEvent[3]>x+7 then
 if type(m)~="number" then m=1 end
 m=m-1
 if m<1 then m=1 end
@@ -121,5 +121,8 @@ tChatHistory[i-1]=tChatHistory[i]
 end
 tChatHistory[17]=tEvent[5]
 end
+elseif tEvent[1]=="alarm" then
+if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end
+os.setAlarm(os.time())
 end
 end
