@@ -1,6 +1,6 @@
 {
-  "System/delete",
-  "Apps/Weather",
-  "Apps/Time/city",
+  tData["path"].."System/delete",
+  tData["path"].."Apps/Weather",
+  tData["path"].."Apps/Time/city",
   "README.md",
 }

@@ -1,6 +1,8 @@
 if term.isColor() and term.isColor then
-shell.run("System/Boot.lua")
-shell.run("System/Lock.lua")
+tData["path"]=shell.getRunningProgram():sub(1,-8).."/"
+tPath=tData["path"]
+shell.run(tData["path"].."System/Boot.lua")
+shell.run(tData["path"].."System/Lock.lua")
 term.setTextColor(colors.yellow)
 print("rOS has crashed!")
 else

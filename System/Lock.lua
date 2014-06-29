@@ -8,7 +8,7 @@ end
 term.setBackgroundColor(256)
 term.clear()
 status(128,false)
-paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),6,5)
+paintutils.drawImage(paintutils.loadImage(tData["path"].."System/Images/keypad"),6,5)
 term.setTextColor(2^15)
 local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
 for i=1,4 do
@@ -84,7 +84,7 @@ term.clear()
 os.sleep(.055)
 end
 kpad=false
-shell.run("System/Desktop.lua")
+shell.run(tData["path"].."System/Desktop.lua")
 else
 for i=1,5 do paintutils.drawPixel((i*2)+7,3,2^14) end
 os.sleep(.33)

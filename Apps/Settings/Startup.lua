@@ -154,17 +154,28 @@ term.setCursorPos(w-2,14)
 cprint(sTime.."$8")
 change=true
 elseif tEvent[4]==8 then
-shell.run("Apps/Update/Startup.lua")
+shell.run(tData["path"].."Apps/Update/Startup.lua")
 elseif tEvent[4]==h then
 settings=false
-f=fs.open("System/Config.lua","w")
+f=fs.open(tData["path"].."System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
-shell.run("System/Desktop.lua")
+shell.run(tData["path"].."System/Desktop.lua")
 end
-if change then f=fs.open("System/Config.lua","w") f.write(textutils.serialize(tData)) f.close() change=nil end
+if change then f=fs.open(tData["path"].."System/Config.lua","w") f.write(textutils.serialize(tData)) f.close() change=nil end
 elseif tEvent[1]=="timer" then
 status(128,false)
 os.startTimer(60/72)
+elseif tEvent[1]=="modem_message" then
+if tEvent[3]==CHAT_CHANNEL then
+if tData["notice"] then status(128,false,tEvent[5],32) end
+for i=2,17 do
+tChatHistory[i-1]=tChatHistory[i]
+end
+tChatHistory[17]=tEvent[5]
+end
+elseif tEvent[1]=="alarm" then
+if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end
+os.setAlarm(os.time())
 end
 end

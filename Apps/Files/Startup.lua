@@ -3,7 +3,7 @@
  tHistory={}
  nHistory=0
  tFiles={}
- sPath=tArgs[1] or "Apps/"
+ sPath=tArgs[1] or tData["path"].."Apps/"
  nScroll=0
  sFile=nil
  x=0
@@ -112,7 +112,7 @@ drawBrowser(sPath)
 end
 end
 end
-elseif y==h and oldy==y then files=false shell.run("System/Desktop.lua") end
+elseif y==h and oldy==y then files=false shell.run(tData["path"].."System/Desktop.lua") end
 end
 elseif tEvent[1]=="mouse_scroll" then
 oldScroll=nScroll
@@ -124,9 +124,20 @@ drawBrowser(sPath)
 end
 elseif tEvent[1]=="key" then
 --if tEvent[2]==keys.enter and selected then if not fs.isDir(selected) then files=false shell.run(selected) else sPath=sPath..selected drawBrowser(sPath) end end
-if tEvent[2]==keys.f4 then files=false shell.run("System/Desktop.lua") end
+if tEvent[2]==keys.f4 then files=false shell.run(tData["path"].."System/Desktop.lua") end
 elseif tEvent[1]=="timer" then
 status(256,false)
 os.startTimer(60/72)
+elseif tEvent[1]=="modem_message" then
+if tEvent[3]==CHAT_CHANNEL then
+if tData["notice"] then status(128,false,tEvent[5],32) end
+for i=2,17 do
+tChatHistory[i-1]=tChatHistory[i]
+end
+tChatHistory[17]=tEvent[5]
+end
+elseif tEvent[1]=="alarm" then
+if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end
+os.setAlarm(os.time())
 end
 end

@@ -1,6 +1,6 @@
 w,h=term.getSize()
-if fs.exists("Apps/Time/Table.lua") then
-f=fs.open("Apps/Time/Table.lua","r")
+if fs.exists(tData["path"].."Apps/Time/Table.lua") then
+f=fs.open(tData["path"].."Apps/Time/Table.lua","r")
 tTime=textutils.unserialize(f.readAll())
 Alarms=tTime.Alarms
 tTime=nil
@@ -73,7 +73,7 @@ if not modem.isOpen(CHAT_CHANNEL) then modem.open(CHAT_CHANNEL) end
 end
 end
 local function setup()
-if not fs.exists("System/config") then
+if not fs.exists(tData["path"].."System/config") then
 local setup=true
 local tData={}
 local tLines = {
@@ -82,7 +82,7 @@ local tLines = {
 	"Use Celsius or not?",
 	"All done!\n System will now reboot"
 }
-f=fs.open("System/Version.lua","r")
+f=fs.open(tData["path"].."System/Version.lua","r")
 f.close()
 tData["version"]=f.readAll()
 local function drawBg(text)
@@ -128,7 +128,7 @@ end
 end
 tData["notice"]=true
 tData["tFormat"]=false
-f=fs.open("System/Config.lua","w")
+f=fs.open(tData["path"].."System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
 drawBg(tLines[4])
@@ -186,11 +186,12 @@ if tEvent then
 os.reboot() end
 end
 function getData()
-if not fs.exists("System/Config.lua") then setup() end
-f=fs.open("System/Config.lua","r")
+tData["path"]=tPath or ""
+if not fs.exists(tData["path"].."System/Config.lua") then setup() end
+f=fs.open(tData["path"].."System/Config.lua","r")
 data=f.readAll()
 f.close()
-f=fs.open("System/Version.lua","r")
+f=fs.open(tData["path"].."System/Version.lua","r")
 cver=f.readAll()
 f.close()
 tData=textutils.unserialize(data)

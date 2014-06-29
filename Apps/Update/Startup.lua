@@ -23,24 +23,24 @@ if tEvent[4]==h/2+2 then
 if tEvent[3]>=w/2-8 and tEvent[3]<=w/2-4 then
 force=true
 update=false
-shell.run("Apps/Update/Startup.lua")
+shell.run(tData["path"].."Apps/Update/Startup.lua")
 else
 update=false
-shell.run("System/Desktop.lua")
+shell.run(tData["path"].."System/Desktop.lua")
 end
 end
 else
 update=false
-shell.run("System/Desktop.lua")
+shell.run(tData["path"].."System/Desktop.lua")
 end
 elseif tEvent[1]=="key" then
 if tEvent[2]==keys.y then
 force=true
 update=false
-shell.run("Apps/Update/Startup.lua")
+shell.run(tData["path"].."Apps/Update/Startup.lua")
 else
 update=false
-shell.run("System/Desktop.lua")
+shell.run(tData["path"].."System/Desktop.lua")
 end
 elseif tEvent[1]=="timer" then
 status(128,false)
@@ -49,7 +49,7 @@ end
 end
 else
 local function loading()
-local img=paintutils.loadImage("Apps/Update/load")
+local img=paintutils.loadImage(tData["path"].."Apps/Update/load")
 paintutils.drawFilledBox(w/2-7,h/2-1,w/2+7,h/2+2,128)
 paintutils.drawImage(img,w/2-4,h/2+1)
 term.setCursorPos((w-9)/2,h/2)
@@ -83,11 +83,11 @@ end
 local function download(url, file)
         save(http.get(url).readAll(),file)
 end
-if not fs.exists("Apps/Update/json") then
+if not fs.exists(tData["path"].."Apps/Update/json") then
         print("")
-        download("http://pastebin.com/raw.php?i=4nRg9CHU","Apps/Update/json")
+        download("http://pastebin.com/raw.php?i=4nRg9CHU",tData["path"].."Apps/Update/json")
 end
-os.loadAPI("Apps/Update/json")
+os.loadAPI(tData["path"].."Apps/Update/json")
 loading()
 if pre_dl then loadstring(pre_dl)() else print("") end
 local data = json.decode(http.get("https://api.github.com/repos/"..args[1].."/"..args[2].."/git/trees/"..args[3].."?recursive=1").readAll())
@@ -111,8 +111,8 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 		end
 	end
 end
-if fs.exists("System/delete") then
-f=fs.open("System/delete","r")
+if fs.exists(tData["path"].."System/delete") then
+f=fs.open(tData["path"].."System/delete","r")
 data=f.readAll()
 f.close()
 data=textutils.unserialize(data)
@@ -126,4 +126,4 @@ os.sleep(0.01)
 os.reboot()
 end
 update=false
-shell.run("System/Desktop.lua")
+shell.run(tData["path"].."System/Desktop.lua")

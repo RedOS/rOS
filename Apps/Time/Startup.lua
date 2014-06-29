@@ -1,9 +1,9 @@
-if not fs.exists("Apps/Time/Table.lua") then
-file=fs.open("Apps/Time/Table.lua","w")
+if not fs.exists(tData["path"].."Apps/Time/Table.lua") then
+file=fs.open(tData["path"].."Apps/Time/Table.lua","w")
 file.write(textutils.serialize({["Alarms"]={["Times"]={},["Active"]={}},["Stopwatch"]=0,["Timer"]=0,["Menu"]={"Alarm","Stopwatch","Timer"},["TimerStart"]=0,["Selected"]=1,Buttons={}}))
 file.close()
 end
-file=fs.open("Apps/Time/Table.lua","r")
+file=fs.open(tData["path"].."Apps/Time/Table.lua","r")
 Time=textutils.unserialize(file.readAll())
 file.close()
 file=nil
@@ -265,10 +265,10 @@ elseif y==h-1 then
 timeApp=false
 activeCountdown=false
 activeStwatch=false
-file=fs.open("Apps/Time/Table.lua","w")
+file=fs.open(tData["path"].."Apps/Time/Table.lua","w")
 file.write(textutils.serialize(Time))
 file.close()
-shell.run("System/Desktop.lua")
+shell.run(tData["path"].."System/Desktop.lua")
 else
 if Time.Selected==2 then
 if x>=w/2-7 and y>= 7 and x<= w/2-1 and y<=9 then
@@ -333,5 +333,16 @@ elseif tEvent[2]==keys.left then
 Time.Selected=Time.Selected-1
 if Time.Selected<1 then Time.Selected=1 end
 getMenu()
+elseif tEvent[1]=="modem_message" then
+if tEvent[3]==CHAT_CHANNEL then
+if tData["notice"] then status(128,false,tEvent[5],32) end
+for i=2,17 do
+tChatHistory[i-1]=tChatHistory[i]
+end
+tChatHistory[17]=tEvent[5]
+end
+elseif tEvent[1]=="alarm" then
+if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end
+os.setAlarm(os.time())
 end
 end

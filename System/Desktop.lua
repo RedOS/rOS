@@ -1,5 +1,5 @@
 bEnd=false
-f=fs.open("Apps/.desktop","r")
+f=fs.open(tData["path"].."Apps/.desktop","r")
 sData=f.readAll()
 tApps=textutils.unserialize(sData)
 tApp=fs.list("Apps")
@@ -34,10 +34,10 @@ term.setTextColor(2^15)
 for n=1,3 do
 for i=1,3 do
 if tApps[m][(n-1)*3+i] then
-if fs.exists("Apps/"..tApps[m][(n-1)*3+i].."/icon") then
-tIcon=loadIcon("Apps/"..tApps[m][(n-1)*3+i].."/icon")
+if fs.exists(tData["path"].."Apps/"..tApps[m][(n-1)*3+i].."/icon") then
+tIcon=loadIcon(tData["path"].."Apps/"..tApps[m][(n-1)*3+i].."/icon")
 else
-tIcon=loadIcon("System/Images/default")
+tIcon=loadIcon(tData["path"].."System/Images/default")
 end
 icon(tIcon,math.ceil(w/3)*(i-1)+3,n*5-2)
 tIcons[nIcon]={}
@@ -82,14 +82,14 @@ if tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if oldx==x and oldy==y then
 for i=1,#tIcons do
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/"..tIcons[i][5].."/Startup.lua") drawApp(m) end
+if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run(tData["path"].."Apps/"..tIcons[i][5].."/Startup.lua") drawApp(m) end
 end
 end
 oldx,oldy=x,y
 elseif tEvent[1]=="mouse_drag" then
 if y>h-3 and tEvent[4]<19 and tEvent[4]<y-3 then
 desktop=false
-shell.run("System/Controll.lua")
+shell.run(tData["path"].."System/Controll.lua")
 end
 if tEvent[3]<x-7 then
 if type(m)~="number" then m=1 end
