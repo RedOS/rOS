@@ -5,17 +5,18 @@ if x and y and z then
 x=math.floor(x)
 y=math.floor(y)
 z=math.floor(z)
-paintutils.drawFilledBox((w-12)/2,h-12,(w+12)/2,h-6,128)
-term.setBackgroundColor(256)
+paintutils.drawLine(w/2-3,h/2-3,w/2+5,h/2-3,32768)
+paintutils.drawLine(w/2+5,h/2-2,w/2+5,h/2+1,32768)
+paintutils.drawFilledBox((w-8)/2,h/2-2,(w+8)/2,h/2+2,256)
 term.setTextColor(1)
-term.setCursorPos((w-12)/2+2,h-11)
+term.setCursorPos((w-10)/2+2,h/2-1)
 print("X="..x," ")
-term.setCursorPos((w-12)/2+2,h-9)
+term.setCursorPos((w-10)/2+2,h/2)
 print("Y="..y," ")
-term.setCursorPos((w-12)/2+2,h-7)
+term.setCursorPos((w-10)/2+2,h/2+1)
 print("Z="..z," ")
 else
-paintutils.drawFilledBox((w-18)/2,h-12,(w+18)/2,h-9,128)
+paintutils.drawFilledBox((w-18)/2,h-12,(w+18)/2,h-9,32)
 term.setCursorPos((w-18)/2+1,h-10)
 print("Can't get position")
 end
@@ -24,12 +25,11 @@ local app=true
 while app do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
-drawApps(m)
 app=false
-shell.run(tData["path"].."System/Desktop.lua")
-elseif tEvent[1]=="timer" then
+shell.run("System/Desktop.lua")
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
 status(128,false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
 if tData["notice"] then status(128,false,tEvent[5],32) end

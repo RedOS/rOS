@@ -76,37 +76,32 @@ status(128,false)
 paintutils.drawLine(7,4,w-4,4,128)
 term.setCursorPos(8,4)
 print(os.getComputerLabel())
-paintutils.drawLine(7,5,w-4,5,128)
-term.setCursorPos(8,5)
-print(tData["city"])
 term.setBackgroundColor(256)
 term.setCursorPos(2,4)
 print("Name")
-term.setCursorPos(2,5)
-print("City")
-term.setCursorPos(1,7)
+term.setCursorPos(1,6)
 cprint(" OS Version "..tData["version"].."\n &7Update&0")
-term.setCursorPos(w-2,9)
+term.setCursorPos(w-2,8)
 cprint("\n HTTP ")
-term.setCursorPos(w-2,10)
+term.setCursorPos(w-2,9)
 cprint(sHttp.."$8")
 cprint(" Modem ")
-term.setCursorPos(w-2,11)
+term.setCursorPos(w-2,10)
 cprint(sModem.."$8")
 cprint(" Use Celsius ")
-term.setCursorPos(w-2,12)
+term.setCursorPos(w-2,11)
 cprint(sTemp.."$8")
 cprint(" Notifications ")
-term.setCursorPos(w-2,13)
+term.setCursorPos(w-2,12)
 cprint(sNotice.."$8")
 cprint(" Use AM/PM ")
-term.setCursorPos(w-2,14)
+term.setCursorPos(w-2,13)
 cprint(sTime.."$8")
 print("\n "..round(nFree,2)..sFreeUnit.." Available")
 print(" "..round(nUsed,2)..sUsedUnit.." Used")
 term.setCursorPos((w-4)/2,h)
 write("Back")
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 while settings do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
@@ -118,54 +113,47 @@ os.setComputerLabel(label)
 term.setCursorPos(8,4)
 cprint(label.."$8")
 change=true
-elseif tEvent[4]==5 then
-paintutils.drawLine(7,5,w-4,5,128)
-term.setCursorPos(8,5)
-tData["city"]=read()
-term.setCursorPos(8,5)
-cprint(tData["city"].."$8")
-change=true
-elseif tEvent[4]==11 then
+elseif tEvent[4]==10 then
 if tData["modemOn"]==true then tData["modemOn"]=false sModem=off else tData["modemOn"]=true sModem=on end
-term.setCursorPos(1,11)
+term.setCursorPos(1,10)
 cprint("$8 Modem ")
-term.setCursorPos(w-2,11)
+term.setCursorPos(w-2,10)
 cprint(sModem.."$8")
 change=true
-elseif tEvent[4]==12 then
+elseif tEvent[4]==11 then
 if tData["bTemp"]==true then tData["bTemp"]=false sTemp=off else tData["bTemp"]=true sTemp=on end
-term.setCursorPos(1,12)
+term.setCursorPos(1,11)
 cprint("$8 Use Celsius ")
-term.setCursorPos(w-2,12)
+term.setCursorPos(w-2,11)
 cprint(sTemp.."$8")
 change=true
-elseif tEvent[4]==13 then
+elseif tEvent[4]==12 then
 if tData["notice"]==true then tData["notice"]=false sNotice=off else tData["notice"]=true sNotice=on end
-term.setCursorPos(1,13)
+term.setCursorPos(1,12)
 cprint("$8 Notifications ")
-term.setCursorPos(w-2,13)
+term.setCursorPos(w-2,12)
 cprint(sNotice.."$8")
 change=true
-elseif tEvent[4]==14 then
+elseif tEvent[4]==13 then
 if tData["tFormat"]==true then tData["tFormat"]=false sTime=on else tData["tFormat"]=true sTime=off end
-term.setCursorPos(1,14)
+term.setCursorPos(1,13)
 cprint("$8 Use AM/PM ")
-term.setCursorPos(w-2,14)
+term.setCursorPos(w-2,13)
 cprint(sTime.."$8")
 change=true
 elseif tEvent[4]==8 then
-shell.run(tData["path"].."Apps/Update/Startup.lua")
+shell.run("Apps/Update/Startup.lua")
 elseif tEvent[4]==h then
 settings=false
-f=fs.open(tData["path"].."System/Config.lua","w")
+f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
-shell.run(tData["path"].."System/Desktop.lua")
+shell.run("System/Desktop.lua")
 end
-if change then f=fs.open(tData["path"].."System/Config.lua","w") f.write(textutils.serialize(tData)) f.close() change=nil end
-elseif tEvent[1]=="timer" then
+if change then f=fs.open("System/Config.lua","w") f.write(textutils.serialize(tData)) f.close() change=nil end
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
 status(128,false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
 if tData["notice"] then status(128,false,tEvent[5],32) end

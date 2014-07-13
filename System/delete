@@ -1,6 +1,4 @@
 {
-  tData["path"].."System/delete",
-  tData["path"].."Apps/Weather",
-  tData["path"].."Apps/Time/city",
+  "System/delete",
   "README.md",
 }

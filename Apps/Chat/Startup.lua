@@ -173,7 +173,7 @@ term.setCursorPos(1,h)
 term.setTextColor(1)
 write("> ")
 msg = fRead()
-if msg=="/exit" then chat=false modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,"&8"..user.." is now offline") shell.run(tData["path"].."System/Desktop.lua") end
+if msg=="/exit" then chat=false modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,"&8"..user.." is now offline") shell.run("System/Desktop.lua") end
 if msg~="" or msg~=" " or msg~=nil or msg~="/exit" then
 modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,user..": "..msg)
 msg="&fYou: ".."&5"..msg
@@ -181,7 +181,7 @@ update(msg)
 end
 end
 else
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 term.clear()
 status(1,false)
 term.setCursorPos((w-20)/2,h/2-1)
@@ -190,8 +190,10 @@ term.setCursorPos((w-24)/2,h/2)
 print("Chat needs rednet to run")
 while chat do
 local tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then chat=false shell.run(tData["path"].."System/Desktop.lua")
-elseif tEvent[1]=="timer" then status(1,false) os.startTimer(60/72)
+if tEvent[1]=="mouse_click" then chat=false shell.run("System/Desktop.lua")
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
+status(128,false)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="alarm" then if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end os.setAlarm(os.time()) end
 end
 end

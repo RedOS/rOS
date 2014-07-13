@@ -8,7 +8,7 @@ end
 term.setBackgroundColor(256)
 term.clear()
 status(128,false)
-paintutils.drawImage(paintutils.loadImage(tData["path"].."System/Images/keypad"),6,5)
+paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),6,5)
 term.setTextColor(2^15)
 local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
 for i=1,4 do
@@ -20,7 +20,7 @@ end
 for i=1,5 do
 paintutils.drawPixel((i*2)+7,3,128)
 end
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 local function number()
 n=""
 if tEvent[3]>5 and tEvent[3]<9 and tEvent[4]>4 and tEvent[4]<8 then n=1 end
@@ -55,9 +55,9 @@ if #nCodeOld~=#nCode then
 try=try+1
 end
 end
-elseif tEvent[1]=="timer" then
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
 status(128,false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
 if tData["notice"] then status(128,false,tEvent[5],32) end
@@ -84,7 +84,7 @@ term.clear()
 os.sleep(.055)
 end
 kpad=false
-shell.run(tData["path"].."System/Desktop.lua")
+shell.run("System/Desktop.lua")
 else
 for i=1,5 do paintutils.drawPixel((i*2)+7,3,2^14) end
 os.sleep(.33)

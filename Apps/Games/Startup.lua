@@ -1,7 +1,7 @@
-tGames=fs.list(tData["path"].."Apps/Games/")
+tGames=fs.list("Apps/Games/")
 for i=1,#tGames do
 if tGames[i] then
-if not fs.isDir(tData["path"].."Apps/Games/"..tGames[i]) then
+if not fs.isDir("Apps/Games/"..tGames[i]) then
 table.remove(tGames,i)
 end
 end
@@ -19,10 +19,10 @@ status(128,false)
 for n=1,2 do
 for i=1,2 do
 if tGames[(n-1)*2+i] then
-if fs.exists(tData["path"].."Apps/Games/"..tGames[(n-1)*2+i].."/icon") then
-tIcon=loadIcon(tData["path"].."Apps/Games/"..tGames[(n-1)*2+i].."/icon")
+if fs.exists("Apps/Games/"..tGames[(n-1)*2+i].."/icon") then
+tIcon=loadIcon("Apps/Games/"..tGames[(n-1)*2+i].."/icon")
 else
-tIcon=loadIcon(tData["path"].."System/Images/default")
+tIcon=loadIcon("System/Images/default")
 end
 icon(tIcon,math.ceil(w/2)*(i-1)+3+(i-1)*4,n*8-4)
 tIcons[nIcon]={}
@@ -42,7 +42,7 @@ end
 end
 end
 end
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 drawGames()
 local games=true
 while games do
@@ -51,8 +51,8 @@ if tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if oldx==x and oldy==y then
 for i=1,#tIcons do
-if x>=w/2-2 and x<=w/2+2 and y==h then games=false shell.run(tData["path"].."System/Desktop.lua") end
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run(tData["path"].."Apps/Games/"..tIcons[i][5].."/Startup.lua") end
+if x>=w/2-2 and x<=w/2+2 and y==h then games=false shell.run("System/Desktop.lua") end
+if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/Games/"..tIcons[i][5].."/Startup.lua") end
 drawGames()
 end
 end
@@ -60,11 +60,11 @@ oldx,oldy=x,y
 elseif tEvent[1]=="mouse_drag" then
 if y>h-3 and tEvent[4]<19 and tEvent[4]<y-3 then
 games=false
-shell.run(tData["path"].."System/Controll.lua")
+shell.run("System/Controll.lua")
 end
-elseif tEvent[1]=="timer" then
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
 status(128,false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
 if tData["notice"] then status(128,false,tEvent[5],32) end

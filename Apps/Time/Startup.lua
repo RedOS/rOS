@@ -1,9 +1,9 @@
-if not fs.exists(tData["path"].."Apps/Time/Table.lua") then
-file=fs.open(tData["path"].."Apps/Time/Table.lua","w")
+if not fs.exists("Apps/Time/Table.lua") then
+file=fs.open("Apps/Time/Table.lua","w")
 file.write(textutils.serialize({["Alarms"]={["Times"]={},["Active"]={}},["Stopwatch"]=0,["Timer"]=0,["Menu"]={"Alarm","Stopwatch","Timer"},["TimerStart"]=0,["Selected"]=1,Buttons={}}))
 file.close()
 end
-file=fs.open(tData["path"].."Apps/Time/Table.lua","r")
+file=fs.open("Apps/Time/Table.lua","r")
 Time=textutils.unserialize(file.readAll())
 file.close()
 file=nil
@@ -160,7 +160,7 @@ end
 times=(mins*60)+secs
 if times==0 then times=1 end
 Time.TimerStart=times
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 return times
 end
 local function setAlarm(number,oldTime)
@@ -212,17 +212,16 @@ term.setCursorPos(5,y)
 write(string.format("%2d",minute))
 end
 if not enter then
-nTime=string.format("%2d:%2d",hour,minute)
+nTime=string.format("%2d:%2d",hour,minute+0.001)
 Time.Alarms.Times[number]=nTime
 Time.Alarms.Active[number]=true
-os.setAlarm(tonumber(hour.."."..math.floor(tonumber(minute)*100/60)))
+os.setAlarm(tonumber(hour.."."..math.floor(tonumber(minute)*100/60))+0.001)
 term.setCursorBlink(false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 end
 end
 end
 getMenu()
-os.startTimer(60/72)
 timeApp=true
 while timeApp do
 tEvent={os.pullEventRaw()}
@@ -253,9 +252,9 @@ paintutils.drawLine(w/2-5,12,w/2+5,12,256)
 paintutils.drawLine(w/2-5,12,(w/2-5)+(10-math.ceil((Time.Timer/Time.TimerStart)*10)),12,16384)
 end
 end
-else
+elseif tEvent[2]==nStatusTimer then
 status(1,false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 end
 elseif tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
@@ -265,10 +264,10 @@ elseif y==h-1 then
 timeApp=false
 activeCountdown=false
 activeStwatch=false
-file=fs.open(tData["path"].."Apps/Time/Table.lua","w")
+file=fs.open("Apps/Time/Table.lua","w")
 file.write(textutils.serialize(Time))
 file.close()
-shell.run(tData["path"].."System/Desktop.lua")
+shell.run("System/Desktop.lua")
 else
 if Time.Selected==2 then
 if x>=w/2-7 and y>= 7 and x<= w/2-1 and y<=9 then

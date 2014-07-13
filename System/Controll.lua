@@ -30,11 +30,11 @@ if y==h-2 then
 if x==w/2-2 then tData["modemOn"]=invert(tData["modemOn"]) draw() end
 --if x==w/2 then tData["btooth"]=invert(tData["btooth"]) draw() end
 if x==w/2+2 then tData["notice"]=invert(tData["notice"]) draw() end
-f=fs.open(tData["path"].."System/Config.lua","w")
+f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
 end
-if x>2 and x<8 and y==h-1 then shell.run(tData["path"].."System/Lock.lua") end
+if x>2 and x<8 and y==h-1 then shell.run("System/Lock.lua") end
 if x>8 and x<17 and y==h-1 then os.shutdown() end
 if x>20 and x<27 and y==h-1 then os.reboot() end
 elseif tEvent[1]=="mouse_drag" then
@@ -48,11 +48,11 @@ paintutils.drawLine(1,h-2+i,w,h-2+i,256)
 paintutils.drawLine(1,h-1+i,w,h-1+i,256)
 os.sleep(0.025)
 end
-shell.run(tData["path"].."System/Desktop.lua")
+shell.run("System/Desktop.lua")
 end
-elseif tEvent[1]=="timer" then
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
 status(128,false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
 if tData["notice"] then status(128,false,tEvent[5],32) end

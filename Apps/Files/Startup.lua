@@ -3,7 +3,7 @@
  tHistory={}
  nHistory=0
  tFiles={}
- sPath=tArgs[1] or tData["path"].."Apps/"
+ sPath=tArgs[1] or "Apps/"
  nScroll=0
  sFile=nil
  x=0
@@ -34,6 +34,7 @@ term.setBackgroundColor(1)
 term.clear()
 paintutils.drawFilledBox(1,1,w,3,256)
 status(256,false)
+nStatusTimer=os.startTimer(60/72)
 term.setCursorPos(2,2)
 if #sPath>w-10 then sLocalPath=sPath:sub(1,w-13).."..." else sLocalPath=sPath end
 cwrite("$0&8 < > $8   $0 "..sLocalPath.." $8&f")
@@ -112,7 +113,7 @@ drawBrowser(sPath)
 end
 end
 end
-elseif y==h and oldy==y then files=false shell.run(tData["path"].."System/Desktop.lua") end
+elseif y==h and oldy==y then files=false shell.run("System/Desktop.lua") end
 end
 elseif tEvent[1]=="mouse_scroll" then
 oldScroll=nScroll
@@ -124,10 +125,10 @@ drawBrowser(sPath)
 end
 elseif tEvent[1]=="key" then
 --if tEvent[2]==keys.enter and selected then if not fs.isDir(selected) then files=false shell.run(selected) else sPath=sPath..selected drawBrowser(sPath) end end
-if tEvent[2]==keys.f4 then files=false shell.run(tData["path"].."System/Desktop.lua") end
-elseif tEvent[1]=="timer" then
-status(256,false)
-os.startTimer(60/72)
+if tEvent[2]==keys.f4 then files=false shell.run("System/Desktop.lua") end
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
+status(128,false)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
 if tData["notice"] then status(128,false,tEvent[5],32) end

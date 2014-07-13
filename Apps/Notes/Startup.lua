@@ -14,13 +14,13 @@ function listtomon()
         end
 end
 local function saveAll()
-        save = fs.open(tData["path"].."Apps/Notes/notes","w")
+        save = fs.open("Apps/Notes/notes","w")
         save.write(textutils.serialize(list))
         save.close()
 end
 local function loadAll()
-        if fs.exists(tData["path"].."Apps/Notes/notes") then
-                load = fs.open(tData["path"].."Apps/Notes/notes","r")
+        if fs.exists("Apps/Notes/notes") then
+                load = fs.open("Apps/Notes/notes","r")
                 list = textutils.unserialize(load.readAll())
                 load.close()
         end
@@ -35,15 +35,15 @@ function drawScreen()
 		term.setTextColor(2^15)
         listtomon()
 end
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 drawScreen()
 while notes do
 listtomon()
 print("Use: del <id> add <text>\n or exit")
 tEvent={os.pullEventRaw()}
-if tEvent[1]=="timer" then
+elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
 status(128,false)
-os.startTimer(60/72)
+nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
 if tData["notice"] then status(128,false,tEvent[5],32) end
@@ -75,7 +75,7 @@ saveAll()
 elseif string.sub(input,0,4) == "exit" then
 notes=false
 saveAll()
-shell.run(tData["path"].."System/Desktop.lua")
+shell.run("System/Desktop.lua")
 end
 drawScreen()
 end
