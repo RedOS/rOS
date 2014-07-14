@@ -125,7 +125,7 @@ local function fRead( _sReplaceChar, _tHistory )
 			term.setCursorPos(oy,ox)
 			term.setBackgroundColor(256)
 			term.setTextColor(1)
-		elseif sEvent=="modem_message" then
+		elseif sEvent=="modem_message" and type(message)~="table" then
 			update("&f"..message)
         end
     end

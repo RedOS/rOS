@@ -1,6 +1,4 @@
 w,h=term.getSize()
-tData={}
-tData["path"]=tPath
 if fs.exists("Apps/Time/Table.lua") then
 f=fs.open("Apps/Time/Table.lua","r")
 tTime=textutils.unserialize(f.readAll())
@@ -47,18 +45,15 @@ function status(nColor, bLock, sMessage, nColor2)
 if sMessage then nCount=10 sLocalMessage=sMessage nLocalColor=nColor2 end
 if nColor==1 then term.setTextColor(2^15) else term.setTextColor(1) end
 tData=getData()
-if tData["modemOn"] and peripheral.isPresent("back") then sTempModem="M " else sTempModem="" end
-if tData["btooth"] then sTempBtooth="B " else sTempBtooth="" end
-if tData["notice"] then sTempNotice="N " else sTempNotice="" end
 if nCount<1 then
 paintutils.drawLine(1,1,w,1,nColor)
 term.setCursorPos(1,1)
-print(tData["net"])
-term.setCursorPos(w-(#sTempModem+#sTempBtooth+#sTempNotice)+2,1)
-cprint(sTempModem..sTempNotice..sTempBtooth)
+cprint(tData.date)
+term.setCursorPos(w-((tData.modemOn and 2 or 0) + (tData.notice and 2 or 0) + (tData.btooth and 2 or 0))+2,1)
+cprint((tData.modemOn and "M " or "")..(tData.notice and "N " or "")..(tData.btooth and "B " or ""))
 if not bLock then
-term.setCursorPos(math.ceil((w-#tData["time"]+1)/2),1)
-print(tData["time"])
+term.setCursorPos(math.ceil((w-#tData.time+1)/2),1)
+print(tData.time)
 end
 else
 paintutils.drawLine(1,1,w,1,nLocalColor)
@@ -70,7 +65,7 @@ print(sLocalMessage)
 term.setCursorPos(1,2)
 nCount=nCount-1
 end
-if tData["modemOn"] and peripheral.isPresent("back") then
+if tData.modemOn and peripheral.isPresent("back") then
 if not modem then modem=peripheral.find("modem") CHAT_CHANNEL=65530 end
 if not modem.isOpen(CHAT_CHANNEL) then modem.open(CHAT_CHANNEL) end
 end
@@ -87,7 +82,7 @@ local tLines = {
 }
 f=fs.open("System/Version.lua","r")
 f.close()
-tData["version"]=f.readAll()
+tData.version=f.readAll()
 local function drawBg(text)
 term.setBackgroundColor(1)
 term.clear()
@@ -111,8 +106,8 @@ drawBg(tLines[2])
 paintutils.drawLine(2,6,w-8,6,128)
 term.setCursorPos(3,6)
 term.setTextColor(1)
-tData["code"]=tonumber(read())
-if #tostring(tData["code"])~=5 then code() end
+tData.code=tonumber(read())
+if #tostring(tData.code)~=5 then code() end
 end
 code()
 drawBg(tLines[3])
@@ -125,12 +120,12 @@ write(" No ")
 while setup do
 local tEvent={os.pullEvent("mouse_click")}
 if tEvent[4]==6 then
-if tEvent[3]>=3 and tEvent[3]<=8 then tData["bTemp"]=true setup=false end
-if tEvent[3]>=9 and tEvent[3]<=13 then tData["bTemp"]=false setup=false end
+if tEvent[3]>=3 and tEvent[3]<=8 then tData.bTemp=true setup=false end
+if tEvent[3]>=9 and tEvent[3]<=13 then tDat.abTemp=false setup=false end
 end
 end
-tData["notice"]=true
-tData["tFormat"]=false
+tData.notice=true
+tData.tFormat=false
 f=fs.open("System/Config.lua","w")
 f.write(textutils.serialize(tData))
 f.close()
@@ -141,7 +136,7 @@ end
 end
 function date(days,string)
 day={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}
-_mon={"Janurary","February","March","April","May","June","July","August","September","October","November","December"}
+_mon={"Jan ","Feb ","Mar ","Apr ","May ","Jun ","Jul ","Aug ","Sep ","Oct ","Nov ","Dec "}
 dNum=(days-math.floor(days/7)*7)+1
 dayName=day[dNum]
 local function isLeapYear(year)
@@ -169,7 +164,7 @@ mon=mon + 1;
 end
 mont=_mon[mon]
 if string=="data" then
-string=dayName..", "..mont.." "..days+1
+string=mont..days+1
 return string
 else
 return year,mont,days+1,dayName,dNum,mon
@@ -197,14 +192,14 @@ f=fs.open("System/Version.lua","r")
 cver=f.readAll()
 f.close()
 tData=textutils.unserialize(data)
-tData["path"]=tPath or ""
-if peripheral.isPresent("back") and tData["modemOn"] then
-tData["net"]="Online" elseif peripheral.isPresent("back") and not tData["modemOn"] then
-tData["net"]="Offline" else
-tData["net"]="No modem" end
-tData["time"]=textutils.formatTime(os.time(),tData["tFormat"])
-tData["date"]=date(os.day(),"data")
-tData["version"]=tostring(cver)
+if not tData then tData={} setup() end
+if peripheral.isPresent("back") and tData.modemOn then
+tData.net="Online" elseif peripheral.isPresent("back") and not tData.modemOn then
+tData.net="Offline" else
+tData.net="No" end
+tData.time=textutils.formatTime(os.time(),tData["tFormat"])
+tData.date=date(os.day(),"data")
+tData.version=tostring(cver)
 return tData
 end
 function cCode(h)

@@ -1,13 +1,11 @@
-local on="$5 I$8"
-local off="$eI $8"
-if http then sHttp=on else sHtpp=off end
-if tData["modemOn"] then sModem=on else sModem=off end
-if tData["notice"] then sNotice=on else sNotice=off end
-if tData["bTemp"] then sTemp=on else sTemp=off end
-if tData["tFormat"] then sTime=off else sTime=on end
+local on="$5&0 I$0&f"
+local off="$e&0I $0&f"
 local function round(num, idp)
   local mult = 10^(idp or 0)
   return math.floor(num * mult + 0.5) / mult
+end
+local function revert(value)
+if value==true then return false else return true end
 end
 local function getSize(path)
   local size = 0
@@ -71,32 +69,32 @@ tData=getData()
 nUsed,sUsedUnit=getSpace(getSize("/"))
 nFree,sFreeUnit=getSpace(fs.getSpaceLimit("/")-getSize("/"))
 local settings=true
-paintutils.drawFilledBox(1,1,w,h,256)
-status(128,false)
-paintutils.drawLine(7,4,w-4,4,128)
+paintutils.drawFilledBox(1,1,w,h,1)
+status(256,false)
+paintutils.drawLine(7,4,w-4,4,256)
 term.setCursorPos(8,4)
 print(os.getComputerLabel())
-term.setBackgroundColor(256)
+term.setBackgroundColor(1)
 term.setCursorPos(2,4)
-print("Name")
+cprint("&fName")
 term.setCursorPos(1,6)
-cprint(" OS Version "..tData["version"].."\n &7Update&0")
+cprint(" OS Version "..tData["version"].."\n &8Update&f")
 term.setCursorPos(w-2,8)
 cprint("\n HTTP ")
 term.setCursorPos(w-2,9)
-cprint(sHttp.."$8")
+cprint(http and on or off.."$0")
 cprint(" Modem ")
 term.setCursorPos(w-2,10)
-cprint(sModem.."$8")
+cprint(tData.modemOn==true and on or off.."$0")
 cprint(" Use Celsius ")
 term.setCursorPos(w-2,11)
-cprint(sTemp.."$8")
+cprint(tData.bTemp==true and on or off.."$0")
 cprint(" Notifications ")
 term.setCursorPos(w-2,12)
-cprint(sNotice.."$8")
+cprint(tData.notice==true and on or off.."$0")
 cprint(" Use AM/PM ")
 term.setCursorPos(w-2,13)
-cprint(sTime.."$8")
+cprint(tData.tFormat==false and on or off.."$0")
 print("\n "..round(nFree,2)..sFreeUnit.." Available")
 print(" "..round(nUsed,2)..sUsedUnit.." Used")
 term.setCursorPos((w-4)/2,h)
@@ -106,42 +104,38 @@ while settings do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
 if tEvent[4]==4 then
-paintutils.drawLine(7,4,w-4,4,128)
+paintutils.drawLine(7,4,w-4,4,256)
 term.setCursorPos(8,4)
 label=read()
 os.setComputerLabel(label)
 term.setCursorPos(8,4)
-cprint(label.."$8")
+cprint(label.."$0")
 change=true
 elseif tEvent[4]==10 then
-if tData["modemOn"]==true then tData["modemOn"]=false sModem=off else tData["modemOn"]=true sModem=on end
+tData.modemOn=revert(tData.modemOn)
 term.setCursorPos(1,10)
-cprint("$8 Modem ")
+cprint("$0&f Modem ")
 term.setCursorPos(w-2,10)
-cprint(sModem.."$8")
-change=true
+cprint(tData.modemOn==true and on or off.."$0")
 elseif tEvent[4]==11 then
-if tData["bTemp"]==true then tData["bTemp"]=false sTemp=off else tData["bTemp"]=true sTemp=on end
+tData.bTemp=revert(tData.bTemp)
 term.setCursorPos(1,11)
-cprint("$8 Use Celsius ")
+cprint("$0&f Use Celsius ")
 term.setCursorPos(w-2,11)
-cprint(sTemp.."$8")
-change=true
+cprint(tData.bTemp==true and on or off.."$0")
 elseif tEvent[4]==12 then
-if tData["notice"]==true then tData["notice"]=false sNotice=off else tData["notice"]=true sNotice=on end
+tData.notice=revert(tData.notice)
 term.setCursorPos(1,12)
-cprint("$8 Notifications ")
+cprint("$0&f Notifications ")
 term.setCursorPos(w-2,12)
-cprint(sNotice.."$8")
-change=true
+cprint(tData.notice==true and on or off.."$0")
 elseif tEvent[4]==13 then
-if tData["tFormat"]==true then tData["tFormat"]=false sTime=on else tData["tFormat"]=true sTime=off end
+tData.tFormat=revert(tData.tFormat)
 term.setCursorPos(1,13)
-cprint("$8 Use AM/PM ")
+cprint("$0&f Use AM/PM ")
 term.setCursorPos(w-2,13)
-cprint(sTime.."$8")
-change=true
-elseif tEvent[4]==8 then
+cprint(tData.tFormat==false and on or off.."$0")
+elseif tEvent[4]==7 then
 shell.run("Apps/Update/Startup.lua")
 elseif tEvent[4]==h then
 settings=false
@@ -150,20 +144,20 @@ f.write(textutils.serialize(tData))
 f.close()
 shell.run("System/Desktop.lua")
 end
-if change then f=fs.open("System/Config.lua","w") f.write(textutils.serialize(tData)) f.close() change=nil end
+f=fs.open("System/Config.lua","w") f.write(textutils.serialize(tData)) f.close()
 elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
-status(128,false)
+status(256,false)
 nStatusTimer=os.startTimer(60/72)
 elseif tEvent[1]=="modem_message" then
 if tEvent[3]==CHAT_CHANNEL then
-if tData["notice"] then status(128,false,tEvent[5],32) end
+if tData["notice"] then status(1,false,tEvent[5],32) end
 for i=2,17 do
 tChatHistory[i-1]=tChatHistory[i]
 end
 tChatHistory[17]=tEvent[5]
 end
 elseif tEvent[1]=="alarm" then
-if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end
+if tData["notice"] then status(1,false,"Alarm at "..tData["time"],16384) end
 os.setAlarm(os.time())
 end
 end

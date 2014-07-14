@@ -1,7 +1,7 @@
 if term.isColor() and term.isColor then
 shell.run("System/Boot.lua")
 shell.run("System/Lock.lua")
-term.setBackgroundColor(2^16)
+term.setBackgroundColor(2^15)
 term.setTextColor(colors.yellow)
 term.clear()
 term.setCursorPos(1,1)

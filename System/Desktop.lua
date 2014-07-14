@@ -86,7 +86,7 @@ if tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if oldx==x and oldy==y then
 for i=1,#tIcons do
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/"..tIcons[i][5].."/Startup.lua") drawApp(m) end
+if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/"..tIcons[i][5].."/Startup.lua") drawApps(m) end
 end
 end
 oldx,oldy=x,y
