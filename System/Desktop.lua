@@ -1,4 +1,3 @@
-Core.last="System/Desktop.lua"
 f=fs.open("Apps/.desktop","r")
 tApps=textutils.unserialize(f.readAll())
 f.close()
