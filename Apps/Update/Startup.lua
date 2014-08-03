@@ -1,4 +1,5 @@
 local args = {"RedOS","rOS"}
+w,h=term.getSize()
 term.setTextColor(1)
 Data=Core.getData()
 if http.get("https://raw.githubusercontent.com/RedOS/rOS/master/System/Version.lua").readAll()==Data.Version and not force then
