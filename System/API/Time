@@ -1,0 +1,61 @@
+Data={["version"]="1.0",["name"]="Time",}
+
+function get(nTime,b24)
+	local sTOD=""
+	if not b24 then
+        if nTime >= 12 then
+           sTOD = "PM"
+        else
+           sTOD = "AM"
+        end
+        if nTime >= 13 then
+            nTime = nTime - 12
+        end
+	end
+    local Hour = math.floor(nTime)
+    local Minute = math.floor((nTime - Hour)*60)
+	return Hour,Minute,sTOD
+end
+
+function date(nTime,format,tPack)
+local nTime=nTime or os.day()
+day={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}
+_mon={"Jan ","Feb ","Mar ","Apr ","May ","June ","July ","Aug ","Sept ","Oct ","Nov ","Dec "}
+dNum=(nTime-math.floor(nTime/7)*7)+1
+dayName=day[dNum]
+local function isLeapYear(year)
+return year % 4 == 0 and (year % 100 > 0 or year % 400 == 0)
+end
+local function nTimeInYear(year)
+if isLeapYear(year) then
+return 366
+end
+return 365
+end 
+local year=0
+local mon=1
+while nTime >= nTimeInYear(year) do
+nTime=nTime - nTimeInYear(year);
+year=year + 1;
+end
+local _temp={ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+if isLeapYear(year) then
+_temp[2]=29
+end
+while nTime >= _temp[mon] do
+nTime=nTime - _temp[mon];
+nTime=nTime+1
+mon=mon + 1;
+end
+mont=_mon[mon]
+if string=="data" then
+string=dayName..", "..mont.." "..nTime
+return string
+else
+if format then
+return string.format(format,mont,nTime)
+else
+return year,mont,nTime,dayName,dNum,mon
+end
+end
+end

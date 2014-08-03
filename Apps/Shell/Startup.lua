@@ -1,5 +1,5 @@
-term.setBackgroundColor(2^15)
-term.clear()
+Draw.clear(2^15)
+Draw.isStatusVisible(false)
 term.setCursorPos(1,1)
 shell.run("rom/programs/shell")
 shell.run("System/Desktop.lua")

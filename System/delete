@@ -1,4 +1,5 @@
 {
-  "System/delete",
+  "Apps/Images",
   "README.md",
+  "System/Boot.lua"
 }

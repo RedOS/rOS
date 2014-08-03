@@ -1,11 +1,24 @@
-if term.isColor() and term.isColor then
-shell.run("System/Boot.lua")
-shell.run("System/Lock.lua")
-term.setBackgroundColor(2^15)
-term.setTextColor(colors.yellow)
-term.clear()
-term.setCursorPos(1,1)
-print("rOS has crashed!")
-else
-print("rOS is only for Advanced (Pocket) Computers")
+tApis=fs.list("System/API/")
+for i=1,#tApis do
+os.loadAPI("System/API/"..tApis[i])
+end
+local tEnv = {
+	[ "shell" ] = shell,
+	[ "multishell" ] = multishell,
+}
+tChatHistory={}
+for i=1,17 do
+tChatHistory[i]=""
+end
+CHAT_CHANNEL=65530
+Core.timer=os.startTimer(60/72)
+Core.launch(tEnv,"System/Lock.lua")
+while Core do
+tEvent={os.pullEventRaw()}
+if tEvent[1]=="timer" and tEvent[2]==Core.timer then Draw.status() Core.timer=os.startTimer(60/72)
+elseif tEvent[1]=="modem_message" and tEvent[3]==CHAT_CHANNEL then if Data.Notification then print("Notifications!") end
+elseif tEvent[1]=="mouse_click" and tEvent[2]==1 and tEvent[4]==1 then Core.launchS(tEnv,"System/Controll.lua")
+elseif tEvent[1]=="key" and tEvent[2]==keys.f1 then break end
+if Core.tProcess2.co then local ok, result = coroutine.resume( Core.tProcess2.co, unpack(tEvent)) end
+local ok, result = coroutine.resume( Core.tProcess.co, unpack(tEvent))
 end

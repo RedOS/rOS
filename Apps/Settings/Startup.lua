@@ -65,99 +65,78 @@ end
 end
 return number, unit
 end
-tData=getData()
+Data=Core.getData()
 nUsed,sUsedUnit=getSpace(getSize("/"))
 nFree,sFreeUnit=getSpace(fs.getSpaceLimit("/")-getSize("/"))
 local settings=true
-paintutils.drawFilledBox(1,1,w,h,1)
-status(256,false)
-paintutils.drawLine(7,4,w-4,4,256)
+Draw.clear(1)
+Draw.isStatusVisible(true)
+Draw.setStatusColor(1)
+Draw.status()
+term.setBackgroundColor(1)
+paintutils.drawLine(7,4,Screen.Width-4,4,256)
 term.setCursorPos(8,4)
 print(os.getComputerLabel())
 term.setBackgroundColor(1)
 term.setCursorPos(2,4)
-cprint("&fName")
+Draw.cprint("&fName")
 term.setCursorPos(1,6)
-cprint(" OS Version "..tData["version"].."\n &8Update&f")
-term.setCursorPos(w-2,8)
-cprint("\n HTTP ")
-term.setCursorPos(w-2,9)
-cprint(http and on or off.."$0")
-cprint(" Modem ")
-term.setCursorPos(w-2,10)
-cprint(tData.modemOn==true and on or off.."$0")
-cprint(" Use Celsius ")
-term.setCursorPos(w-2,11)
-cprint(tData.bTemp==true and on or off.."$0")
-cprint(" Notifications ")
-term.setCursorPos(w-2,12)
-cprint(tData.notice==true and on or off.."$0")
-cprint(" Use AM/PM ")
-term.setCursorPos(w-2,13)
-cprint(tData.tFormat==false and on or off.."$0")
+Draw.cprint(" OS Version "..Data.Version.."\n &8Update&f")
+term.setCursorPos(Screen.Width-2,8)
+Draw.cprint("\n HTTP ")
+term.setCursorPos(Screen.Width-2,9)
+Draw.cprint(http and on or off.."$0")
+Draw.cprint(" Modem ")
+term.setCursorPos(Screen.Width-2,10)
+Draw.cprint(Data.bTemp==true and on or off.."$0")
+Draw.cprint(" Notifications ")
+term.setCursorPos(Screen.Width-2,11)
+Draw.cprint(Data.Notification==true and on or off.."$0")
+Draw.cprint(" Use AM/PM ")
+term.setCursorPos(Screen.Width-2,12)
+Draw.cprint(Data.H24==false and on or off.."$0")
 print("\n "..round(nFree,2)..sFreeUnit.." Available")
 print(" "..round(nUsed,2)..sUsedUnit.." Used")
-term.setCursorPos((w-4)/2,h)
+term.setCursorPos((Screen.Width-4)/2,Screen.Height)
 write("Back")
-nStatusTimer=os.startTimer(60/72)
 while settings do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
 if tEvent[4]==4 then
-paintutils.drawLine(7,4,w-4,4,256)
+paintutils.drawLine(7,4,Screen.Width-4,4,256)
 term.setCursorPos(8,4)
 label=read()
 os.setComputerLabel(label)
 term.setCursorPos(8,4)
-cprint(label.."$0")
+Draw.cprint(label.."$0")
 change=true
 elseif tEvent[4]==10 then
-tData.modemOn=revert(tData.modemOn)
+Data.bModem=revert(Data.bModem)
 term.setCursorPos(1,10)
-cprint("$0&f Modem ")
-term.setCursorPos(w-2,10)
-cprint(tData.modemOn==true and on or off.."$0")
+Draw.cprint("$0&f Modem ")
+term.setCursorPos(Screen.Width-2,10)
+Draw.cprint(Data.bModem==true and on or off.."$0")
 elseif tEvent[4]==11 then
-tData.bTemp=revert(tData.bTemp)
+Data.Notification=revert(Data.Notification)
 term.setCursorPos(1,11)
-cprint("$0&f Use Celsius ")
-term.setCursorPos(w-2,11)
-cprint(tData.bTemp==true and on or off.."$0")
+Draw.cprint("$0&f Notifications ")
+term.setCursorPos(Screen.Width-2,1)
+Draw.cprint(Data.Notification==true and on or off.."$0")
 elseif tEvent[4]==12 then
-tData.notice=revert(tData.notice)
+Data.H24=revert(Data.H24)
 term.setCursorPos(1,12)
-cprint("$0&f Notifications ")
-term.setCursorPos(w-2,12)
-cprint(tData.notice==true and on or off.."$0")
-elseif tEvent[4]==13 then
-tData.tFormat=revert(tData.tFormat)
-term.setCursorPos(1,13)
-cprint("$0&f Use AM/PM ")
-term.setCursorPos(w-2,13)
-cprint(tData.tFormat==false and on or off.."$0")
+Draw.cprint("$0&f Use AM/PM ")
+term.setCursorPos(Screen.Width-2,12)
+Draw.cprint(Data.H24==false and on or off.."$0")
 elseif tEvent[4]==7 then
 shell.run("Apps/Update/Startup.lua")
-elseif tEvent[4]==h then
+elseif tEvent[4]==Screen.Height then
 settings=false
 f=fs.open("System/Config.lua","w")
-f.write(textutils.serialize(tData))
+f.write(textutils.serialize(Data))
 f.close()
 shell.run("System/Desktop.lua")
 end
-f=fs.open("System/Config.lua","w") f.write(textutils.serialize(tData)) f.close()
-elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
-status(256,false)
-nStatusTimer=os.startTimer(60/72)
-elseif tEvent[1]=="modem_message" then
-if tEvent[3]==CHAT_CHANNEL then
-if tData["notice"] then status(1,false,tEvent[5],32) end
-for i=2,17 do
-tChatHistory[i-1]=tChatHistory[i]
-end
-tChatHistory[17]=tEvent[5]
-end
-elseif tEvent[1]=="alarm" then
-if tData["notice"] then status(1,false,"Alarm at "..tData["time"],16384) end
-os.setAlarm(os.time())
+f=fs.open("System/Config.lua","w") f.write(textutils.serialize(Data)) f.close()
 end
 end

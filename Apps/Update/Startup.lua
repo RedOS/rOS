@@ -1,7 +1,7 @@
 local args = {"RedOS","rOS"}
 term.setTextColor(1)
-tData=getData()
-if http.get("https://raw.githubusercontent.com/RedOS/rOS/master/System/Version.lua").readAll()==tData["version"] and not force then
+Data=Core.getData()
+if http.get("https://raw.githubusercontent.com/RedOS/rOS/master/System/Version.lua").readAll()==Data.Version and not force then
 paintutils.drawFilledBox(w/2-9,h/2-1,w/2+9,h/2+2,128)
 term.setCursorPos(w/2-7,h/2)
 term.setTextColor(1)
@@ -14,7 +14,6 @@ print("Yes")
 term.setCursorPos(w/2+6,h/2+2)
 print("No")
 local update=true
-nStatusTimer=os.startTimer(60/72)
 while update do
 local tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
@@ -42,12 +41,12 @@ else
 update=false
 shell.run("System/Desktop.lua")
 end
-elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
-status(128,false)
-nStatusTimer=os.startTimer(60/72)
 end
 end
 else
+Draw.setStatusColor(128)
+Draw.isStatusVisible(true)
+Draw.status()
 local function loading()
 local img=paintutils.loadImage("Apps/Update/load")
 paintutils.drawFilledBox(w/2-7,h/2-1,w/2+7,h/2+2,128)
@@ -56,13 +55,11 @@ term.setCursorPos((w-9)/2,h/2)
 term.setTextColor(1)
 term.setBackgroundColor(128)
 print("Updating...")
-status(128,false)
 for i=1,5 do
 paintutils.drawImage(img,w/2-4,h/2+1)
 paintutils.drawPixel(w/2-4+2*(i-1),h/2+1,1)
 os.sleep(.085)
 end
-status(128,false)
 paintutils.drawImage(img,w/2-4,h/2+1)
 end
 args[3] = args[3] or "master"

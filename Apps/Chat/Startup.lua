@@ -1,8 +1,9 @@
 term.setBackgroundColor(1)
 term.setTextColor(2^15)
 local chat=true
-tData=getData()
-if tData["modemOn"] and modem and modem.isWireless() then
+Data=Core.getData()
+if Data.bModem then modem=peripheral.find("modem") end
+if modem then
 local function update(msg)
 local ox=term.getCursorPos()
 term.setBackgroundColor(1)
@@ -14,9 +15,9 @@ tChatHistory[17]=msg
 for i=1,17 do
 term.setCursorPos(2,i+1)
 term.clearLine()
-cprint(tChatHistory[i])
+Draw.cprint(tChatHistory[i])
 end
-term.setCursorPos(ox,h)
+term.setCursorPos(ox,Screen.Height)
 end
 local function fRead( _sReplaceChar, _tHistory )
     term.setCursorBlink( true )
@@ -118,13 +119,6 @@ local function fRead( _sReplaceChar, _tHistory )
         elseif sEvent == "term_resize" then
             w = term.getSize()
             redraw()
-		elseif sEvent=="timer" then
-			oy,ox=term.getCursorPos()
-			status(1,false)
-			os.startTimer(60/72)
-			term.setCursorPos(oy,ox)
-			term.setBackgroundColor(256)
-			term.setTextColor(1)
 		elseif sEvent=="modem_message" and type(message)~="table" then
 			update("&f"..message)
         end
@@ -135,41 +129,42 @@ local function fRead( _sReplaceChar, _tHistory )
     print()
     return sLine
 end
-status(1,false)
-paintutils.drawFilledBox(1,1,w,h,1)
+Draw.setStatusColor(1)
+Draw.isStatusVisible(true)
+Draw.status()
+paintutils.drawFilledBox(1,1,Screen.Width,Screen.Height,1)
 --[[if type(tChatHistory)~="table" or #tChatHistory==0 then
 tChatHistory={}
 for i=1,17 do
 tChatHistory[i]=""
 end
 end]]
-os.startTimer(60/72)
 if not user then
-term.setCursorPos(1,h)
-paintutils.drawLine(1,h+1,w,h+1,256)
+term.setCursorPos(1,Screen.Height)
+paintutils.drawLine(1,Screen.Height+1,Screen.Width,Screen.Height+1,256)
 term.setBackgroundColor(256)
 term.setTextColor(1)
 write("Nickname: ")
 user = fRead()
 end
 modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,"&8"..user.." is now online")
-paintutils.drawFilledBox(1,1,w,h,1)
+paintutils.drawFilledBox(1,1,Screen.Width,Screen.Height,1)
 for o=1,17 do
 term.setTextColor(2^15)
 term.setCursorPos(2,o+1)
 term.clearLine()
-cprint(tChatHistory[o])
+Draw.cprint(tChatHistory[o])
 end
 while chat do
-term.setCursorPos(1,h-1)
-paintutils.drawFilledBox(1,h-1,w,h,1)
-term.setCursorPos(1,h)
+term.setCursorPos(1,Screen.Height-1)
+paintutils.drawFilledBox(1,Screen.Height-1,Screen.Width,Screen.Height,1)
+term.setCursorPos(1,Screen.Height)
 term.setBackgroundColor(1)
 term.setTextColor(2^15)
-term.setCursorPos(2,h-1)
+term.setCursorPos(2,Screen.Height-1)
 print("/exit for exit")
-paintutils.drawLine(1,h,w,h,256)
-term.setCursorPos(1,h)
+paintutils.drawLine(1,Screen.Height,Screen.Width,Screen.Height,256)
+term.setCursorPos(1,Screen.Height)
 term.setTextColor(1)
 write("> ")
 msg = fRead()
@@ -181,19 +176,15 @@ update(msg)
 end
 end
 else
-nStatusTimer=os.startTimer(60/72)
 term.clear()
-status(1,false)
-term.setCursorPos((w-20)/2,h/2-1)
+Draw.status()
+term.setCursorPos((Screen.Width-20)/2,Screen.Height/2-1)
 print("No rednet connection!")
-term.setCursorPos((w-24)/2,h/2)
+term.setCursorPos((Screen.Width-24)/2,Screen.Height/2)
 print("Chat needs rednet to run")
 while chat do
 local tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then chat=false shell.run("System/Desktop.lua")
-elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
-status(128,false)
-nStatusTimer=os.startTimer(60/72)
-elseif tEvent[1]=="alarm" then if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end os.setAlarm(os.time()) end
+end
 end
 end

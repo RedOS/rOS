@@ -7,7 +7,7 @@ function listtomon()
 		term.setTextColor(2^15)
         term.setCursorPos(2,3)
                 for k,v in pairs(list) do
-                        cprint("&b"..k.."&f "..v)
+                        Draw.cprint("&b"..k.."&f "..v)
                         x,y = term.getCursorPos()
                         term.setCursorPos(x+1,y)
                 end
@@ -29,33 +29,18 @@ function drawScreen()
         loadAll()
 		term.setBackgroundColor(1)
         term.clear()
-		status(128,false)
+		Draw.setStatusColor(128)
+		Draw.isStatusVisible(true)
+		Draw.status()
         term.setCursorPos(1,1)
         term.setBackgroundColor(1)
 		term.setTextColor(2^15)
         listtomon()
 end
-nStatusTimer=os.startTimer(60/72)
 drawScreen()
 while notes do
 listtomon()
 print("Use: del <id> add <text>\n or exit")
-tEvent={os.pullEventRaw()}
-elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
-status(128,false)
-nStatusTimer=os.startTimer(60/72)
-elseif tEvent[1]=="modem_message" then
-if tEvent[3]==CHAT_CHANNEL then
-if tData["notice"] then status(128,false,tEvent[5],32) end
-for i=2,17 do
-tChatHistory[i-1]=tChatHistory[i]
-end
-tChatHistory[17]=tEvent[5]
-end
-elseif tEvent[1]=="alarm" then
-if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end
-os.setAlarm(os.time())
-else
 ax,ay=term.getCursorPos()
 term.setCursorPos(2,ay)
 input = read()
@@ -78,5 +63,4 @@ saveAll()
 shell.run("System/Desktop.lua")
 end
 drawScreen()
-end
 end

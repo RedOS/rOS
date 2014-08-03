@@ -1,0 +1,66 @@
+Data={["version"]="1.0",["name"]="Core",}
+
+DataChange=true
+last="System/Lock.lua"
+tProcess={}
+tProcess2={}
+
+function launch(tProgramEnv,sProgramPath,...)
+local tProgramArgs={ ... }
+tProcess.co = coroutine.create( function()
+        os.run( tProgramEnv, sProgramPath, unpack( tProgramArgs ) )
+    end )
+coroutine.resume(tProcess.co)
+end
+
+function launchS(tProgramEnv,sProgramPath,...)
+local tProgramArgs={ ... }
+tProcess2.co = coroutine.create( function()
+        os.run( tProgramEnv, sProgramPath, unpack( tProgramArgs ) )
+    end )
+coroutine.resume(tProcess2.co)
+end
+
+function getData()
+	if Core then
+		if fs.exists("System/Config.lua") then
+			f=fs.open("System/Config.lua","r")
+			data=f.readAll()
+			f.close()
+			Data=textutils.unserialize(data)
+			f=fs.open("System/Version.lua","r")
+			Data.Version=f.readAll()
+			f.close()
+			return Data
+		else
+			local setup=true
+				Draw.clear(1)
+				term.setTextColor(2^15)
+				term.setCursorPos(1,3)
+				Draw.print("Enter your five-digit code")
+				local numbers={"1","2","3","4","5","6","7","8","9"}
+				local code=""
+				while setup do
+					local event={os.pullEventRaw("char")}
+					if type(tonumber(event[2]))=="nil" then
+						local event={os.pullEventRaw("char")}
+					else
+						code=code..event[2]
+						term.setCursorPos(2,4)
+						Draw.clearLine()
+						Draw.write(code,2^15)
+						if #code==5 then setup=false end
+					end
+				end
+			code=tonumber(code)
+			Data={}
+			Data.Notifications=true
+			Data.bModem=true
+			Data.Code=code
+			Data.H24=false
+			f=fs.open("System/Config.lua","w")
+			f.write(textutils.serialize(Data))
+			f.close()
+		end
+	end
+end

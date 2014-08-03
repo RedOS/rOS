@@ -30,24 +30,24 @@ end
 cleanHistory(tHistory)
 if nHistory<1 then nHistory=1 end
 if nHistory>#tHistory then nHistory=#tHistory end
-term.setBackgroundColor(1)
-term.clear()
+Draw.clear(1)
 paintutils.drawFilledBox(1,1,w,3,256)
-status(256,false)
-nStatusTimer=os.startTimer(60/72)
+Draw.setStatusColor(128)
+Draw.isStatusVisible(true)
+Draw.status()
 term.setCursorPos(2,2)
 if #sPath>w-10 then sLocalPath=sPath:sub(1,w-13).."..." else sLocalPath=sPath end
-cwrite("$0&8 < > $8   $0 "..sLocalPath.." $8&f")
+Draw.cwrite("$0&8 < > $8   $0 "..sLocalPath.." $8&f")
 term.setCursorPos(2,5)
 if nHistory>1 and nHistory==#tHistory then
 term.setCursorPos(3,2)
-cwrite("$0&b< &8>&f")
+Draw.cwrite("$0&b< &8>&f")
 elseif nHistory>1 and nHistory~=#tHistory then
 term.setCursorPos(3,2)
-cwrite("$0&b< >&f")
+Draw.cwrite("$0&b< >&f")
 elseif nHistory==1 and #tHistory>1 then
 term.setCursorPos(3,2)
-cwrite("$0&8< &b>&f")
+Draw.cwrite("$0&8< &b>&f")
 end
 nSize=h-5
 term.setCursorPos(1,5)
@@ -56,15 +56,15 @@ for i=1,nSize do
 term.setCursorPos(1,4+i)
 if tFiles[i+nScroll] then
 if tFiles[i+nScroll]==selected then
-cwrite("$0&b")
-cwrite(" "..tFiles[i+nScroll])
+Draw.cwrite("$0&b")
+Draw.cwrite(" "..tFiles[i+nScroll])
 else
-cwrite("$0&f "..tFiles[i+nScroll])
+Draw.cwrite("$0&f "..tFiles[i+nScroll])
 end
 end
 end
 term.setCursorPos(w/2-2,h)
-cwrite("$0&8Exit")
+Draw.cwrite("$0&8Exit")
 end
 files=true
 drawBrowser(sPath)
@@ -83,7 +83,7 @@ end
 elseif x>10 and x<=#sLocalPath+10 and y==2 then
 paintutils.drawLine(10,2,#sLocalPath+11,2,1)
 term.setCursorPos(11,2)
-cwrite("$0&8")
+Draw.cwrite("$0&8")
 sPath=read(nil,tHistory)
 if sPath:sub(-1,-1)~="/" then sPath=sPath.."/" end
 drawBrowser(sPath)
@@ -125,20 +125,5 @@ drawBrowser(sPath)
 end
 elseif tEvent[1]=="key" then
 --if tEvent[2]==keys.enter and selected then if not fs.isDir(selected) then files=false shell.run(selected) else sPath=sPath..selected drawBrowser(sPath) end end
-if tEvent[2]==keys.f4 then files=false shell.run("System/Desktop.lua") end
-elseif tEvent[1]=="timer" and tEvent[2]==nStatusTimer then
-status(128,false)
-nStatusTimer=os.startTimer(60/72)
-elseif tEvent[1]=="modem_message" then
-if tEvent[3]==CHAT_CHANNEL then
-if tData["notice"] then status(128,false,tEvent[5],32) end
-for i=2,17 do
-tChatHistory[i-1]=tChatHistory[i]
-end
-tChatHistory[17]=tEvent[5]
-end
-elseif tEvent[1]=="alarm" then
-if tData["notice"] then status(128,false,"Alarm at "..tData["time"],16384) end
-os.setAlarm(os.time())
 end
 end
