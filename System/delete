@@ -2,4 +2,5 @@
   "Apps/Images",
   "README.md",
   "System/Boot.lua"
+  "System/Config.lua"
 }
