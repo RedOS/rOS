@@ -37,7 +37,7 @@ function getData()
 				Draw.clear(1)
 				term.setTextColor(2^15)
 				term.setCursorPos(1,3)
-				Draw.print("Enter your five-digit code")
+				print("Enter your five-digit code")
 				local numbers={"1","2","3","4","5","6","7","8","9"}
 				local code=""
 				while setup do
@@ -47,8 +47,8 @@ function getData()
 					else
 						code=code..event[2]
 						term.setCursorPos(2,4)
-						Draw.clearLine()
-						Draw.write(code,2^15)
+						term.clearLine()
+						write(code,2^15)
 						if #code==5 then setup=false end
 					end
 				end
