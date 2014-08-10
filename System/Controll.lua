@@ -1,5 +1,6 @@
+term.redirect(Core.parentTerm)
+Core.tProcess.window.redraw()
 Data=Core.getData()
-local c=true
 Draw.statusTime="right"
 local _color=Draw.sColor
 paintutils.drawLine(1,1,Screen.Width,1,1)
@@ -9,12 +10,13 @@ term.setCursorPos(2,1)
 Draw.cwrite("&5L &1R &eS&f")
 term.setCursorPos((Screen.Width-4)/2,1)
 Draw.cwrite((Data.bModem and "&fM " or "&8M ")..(Data.Notification and "&fN " or "&8N ")..(Data.H24 and "&fH " or "&8H "))
+local c=true
 while c do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="mouse_click" then
 local x,y=tEvent[3],tEvent[4]
-if y==1 then
-if x==(Screen.Width-4)/2 then if Data.bModem then Data.bModem=false else Data.bModem=true end
+if tEvent[4]==1 then
+if tEvent[3]==(Screen.Width-4)/2 then if Data.bModem then Data.bModem=false else Data.bModem=true end
 elseif x==(Screen.Width-4)/2+2 then if Data.Notification then Data.Notification=false else Data.Notification=true end
 elseif x==(Screen.Width-4)/2+4 then if Data.H24 then Data.H24=false else Data.H24=true end
 elseif x==2 then c=nil Draw.setStatusColor(_color); Draw.statusTime="center"; shell.run("System/Lock.lua")
@@ -29,7 +31,8 @@ else
 c=nil
 Draw.setStatusColor(_color)
 Draw.statusTime="center"
-shell.run(Core.last)
+Draw.status()
+term.redirect(Core.tProcess.window)
 end
 end
 end

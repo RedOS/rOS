@@ -41,7 +41,7 @@ if fs.exists("Apps/"..tApps[m][(n-1)*3+i].."/icon") then
 tIcon=Draw.loadIcon("Apps/"..tApps[m][(n-1)*3+i].."/icon")
 if tIcon==nil then tIcon=Draw.loadIcon("System/Images/default") end
 end
-Draw.icon(tIcon,math.ceil(Screen.Width/3)*(i-1)+3,n*5-2)
+Draw.icon(tIcon,math.ceil(Screen.Width/3)*(i-1)+3,n*5-3)
 tIcons[nIcon]={}
 tIcons[nIcon][1]=math.ceil(Screen.Width/3)*(i-1)+3
 tIcons[nIcon][2]=math.ceil(Screen.Width/3)*(i-1)+6
@@ -50,7 +50,7 @@ tIcons[nIcon][4]=n*5+1
 tIcons[nIcon][5]=tApps[m][(n-1)*3+i]
 nIcon=nIcon+1
 if tApps[m][(n-1)*3+i]=="Date" then
-term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+4,n*5-1)
+term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+4,n*5-2)
 if Time.date then
 _y,_m,nD=Time.date(os.day())
 else
@@ -65,11 +65,11 @@ term.setTextColor(2^15)
 sName=nil
 sName2=nil
 if #tApps[m][(n-1)*3+i]>10 then sName=tApps[m][(n-1)*3+i]:sub(1,9) sName2=tApps[m][(n-1)*3+i]:sub(9,#tApps[m][(n-1)*3+i]) else sName=tApps[m][(n-1)*3+i] end
-term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+(7/#sName)*2,n*5+1)
+term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+(7/#sName)*2,n*5)
 term.setBackgroundColor(1)
 write(sName)
 if sName2 then
-term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+3,n*5+2)
+term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+3,n*5+1)
 write(sName2)
 end
 end
@@ -87,7 +87,7 @@ if tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if oldx==x and oldy==y then
 for i=1,#tIcons do
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then Core.last="Apps/"..tIcons[i][5].."/Startup.lua"; shell.run("Apps/"..tIcons[i][5].."/Startup.lua") end
+if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then Core.last="Apps/"..tIcons[i][5].."/Startup.lua"; shell.run("Apps/"..tIcons[i][5].."/Startup.lua") Core.last="System/Desktop.lua" drawApps(m) end
 end
 end
 oldx,oldy=x,y

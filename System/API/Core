@@ -4,20 +4,25 @@ DataChange=true
 last="System/Lock.lua"
 tProcess={}
 tProcess2={}
+parentTerm = term.current()
 
 function launch(tProgramEnv,sProgramPath,...)
 local tProgramArgs={ ... }
+tProcess.window=window.create(parentTerm,1,2,Screen.Width,Screen.Height,true)
 tProcess.co = coroutine.create( function()
         os.run( tProgramEnv, sProgramPath, unpack( tProgramArgs ) )
     end )
+	term.redirect(tProcess.window)
 coroutine.resume(tProcess.co)
 end
 
 function launchS(tProgramEnv,sProgramPath,...)
 local tProgramArgs={ ... }
+tProcess2.window=window.create(parentTerm,1,2,Screen.Width,Screen.Height,true)
 tProcess2.co = coroutine.create( function()
         os.run( tProgramEnv, sProgramPath, unpack( tProgramArgs ) )
     end )
+term.redirect(tProcess2.window)
 coroutine.resume(tProcess2.co)
 end
 
@@ -47,8 +52,8 @@ function getData()
 					else
 						code=code..event[2]
 						term.setCursorPos(2,4)
-						term.clearLine()
-						write(code,2^15)
+						Draw.clearLine()
+						Draw.write(code,2^15)
 						if #code==5 then setup=false end
 					end
 				end
@@ -61,6 +66,7 @@ function getData()
 			f=fs.open("System/Config.lua","w")
 			f.write(textutils.serialize(Data))
 			f.close()
+			os.reboot()
 		end
 	end
 end

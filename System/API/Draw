@@ -1,5 +1,6 @@
 Data={["version"]="1.0",["name"]="Draw",}
 
+BgColor=32768
 TextColor=1
 isVisible=true
 sColor=1
@@ -13,8 +14,24 @@ end
 function setStatusColor(nColor)
 Draw.sColor=nColor
 end
+oterm={}
+oterm.setBackgroundColor=term.setBackgroundColor
+oterm.setTextColor=term.setTextColor
+function term.setBackgroundColor(nColor)
+oterm.setBackgroundColor(nColor)
+Draw.BgColor=nColor
+end
+function term.setTextColor(nColor)
+oterm.setTextColor(nColor)
+Draw.TextColor=nColor
+end
+
 
 function status()
+	local _term = term.current()
+	term.redirect(Core.parentTerm)
+	local _bClr=Draw.BgColor
+	local _tClr=Draw.TextColor
 	if Draw.isVisible then
 	ox,oy=term.getCursorPos()
 	local Data=Core.getData()
@@ -36,13 +53,22 @@ function status()
 	write((Data.bModem and "M " or "")..(Data.Notification and "N " or ""))
 	end
 	term.setCursorPos(ox,oy)
+	term.setBackgroundColor(_bClr)
+	term.setTextColor(_tClr)
 	end
+	term.redirect(_term)
 end
 
 function clear(color)
 	local color=color or Draw.BgColor
 	term.setBackgroundColor(color)
 	term.clear()
+	for i=1,Screen.Width do
+	for n=1,Screen.Height do
+	Screen.Pixel[i][n]["bgc"]=color
+	Screen.Pixel[i][n]["char"]=" "
+	end
+	end
 	term.setCursorPos(1,1)
 end
 

@@ -1,0 +1,40 @@
+Data={["version"]="1.0",["name"]="Multitask",}
+
+Processes={}
+parentTerm = term.current()
+
+function launch(tEnv,sProgramPath,...)
+    local tProgramArgs={...}
+    local nProcess=#Processes+1
+    local Process={}
+    Process.title=fs.getName(sProgramPath)
+    Process.window=window.create(parentTerm,1,2,Screen.Width,Screen.Height,true)
+    Process.co = coroutine.create( function()
+        os.run(tEnv,sProgramPath,unpack(tProgramArgs))
+    end )
+	term.redirect(Process.window)
+	coroutine.resume(Processses[nProcess].co)
+    Processes[ nProcess]=Process
+    return nProcess
+end
+
+function select(nProcess)
+	if Processes[nProcess] then
+		term.redirect(Processes[nProcess].window)
+		Processes[nProcess].window.redraw()
+		coroutine.resume(Processes[nProcess].co)
+		return true
+	else
+		return false
+	end
+end
+
+function close(nProcess)
+	if Processes[nProcess] then
+		table.remove(Processes,nProcess)
+		select(
+		return true
+	else
+		return false
+	end
+end
