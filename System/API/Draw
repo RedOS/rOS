@@ -29,7 +29,7 @@ end
 
 function status()
 	local _term = term.current()
-	term.redirect(Core.parentTerm)
+	term.redirect(Multitask.parentTerm)
 	local _bClr=Draw.BgColor
 	local _tClr=Draw.TextColor
 	if Draw.isVisible then
@@ -138,8 +138,10 @@ function cprint(text)
 cwrite(text.."\n")
 end
 function icon(text,x,y)
+if text then
 for i=1,#text do
 term.setCursorPos(x,y+(i-1))
 cwrite(text[i])
+end
 end
 end

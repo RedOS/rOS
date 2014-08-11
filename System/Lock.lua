@@ -1,5 +1,5 @@
+Screen.Width,Screen.Height=term.getSize()
 Data=Core.getData()
-Core.last="System/Lock.lua"
 Draw.clear(256)
 Draw.setStatusColor(128)
 Draw.isStatusVisible(true)
@@ -58,7 +58,6 @@ if try==5 then
 if tonumber(nCode)==Data.Code then
 Draw.clear(1)
 kpad=false
-Core.last="System/Desktop.lua"
 shell.run("System/Desktop.lua")
 else
 for i=1,5 do paintutils.drawPixel((i*2)+7,2,2^14) end
