@@ -76,8 +76,8 @@ end
 end
 end
 local tPixs={}
-for i=1,#tApps do paintutils.drawPixel((Screen.Width-#tApps)/2+2*(i-1),Screen.Height-2,256) tPixs[i]=(Screen.Width-#tApps)/2+2*(i-1) end
-paintutils.drawPixel(tPixs[m],Screen.Height-2,128)
+for i=1,#tApps do paintutils.drawPixel((Screen.Width-#tApps)/2+2*(i-1),Screen.Height-1,256) tPixs[i]=(Screen.Width-#tApps)/2+2*(i-1) end
+paintutils.drawPixel(tPixs[m],Screen.Height-1,128)
 end
 drawApps(m)
 local desktop=true
@@ -87,7 +87,7 @@ if tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if oldx==x and oldy==y then
 for i=1,#tIcons do
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then Multitask.launch({},"Apps/"..tIcons[i][5].."/Startup.lua",tIcons[i][5]) Multitask.Processes[1].window.redraw() end
+if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/"..tIcons[i][5].."/Startup.lua") drawApps(m) end
 end
 end
 oldx,oldy=x,y

@@ -27,8 +27,7 @@ local function loadAll()
 end
 function drawScreen()
         loadAll()
-		term.setBackgroundColor(1)
-        term.clear()
+        Draw.clear(1)
 		Draw.setStatusColor(128)
 		Draw.isStatusVisible(true)
 		Draw.status()
@@ -60,7 +59,6 @@ saveAll()
 elseif string.sub(input,0,4) == "exit" then
 notes=false
 saveAll()
-shell.run("System/Desktop.lua")
 end
 drawScreen()
 end
