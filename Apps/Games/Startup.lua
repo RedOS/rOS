@@ -1,9 +1,7 @@
-tGames=fs.list("Apps/Games/")
+w,h=term.getSize()
+tGames=fs.list("Apps/Games/Content")
 for i=1,#tGames do
 if tGames[i] then
-if not fs.isDir("Apps/Games/"..tGames[i]) then
-table.remove(tGames,i)
-end
 end
 end
 function drawGames()
@@ -19,8 +17,8 @@ Draw.status()
 for n=1,2 do
 for i=1,2 do
 if tGames[(n-1)*2+i] then
-if fs.exists("Apps/Games/"..tGames[(n-1)*2+i].."/icon") then
-tIcon=Draw.loadIcon("Apps/Games/"..tGames[(n-1)*2+i].."/icon")
+if fs.exists("Apps/Games/Content/"..tGames[(n-1)*2+i].."/icon") then
+tIcon=Draw.loadIcon("Apps/Games/Content/"..tGames[(n-1)*2+i].."/icon")
 else
 tIcon=Draw.loadIcon("System/Images/default")
 end
@@ -38,6 +36,8 @@ if #tGames[(n-1)*2+i]>12 then sName=tGames[(n-1)*2+i]:sub(1,9).."..." else sName
 term.setCursorPos(math.ceil(w/2)*(i-1)+(12/#sName)*i+i-1,n*8-1)
 term.setBackgroundColor(1)
 term.write(sName)
+term.setBackgroundColor(32768)
+term.setTextColor(1)
 end
 end
 end
@@ -52,7 +52,7 @@ x,y=tEvent[3],tEvent[4]
 if oldx==x and oldy==y then
 for i=1,#tIcons do
 if x>=w/2-2 and x<=w/2+2 and y==h then games=false shell.run("System/Desktop.lua") end
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/Games/"..tIcons[i][5].."/Startup.lua") end
+if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/Games/Content/"..tIcons[i][5].."/Startup.lua") end
 drawGames()
 end
 end

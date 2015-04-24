@@ -9,7 +9,7 @@ local ox=term.getCursorPos()
 term.setBackgroundColor(1)
 term.setTextColor(2^15)
 for i=1,17 do
-term.setCursorPos(2,i+1)
+term.setCursorPos(2,i)
 term.clearLine()
 Draw.cprint(tChatHistory[i])
 end
@@ -142,7 +142,7 @@ modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,"&8"..user.." is now online")
 paintutils.drawFilledBox(1,1,Screen.Width,Screen.Height,1)
 for o=1,17 do
 term.setTextColor(2^15)
-term.setCursorPos(2,o+1)
+term.setCursorPos(2,o-1)
 term.clearLine()
 Draw.cprint(tChatHistory[o])
 end
@@ -164,7 +164,10 @@ if msg~="" or msg~=" " or msg~=nil or msg~="/exit" then
 modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,user..": "..msg)
 msg="&fYou: ".."&5"..msg.."&f"
 for i=2,17 do tChatHistory[i-1]=tChatHistory[i] end tChatHistory[17]=msg
+local xpos,ypos=term.getCursorPos()
+term.setCursorPos(2,Screen.Height-1)
 update()
+term.setCursorPos(xpos,ypos)
 end
 end
 else

@@ -1,4 +1,5 @@
 local calendar=true
+nYear,sMonth,nDay,sDay,nDayWeek,nMonth=nil,nil,nil,nil,nil,nil       
 Draw.clear(256)
 Draw.setStatusColor(128)
 Draw.status()
@@ -7,7 +8,7 @@ if not Time then os.loadAPI("System/API/Time") end
 nYear,sMonth,nDay,sDay,nDayWeek,nMonth=Time.date(os.day())
 term.setCursorPos(1,2)
 Draw.cprint("&0$8 Today is "..sDay..",\n "..sMonth..nDay..", year "..nYear)
-term.setCursorPos((Screen.Width-4)/2,Screen.Height-1)
+term.setCursorPos((Screen.Width-4)/2,Screen.Height)
 write("Back")
 while calendar do
 tEvent={os.pullEventRaw()}

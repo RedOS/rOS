@@ -275,7 +275,7 @@ activeStwatch=false
 Time.Stopwatch=0
 paintutils.drawFilledBox(Screen.Width/2-7,7,Screen.Width/2-1,9,32)
 term.setCursorPos(Screen.Width/2-6,8)
-cwrite("$5&0Start")
+Draw.cwrite("$5&0Start")
 term.setTextColor(16384)
 term.setBackgroundColor(1)
 term.setCursorPos(math.ceil((Screen.Width-13)/2),5)

@@ -120,7 +120,7 @@ elseif tEvent[4]==11 then
 Data.Notification=revert(Data.Notification)
 term.setCursorPos(1,11)
 Draw.cprint("$0&f Notifications ")
-term.setCursorPos(Screen.Width-2,1)
+term.setCursorPos(Screen.Width-2,11)
 Draw.cprint(Data.Notification==true and on or off.."$0")
 elseif tEvent[4]==12 then
 Data.H24=revert(Data.H24)
