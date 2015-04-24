@@ -4,14 +4,10 @@ local chat=true
 Data=Core.getData()
 if Data.bModem then modem=peripheral.find("modem") end
 if modem then
-local function update(msg)
+local function update()
 local ox=term.getCursorPos()
 term.setBackgroundColor(1)
 term.setTextColor(2^15)
-for i=2,17 do
-tChatHistory[i-1]=tChatHistory[i]
-end
-tChatHistory[17]=msg
 for i=1,17 do
 term.setCursorPos(2,i+1)
 term.clearLine()
@@ -120,7 +116,7 @@ local function fRead( _sReplaceChar, _tHistory )
             w = term.getSize()
             redraw()
 		elseif sEvent=="modem_message" and type(message)~="table" then
-			update("&f"..message)
+			update()
         end
     end
     local cx, cy = term.getCursorPos()
@@ -133,12 +129,7 @@ Draw.setStatusColor(1)
 Draw.isStatusVisible(true)
 Draw.status()
 paintutils.drawFilledBox(1,1,Screen.Width,Screen.Height,1)
---[[if type(tChatHistory)~="table" or #tChatHistory==0 then
-tChatHistory={}
-for i=1,17 do
-tChatHistory[i]=""
-end
-end]]
+if not modem.isOpen(CHAT_CHANNEL) then modem.open(CHAT_CHANNEL) end
 if not user then
 term.setCursorPos(1,Screen.Height)
 paintutils.drawLine(1,Screen.Height+1,Screen.Width,Screen.Height+1,256)
@@ -167,12 +158,13 @@ paintutils.drawLine(1,Screen.Height,Screen.Width,Screen.Height,256)
 term.setCursorPos(1,Screen.Height)
 term.setTextColor(1)
 write("> ")
-msg = fRead()
+msg=fRead()
 if msg=="/exit" then chat=false modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,"&8"..user.." is now offline") shell.run("System/Desktop.lua") end
 if msg~="" or msg~=" " or msg~=nil or msg~="/exit" then
 modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,user..": "..msg)
-msg="&fYou: ".."&5"..msg
-update(msg)
+msg="&fYou: ".."&5"..msg.."&f"
+for i=2,17 do tChatHistory[i-1]=tChatHistory[i] end tChatHistory[17]=msg
+update()
 end
 end
 else

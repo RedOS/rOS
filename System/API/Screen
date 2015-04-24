@@ -1,10 +1,4 @@
 Data={["version"]="1.0",["name"]="Screen",}
 
 Width,Height=term.getSize()
-Pixel={}
-for n=1,Width do
-Pixel[n]={}
-for i=1,Height do
-Pixel[n][i]={["char"]=" ",["txc"]=1,["bgc"]=32768}
-end
-end
+Height=Height+1
