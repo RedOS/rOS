@@ -4,7 +4,7 @@ file.write(textutils.serialize({["Alarms"]={["Times"]={},["Active"]={}},["Stopwa
 file.close()
 end
 file=fs.open("Apps/Time/Table.lua","r")
-Time=textutils.unserialize(file.readAll())
+tTime=textutils.unserialize(file.readAll())
 file.close()
 file=nil
 activeStwatch=false
@@ -15,14 +15,14 @@ Draw.isStatusVisible(true)
 Draw.status()
 term.setCursorPos(1,Screen.Height-1)
 Draw.cwrite("$0&eExit")
-for i=1,#Time.Menu do
-term.setCursorPos((((Screen.Width-#Time.Menu[i])/#Time.Menu)*(i-1))+3*(i-1)+1,Screen.Height)
-Time.Buttons[i]={}
-Time.Buttons[i][1]=math.floor((((Screen.Width-#Time.Menu[i])/#Time.Menu)*(i-1))+3*(i-1)+1)
-Time.Buttons[i][2]=math.ceil(Time.Buttons[i][1]+#Time.Menu[i])
+for i=1,#tTime.Menu do
+term.setCursorPos((((Screen.Width-#tTime.Menu[i])/#tTime.Menu)*(i-1))+3*(i-1)+1,Screen.Height)
+tTime.Buttons[i]={}
+tTime.Buttons[i][1]=math.floor((((Screen.Width-#tTime.Menu[i])/#tTime.Menu)*(i-1))+3*(i-1)+1)
+tTime.Buttons[i][2]=math.ceil(tTime.Buttons[i][1]+#tTime.Menu[i])
 term.setTextColor(256)
-if i==Time.Selected then term.setTextColor(16384) end
-term.write(Time.Menu[i])
+if i==tTime.Selected then term.setTextColor(16384) end
+term.write(tTime.Menu[i])
 end
 end
 local function drawButton(state)
@@ -35,7 +35,7 @@ Draw.cwrite("&0$eI $0")
 end
 end
 local function drawAlarms(table)
-Time.Selected=1
+tTime.Selected=1
 drawTimeMenu()
 term.setCursorPos(Screen.Width-6,2)
 if not edit then
@@ -55,7 +55,7 @@ end
 end
 end
 local function drawStwatch(table)
-Time.Selected=2
+tTime.Selected=2
 drawTimeMenu()
 term.setCursorPos(math.ceil((Screen.Width-7)/2),5)
 term.setTextColor(16384)
@@ -73,7 +73,7 @@ else
 mseconds=number
 end
 end
-parse(Time.Stopwatch)
+parse(tTime.Stopwatch)
 print(string.format("%02d:%02d:%d",tostring(minutes),tostring(seconds),tostring(mseconds)))
 if activeStwatch then
 paintutils.drawFilledBox(Screen.Width/2-7,7,Screen.Width/2-1,9,16384)
@@ -94,10 +94,10 @@ function parseTimer(number)
 minutes=math.floor(number/60)
 seconds=number-minutes*60
 end
-Time.Selected=3
+tTime.Selected=3
 drawTimeMenu()
 term.setCursorPos(Screen.Width/2-2,5)
-parseTimer(Time.Timer)
+parseTimer(tTime.Timer)
 write(string.format("%02d:%02d",tonumber(minutes),tonumber(seconds)))
 if activeCountdown then
 paintutils.drawFilledBox(Screen.Width/2-7,7,Screen.Width/2-1,9,16384)
@@ -112,12 +112,12 @@ paintutils.drawFilledBox(Screen.Width/2+1,7,Screen.Width/2+7,9,256)
 term.setCursorPos(Screen.Width/2+2,8)
 Draw.cwrite("$8&0Cancel")
 paintutils.drawLine(Screen.Width/2-5,12,Screen.Width/2+5,12,256)
-paintutils.drawLine(Screen.Width/2-5,12,(Screen.Width/2-5)+(10-math.ceil((Time.Timer/Time.TimerStart)*10)),12,16384)
+paintutils.drawLine(Screen.Width/2-5,12,(Screen.Width/2-5)+(10-math.ceil((tTime.Timer/tTime.TimerStart)*10)),12,16384)
 end
 local function getMenu()
-if Time.Selected==1 then drawAlarms(Time) end
-if Time.Selected==2 then drawStwatch(Time) end
-if Time.Selected==3 then drawTimer(Time) end
+if tTime.Selected==1 then drawAlarms(tTime) end
+if tTime.Selected==2 then drawStwatch(tTime) end
+if tTime.Selected==3 then drawTimer(tTime) end
 end
 local function getTimer()
 slct=1
@@ -161,7 +161,7 @@ end
 end
 times=(mins*60)+secs
 if times==0 then times=1 end
-Time.TimerStart=times
+tTime.TimerStart=times
 return times
 end
 local function setAlarm(number,oldTime)
@@ -214,8 +214,8 @@ write(string.format("%2d",minute))
 end
 if not enter then
 nTime=string.format("%2d:%2d",hour,minute+0.001)
-Time.Alarms.Times[number]=nTime
-Time.Alarms.Active[number]=true
+tTime.Alarms.Times[number]=nTime
+tTime.Alarms.Active[number]=true
 os.setAlarm(tonumber(hour.."."..math.floor(tonumber(minute)*100/60))+0.001)
 term.setCursorBlink(false)
 end
@@ -227,52 +227,52 @@ while timeApp do
 tEvent={os.pullEventRaw()}
 if tEvent[1]=="timer" then
 if tEvent[2]==stWatch and activeStwatch then
-Time.Stopwatch=Time.Stopwatch+1
+tTime.Stopwatch=tTime.Stopwatch+1
 stWatch=os.startTimer(60/72/10)
-if Time.Selected==2 then
+if tTime.Selected==2 then
 minutes,seconds,mseconds=0,0,0
-parse(Time.Stopwatch)
+parse(tTime.Stopwatch)
 term.setTextColor(16384)
 term.setBackgroundColor(1)
 term.setCursorPos(math.ceil((Screen.Width-7)/2),5)
 print(string.format("%02d:%02d:%d",tostring(minutes),tostring(seconds),tostring(mseconds)))
 end
 elseif tEvent[2]==count and activeCountdown then
-Time.Timer=Time.Timer-1
-if Time.Timer<=0 then activeCountdown=false Time.Timer=Time.TimerStart drawTimer(Time) else
+tTime.Timer=tTime.Timer-1
+if tTime.Timer<=0 then activeCountdown=false tTime.Timer=tTime.TimerStart drawTimer(tTime) else
 count=os.startTimer(60/72)
-if Time.Selected==3 then
+if tTime.Selected==3 then
 minutes,seconds=0,0
-parseTimer(Time.Timer)
+parseTimer(tTime.Timer)
 term.setTextColor(16384)
 term.setBackgroundColor(1)
 term.setCursorPos(Screen.Width/2-2,5)
 print(string.format("%02d:%02d",tostring(minutes),tostring(seconds)))
 paintutils.drawLine(Screen.Width/2-5,12,Screen.Width/2+5,12,256)
-paintutils.drawLine(Screen.Width/2-5,12,(Screen.Width/2-5)+(10-math.ceil((Time.Timer/Time.TimerStart)*10)),12,16384)
+paintutils.drawLine(Screen.Width/2-5,12,(Screen.Width/2-5)+(10-math.ceil((tTime.Timer/tTime.TimerStart)*10)),12,16384)
 end
 end
 end
 elseif tEvent[1]=="mouse_click" then
 x,y=tEvent[3],tEvent[4]
 if y==Screen.Height then
-for i=1,#Time.Buttons do if x>=Time.Buttons[i][1] and x<=Time.Buttons[i][2] then Time.Selected=i getMenu() x,y=0,0 end end
+for i=1,#tTime.Buttons do if x>=tTime.Buttons[i][1] and x<=tTime.Buttons[i][2] then tTime.Selected=i getMenu() x,y=0,0 end end
 elseif y==Screen.Height-1 then
 timeApp=false
 activeCountdown=false
 activeStwatch=false
 file=fs.open("Apps/Time/Table.lua","w")
-file.write(textutils.serialize(Time))
+file.write(textutils.serialize(tTime))
 file.close()
 shell.run("System/Desktop.lua")
 else
-if Time.Selected==2 then
+if tTime.Selected==2 then
 if x>=Screen.Width/2-7 and y>= 7 and x<= Screen.Width/2-1 and y<=9 then
 if activeStwatch then activeStwatch=false else activeStwatch=true stWatch=os.startTimer(60/72/10) end
-drawStwatch(Time)
+drawStwatch(tTime)
 elseif x>=Screen.Width/2+1 and y>=7 and x<=Screen.Width/2+7 and y<=9 then
 activeStwatch=false
-Time.Stopwatch=0
+tTime.Stopwatch=0
 paintutils.drawFilledBox(Screen.Width/2-7,7,Screen.Width/2-1,9,32)
 term.setCursorPos(Screen.Width/2-6,8)
 Draw.cwrite("$5&0Start")
@@ -281,7 +281,7 @@ term.setBackgroundColor(1)
 term.setCursorPos(math.ceil((Screen.Width-13)/2),5)
 print("   00:00:0   ")
 end
-elseif Time.Selected==1 then
+elseif tTime.Selected==1 then
 if y==2 then
 if edit==true then edit=false else edit=true end
 term.setCursorPos(Screen.Width-6,2)
@@ -293,41 +293,41 @@ end
 else
 if x<Screen.Width-2 then
 if edit then
-if Time.Alarms.Times[y-2] then nAlarm=y-2 else nAlarm=#Time.Alarms.Times+1 end
+if tTime.Alarms.Times[y-2] then nAlarm=y-2 else nAlarm=#tTime.Alarms.Times+1 end
 term.setCursorPos(2,nAlarm)
 setAlarm(nAlarm)
 else
-if Time.Alarms.Active[y-2]==true and Time.Alarms.Times[y-2] then Time.Alarms.Active[y-2]=false elseif Time.Alarms.Active[y-2]==false and Time.Alarms.Times[y-2] then Time.Alarms.Active[y-2]=true end
+if tTime.Alarms.Active[y-2]==true and tTime.Alarms.Times[y-2] then tTime.Alarms.Active[y-2]=false elseif tTime.Alarms.Active[y-2]==false and tTime.Alarms.Times[y-2] then tTime.Alarms.Active[y-2]=true end
 end
-drawAlarms(Time)
+drawAlarms(tTime)
 elseif x==Screen.Width-1 then
-table.remove(Time.Alarms.Active,y-2)
-table.remove(Time.Alarms.Times,y-2)
-drawAlarms(Time)
+table.remove(tTime.Alarms.Active,y-2)
+table.remove(tTime.Alarms.Times,y-2)
+drawAlarms(tTime)
 end
 end
-elseif Time.Selected==3 then
+elseif tTime.Selected==3 then
 if y==5 then
-Time.Timer=getTimer()
-drawTimer(Time)
+tTime.Timer=getTimer()
+drawTimer(tTime)
 end
 if x>=Screen.Width/2-7 and y>= 7 and x<= Screen.Width/2-1 and y<=9 then
 if activeCountdown then activeCountdown=false else activeCountdown=true count=os.startTimer(60/72) end
-drawTimer(Time)
+drawTimer(tTime)
 elseif x>=Screen.Width/2+1 and y>= 7 and x<= Screen.Width/2+7 and y<=9 then
 activeCountdown=false
-Time.Timer=0
-drawTimer(Time)
+tTime.Timer=0
+drawTimer(tTime)
 end
 end
 end
 elseif tEvent[2]==keys.right then
-Time.Selected=Time.Selected+1
-if Time.Selected>#Time.Menu then Time.Selected=#Time.Menu end
+tTime.Selected=tTime.Selected+1
+if tTime.Selected>#tTime.Menu then tTime.Selected=#tTime.Menu end
 getMenu()
 elseif tEvent[2]==keys.left then
-Time.Selected=Time.Selected-1
-if Time.Selected<1 then Time.Selected=1 end
+tTime.Selected=tTime.Selected-1
+if tTime.Selected<1 then tTime.Selected=1 end
 getMenu()
 end
 end
