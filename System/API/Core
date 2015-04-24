@@ -1,23 +1,6 @@
 Data={["version"]="1.0",["name"]="Core",}
 
 DataChange=true
-parentTerm=term.current()
-local Process,W,H={},term.getSize()
-
-function launch(tEnv,sProgramPath,...)
-    local ProgramArgs={...}
-    Process.title=fs.getName(sProgramPath)
-	Process.path=fs.getDir(sProgramPath)
-	Process.aPath=sProgramPath
-    Process.window=window.create(parentTerm,1,2,W,H-1,true)
-    Process.co = coroutine.create( function()
-        os.run(tEnv,sProgramPath,unpack(ProgramArgs))
-    end )
-	term.redirect(Process.window)
-	Core.thread=Process.co
-	Core.window=Process.window
-	coroutine.resume(Process.co)
-end
 
 function getData()
 	if Core then

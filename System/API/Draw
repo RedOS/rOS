@@ -28,8 +28,8 @@ end
 
 
 function status()
-	local _term=term.current()
-	term.redirect(Core.parentTerm)
+	local _term = term.current()
+	term.redirect(Multitask.parentTerm)
 	local _bClr=Draw.BgColor
 	local _tClr=Draw.TextColor
 	if Draw.isVisible then
@@ -63,11 +63,21 @@ function clear(color)
 	local color=color or Draw.BgColor
 	term.setBackgroundColor(color)
 	term.clear()
+	for i=1,Screen.Width do
+	for n=1,Screen.Height do
+	Screen.Pixel[i][n]["bgc"]=color
+	Screen.Pixel[i][n]["char"]=" "
+	end
+	end
 	term.setCursorPos(1,1)
 end
 
 function clearLine()
 	x,y=Draw.getCursor()
+	for i=1,Screen.Width do
+		term.setCursorPos(i,y)
+		write(" ")
+	end
 end
 
 function loadIcon(path,bBig)
