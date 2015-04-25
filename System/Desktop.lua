@@ -3,6 +3,7 @@ f=fs.open("Apps/.desktop","r")
 tApps=textutils.unserialize(f.readAll())
 f.close()
 tApp=fs.list("Apps")
+x,y=0,0
 for i=1,#tApps do
 if tApp[i]==".desktop" then table.remove(tApp,i) end
 end
