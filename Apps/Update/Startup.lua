@@ -44,16 +44,16 @@ end
 end
 end
 else
-Draw.setStatusColor(128)
+Draw.setStatusColor(Draw.StatusGlobal)
 Draw.isStatusVisible(true)
 Draw.status()
 local function loading()
 local img=paintutils.loadImage("Apps/Update/load")
-paintutils.drawFilledBox(Screen.Width/2-7,Screen.Height/2-1,Screen.Width/2+7,Screen.Height/2+2,128)
+paintutils.drawFilledBox(Screen.Width/2-7,Screen.Height/2-1,Screen.Width/2+7,Screen.Height/2+2,256)
 paintutils.drawImage(img,Screen.Width/2-4,Screen.Height/2+1)
-term.setCursorPos((w-9)/2,Screen.Height/2)
+term.setCursorPos((Screen.Width-9)/2,Screen.Height/2)
 term.setTextColor(1)
-term.setBackgroundColor(128)
+term.setBackgroundColor(256)
 print("Updating...")
 for i=1,5 do
 paintutils.drawImage(img,Screen.Width/2-4,Screen.Height/2+1)
