@@ -2,6 +2,7 @@ Data={["version"]="1.0",["name"]="Draw",}
 
 BgColor=32768
 TextColor=1
+StatusGlobal=256
 isVisible=true
 sColor=1
 statusTime="center"
