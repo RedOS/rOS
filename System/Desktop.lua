@@ -29,7 +29,7 @@ local function drawApps(m)
 local nIcon=1
 tIcons={}
 Draw.clear(1)
-Draw.setStatusColor(128)
+Draw.setStatusColor(Draw.StatusGlobal)
 Draw.isStatusVisible(true)
 Draw.status()
 term.setTextColor(2^15)

@@ -1,11 +1,11 @@
 Screen.Width,Screen.Height=term.getSize()
 Data=Core.getData()
-Draw.clear(256)
-Draw.setStatusColor(128)
+Draw.clear(1)
+Draw.setStatusColor(256)
 Draw.isStatusVisible(true)
 Draw.status()
 paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),6,4)
-term.setTextColor(2^15)
+term.setTextColor(1)
 local nDrag,nLast,lock,kpad=0,3,true,true
 local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
 for i=1,4 do
@@ -51,7 +51,7 @@ end
 if try then
 if try>5 then try=5 end
 for i=1,try do
-paintutils.drawPixel((i*2)+7,2,1)
+paintutils.drawPixel((i*2)+7,2,32)
 end
 end
 if try==5 then
