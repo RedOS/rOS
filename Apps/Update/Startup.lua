@@ -53,3 +53,5 @@ if fs.exists(data[i]) then
 fs.delete(data[i])
 end
 end
+end
+os.reboot()
