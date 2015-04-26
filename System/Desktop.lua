@@ -24,7 +24,7 @@ if number>Desktop.Pages then number=Desktop.Pages end
 			CurrentApp=(number*(Desktop.Lines*Desktop.Rows))+(line-1)*Desktop.Rows+row
 				if Desktop.Applications[CurrentApp] then
 				Desktop.App[CurrentApp]={}
-				Desktop.App[CurrentApp].sX=math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2
+				Desktop.App[CurrentApp].sX=math.floor(math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2)
 				Desktop.App[CurrentApp].sY=line*5-3
 				Desktop.App[CurrentApp].name=Desktop.Applications[CurrentApp]
 				term.setCursorPos(Desktop.App[CurrentApp].sX,Desktop.App[CurrentApp].sY)
@@ -55,7 +55,7 @@ while Desktop.Running do
 		if Desktop.oldx==Desktop.x and Desktop.oldy==Desktop.y then
 			for i=1,Desktop.AppsDrawn do
 			local l=Desktop.Pages*(Desktop.Rows*Desktop.Lines)
-			if Desktop.x>=Desktop.App[l+i].sX and Desktop.x<=Desktop.App[+li].sX+4 and Desktop.y>=Desktop.App[l+i].sY and Desktop.y<=Desktop.App[l+i].sY+4 then
+			if Desktop.x>=Desktop.App[l+i].sX and Desktop.x<=Desktop.App[l+i].sX+4 and Desktop.y>=Desktop.App[l+i].sY and Desktop.y<=Desktop.App[l+i].sY+4 then
 				shell.run("Apps/"..Desktop.App[l+i].name.."/Startup.lua") Desktop.draw()
 			end
 			end
@@ -65,4 +65,5 @@ while Desktop.Running do
 		if Event[3]<Desktop.x-4 then if Desktop.CurrentPage+1<=Desktop.Pages then Desktop.draw(Desktop.CurrentPage+1) end end
 		if Event[3]>Desktop.x+4 then if Desktop.CurrentPage-1>=0 then Desktop.draw(Desktop.CurrentPage-1) end end
 	end
+	Desktop.oldx,Desktop.oldy=Desktop.x,Desktop.y
 end

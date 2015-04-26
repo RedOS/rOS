@@ -24,7 +24,7 @@ if number>Game.Pages then number=Game.Pages end
 			CurrentApp=(number*(Game.Lines*Game.Rows))+(line-1)*Game.Rows+row
 				if Game.Applications[CurrentApp] then
 				Game.App[CurrentApp]={}
-				Game.App[CurrentApp].sX=math.floor(Screen.Width*row/Game.Rows)-Screen.Width/Game.Rows/2
+				Game.App[CurrentApp].sX=math.floor(math.floor(Screen.Width*row/Game.Rows)-Screen.Width/Game.Rows/2)
 				Game.App[CurrentApp].sY=line*5-3
 				Game.App[CurrentApp].name=Game.Applications[CurrentApp]
 				term.setCursorPos(Game.App[CurrentApp].sX,Game.App[CurrentApp].sY)
@@ -55,7 +55,7 @@ while Game.Running do
 		if Game.oldx==Game.x and Game.oldy==Game.y then
 			for i=1,Game.AppsDrawn do
 			local l=Game.Pages*(Game.Rows*Game.Lines)
-			if Game.x>=Game.App[Game.Pages*(l+i].sX and Game.x<=Game.App[+li].sX+4 and Game.y>=Game.App[l+i].sY and Game.y<=Game.App[l+i].sY+4 then
+			if Game.x>=Game.App[Game.Pages*(l+i].sX and Game.x<=Game.App[l+i].sX+4 and Game.y>=Game.App[l+i].sY and Game.y<=Game.App[l+i].sY+4 then
 				shell.run("Apps/Games/Content"..Game.App[l+i].name.."/Startup.lua") Game.draw()
 			end
 			end
@@ -65,4 +65,5 @@ while Game.Running do
 		if Event[3]<Game.x-4 then if Game.CurrentPage+1<=Game.Pages then Game.draw(Game.CurrentPage+1) end end
 		if Event[3]>Game.x+4 then if Game.CurrentPage-1>=0 then Game.draw(Game.CurrentPage-1) end end
 	end
+	Game.oldx,Game.oldy=Game.x,Game.y
 end
