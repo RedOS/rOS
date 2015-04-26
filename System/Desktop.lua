@@ -15,7 +15,7 @@ local function setPage(number)
 Desktop.CurrentPage=number
 end
 local function draw(number)
-Draw.clear(1)
+Draw.clear(128)
 local number=number or 0
 if number<0 then number=0 end
 if number>Desktop.Pages then number=Desktop.Pages end
@@ -31,7 +31,7 @@ if number>Desktop.Pages then number=Desktop.Pages end
 				term.setCursorPos(Desktop.App[CurrentApp].sX,Desktop.App[CurrentApp].sY)
 				if fs.exists("Apps/"..Desktop.App[CurrentApp].name.."/icon")==true then path="Apps/"..Desktop.App[CurrentApp].name.."/icon" else path="System/Images/icon" end
 				Draw.icon(path)
-				term.setBackgroundColor(1)
+				term.setBackgroundColor(128)
 				term.setTextColor(32768)
 				term.setCursorPos(((math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2)+2-#Desktop.Applications[CurrentApp]/2)>1 and (math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2)+2-#Desktop.Applications[CurrentApp]/2 or 1,Desktop.App[CurrentApp].sY+3)
 				term.write(Desktop.App[CurrentApp].name)
@@ -40,7 +40,7 @@ if number>Desktop.Pages then number=Desktop.Pages end
 		end
 	end
 	for i=1,Desktop.Pages+1 do
-		paintutils.drawPixel(Screen.Width/2+2*(i-1)-Desktop.Pages,Screen.Height-1,(i-1)==Desktop.CurrentPage and 128 or 256)
+		paintutils.drawPixel(Screen.Width/2+2*(i-1)-Desktop.Pages,Screen.Height-1,(i-1)==Desktop.CurrentPage and 1 or 256)
 	end
 	Draw.setStatusColor(Draw.StatusGlobal)
 	Draw.isStatusVisible(true)
