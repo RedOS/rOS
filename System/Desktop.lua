@@ -1,4 +1,8 @@
 Desktop={}
+Desktop.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
+Desktop.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
+Desktop.Pages=math.ceil(Desktop.Icons/(Desktop.Rows*Desktop.Lines))-1
+local function draw(number)
 Desktop.App={}
 Desktop.Applications=fs.list("Apps/")
 Desktop.Icons=#Desktop.Applications
@@ -8,13 +12,6 @@ Desktop.oldx=0
 Desktop.oldy=0
 Desktop.CurrentPage=0
 Desktop.AppsDrawn=0
-Desktop.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
-Desktop.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
-Desktop.Pages=math.ceil(Desktop.Icons/(Desktop.Rows*Desktop.Lines))-1
-local function setPage(number)
-Desktop.CurrentPage=number
-end
-local function draw(number)
 Draw.clear(1)
 local number=number or 0
 if number<0 then number=0 end
