@@ -1,2 +1,4 @@
-Apps/.desktop
-System/delete
+{
+  "Apps/.desktop",
+  "System/delete",
+}

@@ -6,40 +6,82 @@ term.setCursorPos(Screen.Width/2-4,Screen.Height/2)
 term.setTextColor(32768)
 term.setBackgroundColor(1)
 term.write("Updating")
+local path="/"
 local function save(data,file)
-        local file = shell.resolve(file)
-        if not (fs.exists(string.sub(file,1,#file - #fs.getName(file))) and fs.isDir(string.sub(file,1,#file - #fs.getName(file)))) then
-                if fs.exists(string.sub(file,1,#file - #fs.getName(file))) then fs.delete(string.sub(file,1,#file - #fs.getName(file))) end
-                fs.makeDir(string.sub(file,1,#file - #fs.getName(file)))
-        end
-        local f = fs.open(file,"w")
-        f.write(data)
-        f.close()
+	local file = shell.resolve(file:gsub("%%20"," "))
+	if not (fs.exists(string.sub(file,1,#file - #fs.getName(file))) and fs.isDir(string.sub(file,1,#file - #fs.getName(file)))) then
+		if fs.exists(string.sub(file,1,#file - #fs.getName(file))) then fs.delete(string.sub(file,1,#file - #fs.getName(file))) end
+		fs.makeDir(string.sub(file,1,#file - #fs.getName(file)))
+	end
+	local f = fs.open(file,"w")
+	f.write(data)
+	f.close()
 end
 local function download(url, file)
-        save(http.get(url).readAll(),file)
+	save(http.get(url).readAll(),file)
 end
 if not fs.exists("Apps/Update/json") then
         download("http://pastebin.com/raw.php?i=4nRg9CHU","Apps/Update/json")
 end
 os.loadAPI("Apps/Update/json")
-if pre_dl then loadstring(pre_dl)() end
 local data = json.decode(http.get("https://api.github.com/repos/RedOS/rOS/git/trees/master?recursive=1").readAll())
+if data.message and data.message:find("API rate limit exceeded") then error("Out of API calls, try again later") end
 if data.message and data.message == "Not found" then error("Invalid repository",2) else
 	for k,v in pairs(data.tree) do
-		if v.size then
-			size=size+v.size
-		end
-	end
-	
-	for k,v in pairs(data.tree) do
+		-- Make directories
 		if v.type == "tree" then
-			fs.makeDir(v.path)
+			fs.makeDir(fs.combine(path,v.path))
+			if not hide_progress then
+			end
 		end
 	end
+	local drawProgress
+	if async and not silent then
+		local _, y = term.getCursorPos()
+		local wide, _ = term.getSize()
+		term.setCursorPos(1, y)
+		term.write("[")
+		term.setCursorPos(wide - 6, y)
+		term.write("]")
+		drawProgress = function(done, max)
+			local value = done / max
+			term.setCursorPos(2,y)
+			term.write(("="):rep(math.floor(value * (wide - 8))))
+			local percent = math.floor(value * 100) .. "%"
+			term.setCursorPos(wide - percent:len(),y)
+			term.write(percent)
+		end
+	end
+	local filecount = 0
+	local downloaded = 0
+	local paths = {}
+	local failed = {}
 	for k,v in pairs(data.tree) do
+		-- Send all HTTP requests (async)
 		if v.type == "blob" then
-			download("https://raw.github.com/RedOS/rOS/master/"..v.path,v.path)
+			v.path = v.path:gsub("%s","%%20")
+			local url = "https://raw.github.com/"..args[1].."/"..args[2].."/"..args[3].."/"..v.path,fs.combine(path,v.path)
+			if async then
+				http.request(url)
+				paths[url] = fs.combine(path,v.path)
+				filecount = filecount + 1
+			else
+				download(url, fs.combine(path, v.path))
+				if not silent then print(fs.combine(path, v.path)) end
+			end
+		end
+	end
+	while downloaded < filecount do
+		local e, a, b = os.pullEvent()
+		if e == "http_success" then
+			save(b.readAll(),paths[a])
+			downloaded = downloaded + 1
+			if not silent then drawProgress(downloaded,filecount) end
+		elseif e == "http_failure" then
+			-- Retry in 3 seconds
+			failed[os.startTimer(3)] = a
+		elseif e == "timer" and failed[a] then
+			http.request(failed[a])
 		end
 	end
 end
