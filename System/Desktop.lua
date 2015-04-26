@@ -15,10 +15,6 @@ local function setPage(number)
 Desktop.CurrentPage=number
 end
 local function draw(number)
-Desktop.x=0
-Desktop.y=0
-Desktop.oldx=0
-Desktop.oldy=0
 Draw.clear(1)
 local number=number or 0
 if number<0 then number=0 end
@@ -60,8 +56,10 @@ while Desktop.Running do
 		if Desktop.oldx==Desktop.x and Desktop.oldy==Desktop.y then
 			for i=1,Desktop.AppsDrawn do
 			local l=Desktop.CurrentPage*(Desktop.Rows*Desktop.Lines)
+			if Desktop.App[l+i] then
 			if Desktop.x>=Desktop.App[l+i].sX and Desktop.x<=Desktop.App[l+i].sX+4 and Desktop.y>=Desktop.App[l+i].sY and Desktop.y<=Desktop.App[l+i].sY+4 then
 				shell.run("Apps/"..Desktop.App[l+i].name.."/Startup.lua") Desktop.draw()
+			end
 			end
 			end
 			Desktop.oldx,Desktop.oldy=Desktop.x,Desktop.y

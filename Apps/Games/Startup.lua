@@ -1,18 +1,22 @@
 Game={}
-Game.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
-Game.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
-Game.CurrentPage=0
-local function draw(number)
-Draw.clear(1)
-local number=number or 0
 Game.App={}
 Game.Applications=fs.list("Apps/Games/Content")
 Game.Icons=#Game.Applications
-Game.Pages=math.ceil(Game.Icons/(Game.Rows*Game.Lines))-1
 Game.x=0
 Game.y=0
 Game.oldx=0
-Game.oldy=0Game.AppsDrawn=0
+Game.oldy=0
+Game.CurrentPage=0
+Game.AppsDrawn=0
+Game.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
+Game.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
+Game.Pages=math.ceil(Game.Icons/(Game.Rows*Game.Lines))-1
+local function setPage(number)
+Game.CurrentPage=number
+end
+local function draw(number)
+Draw.clear(1)
+local number=number or 0
 if number<0 then number=0 end
 if number>Game.Pages then number=Game.Pages end
 	Game.CurrentPage=number
@@ -25,7 +29,7 @@ if number>Game.Pages then number=Game.Pages end
 				Game.App[CurrentApp].sY=line*5-3
 				Game.App[CurrentApp].name=Game.Applications[CurrentApp]
 				term.setCursorPos(Game.App[CurrentApp].sX,Game.App[CurrentApp].sY)
-				if fs.exists("Apps/Games/Content"..Game.App[CurrentApp].name.."/icon")==true then path="Apps/Games/Content/"..Game.App[CurrentApp].name.."/icon" else path="System/Images/icon" end
+				if fs.exists("Apps/Games/Content/"..Game.App[CurrentApp].name.."/icon")==true then path="Apps/Games/Content/"..Game.App[CurrentApp].name.."/icon" else path="System/Images/icon" end
 				Draw.icon(path)
 				term.setBackgroundColor(1)
 				term.setTextColor(32768)
@@ -52,8 +56,10 @@ while Game.Running do
 		if Game.oldx==Game.x and Game.oldy==Game.y then
 			for i=1,Game.AppsDrawn do
 			local l=Game.CurrentPage*(Game.Rows*Game.Lines)
+			if Game.App[l+i] then
 			if Game.x>=Game.App[l+i].sX and Game.x<=Game.App[l+i].sX+4 and Game.y>=Game.App[l+i].sY and Game.y<=Game.App[l+i].sY+4 then
 				shell.run("Apps/Games/Content/"..Game.App[l+i].name.."/Startup.lua") Game.draw()
+			end
 			end
 			end
 			Game.oldx,Game.oldy=Game.x,Game.y
