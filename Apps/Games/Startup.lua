@@ -1,6 +1,7 @@
 Game={}
 Game.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
 Game.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
+Game.CurrentPage=0
 local function draw(number)
 Draw.clear(1)
 local number=number or 0
@@ -11,9 +12,7 @@ Game.Pages=math.ceil(Game.Icons/(Game.Rows*Game.Lines))-1
 Game.x=0
 Game.y=0
 Game.oldx=0
-Game.oldy=0
-Game.CurrentPage=0
-Game.AppsDrawn=0
+Game.oldy=0Game.AppsDrawn=0
 if number<0 then number=0 end
 if number>Game.Pages then number=Game.Pages end
 	Game.CurrentPage=number
