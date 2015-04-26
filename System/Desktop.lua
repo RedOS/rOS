@@ -1,113 +1,68 @@
 Core.last="System/Desktop.lua"
-f=fs.open("Apps/.desktop","r")
-tApps=textutils.unserialize(f.readAll())
-f.close()
-tApp=fs.list("Apps")
-x,y=0,0
-for i=1,#tApps do
-if tApp[i]==".desktop" then table.remove(tApp,i) end
+Desktop={}
+Desktop.App={}
+Desktop.Applications=fs.list("Apps/")
+Desktop.Icons=#Desktop.Applications
+Desktop.x=0
+Desktop.y=0
+Desktop.oldx=0
+Desktop.oldy=0
+Desktop.CurrentPage=0
+Desktop.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
+Desktop.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
+Desktop.Pages=math.ceil(Desktop.Icons/(Desktop.Rows*Desktop.Lines))-1
+local function setPage(number)
+Desktop.CurrentPage=number
 end
-for i=1,3 do
-for k=1,#tApp do
-for n=1,#tApps do
-for i=1,#tApps[n] do
-if tApp[k]==tApps[n][i] then table.remove(tApp,k) end
-end
-end
-end
-end
-if tApp then
-for i=1,math.ceil(#tApp/9) do
-tApps[i+2]={}
-for n=1,9 do
-tApps[i+2][n]=tApp[(i-1)*9+n]
-end
-end
-end
-Data=Core.getData()
-if type(m)~="number" then m=1 end
-local function drawApps(m)
-local nIcon=1
-tIcons={}
+local function draw(number)
 Draw.clear(1)
-Draw.setStatusColor(Draw.StatusGlobal)
-Draw.isStatusVisible(true)
-Draw.status()
-term.setTextColor(2^15)
-for n=1,3 do
-for i=1,3 do
-if tApps[m][(n-1)*3+i] then
-tIcon=Draw.loadIcon("System/Images/default")
-if fs.exists("Apps/"..tApps[m][(n-1)*3+i].."/icon") then
-tIcon=Draw.loadIcon("Apps/"..tApps[m][(n-1)*3+i].."/icon")
-if tIcon==nil then tIcon=Draw.loadIcon("System/Images/default") end
+local number=number or 0
+if number<0 then number=0 end
+if number>Desktop.Pages then number=Desktop.Pages end
+	Desktop.CurrentPage=number
+	for line=1,Desktop.Lines do
+		for row=1,Desktop.Rows do
+			CurrentApp=(number*(Desktop.Lines*Desktop.Rows))+(line-1)*Desktop.Rows+row
+				if Desktop.Applications[CurrentApp] then
+				Desktop.App[CurrentApp]={}
+				Desktop.App[CurrentApp].sX=math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2
+				Desktop.App[CurrentApp].sY=line*5-3
+				Desktop.App[CurrentApp].name=Desktop.Applications[CurrentApp]
+				term.setCursorPos(Desktop.App[CurrentApp].sX,Desktop.App[CurrentApp].sY)
+				if fs.exists("Apps/"..Desktop.App[CurrentApp].name.."/icon")==true then path="Apps/"..Desktop.App[CurrentApp].name.."/icon" else path="System/Images/icon" end
+				Draw.icon(path)
+				term.setBackgroundColor(1)
+				term.setTextColor(32768)
+				term.setCursorPos(((math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2)+2-#Desktop.Applications[CurrentApp]/2)>1 and (math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2)+2-#Desktop.Applications[CurrentApp]/2 or 1,Desktop.App[CurrentApp].sY+3)
+				term.write(Desktop.App[CurrentApp].name)
+			end
+		end
+	end
+	for i=1,Desktop.Pages+1 do
+		paintutils.drawPixel(Screen.Width/2+2*(i-1)-Desktop.Pages,Screen.Height-1,(i-1)==Desktop.CurrentPage and 128 or 256)
+	end
+	Desktop.AppsDrawn=CurrentApp
+	Draw.setStatusColor(Draw.StatusGlobal)
+	Draw.isStatusVisible(true)
+	Draw.status()
 end
-Draw.icon(tIcon,math.ceil(Screen.Width/3)*(i-1)+3,n*5-3)
-tIcons[nIcon]={}
-tIcons[nIcon][1]=math.ceil(Screen.Width/3)*(i-1)+3
-tIcons[nIcon][2]=math.ceil(Screen.Width/3)*(i-1)+6
-tIcons[nIcon][3]=n*5-2
-tIcons[nIcon][4]=n*5+1
-tIcons[nIcon][5]=tApps[m][(n-1)*3+i]
-nIcon=nIcon+1
-if tApps[m][(n-1)*3+i]=="Date" then
-term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+4,n*5-2)
-if Time.date then
-_y,_m,nD=Time.date(os.day())
-else
-nD="--"
-end
-term.setTextColor(1)
-term.setBackgroundColor(2^14)
-if #tostring(nD)==1 then nD="0"..nD end
-print(nD)
-end
-term.setTextColor(2^15)
-sName=nil
-sName2=nil
-if #tApps[m][(n-1)*3+i]>10 then sName=tApps[m][(n-1)*3+i]:sub(1,9) sName2=tApps[m][(n-1)*3+i]:sub(9,#tApps[m][(n-1)*3+i]) else sName=tApps[m][(n-1)*3+i] end
-term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+(7/#sName)*2,n*5)
-term.setBackgroundColor(1)
-write(sName)
-if sName2 then
-term.setCursorPos(math.ceil(Screen.Width/3)*(i-1)+3,n*5+1)
-write(sName2)
-end
-end
-end
-end
-local tPixs={}
-for i=1,#tApps do paintutils.drawPixel((Screen.Width-#tApps)/2+2*(i-1),Screen.Height-1,256) tPixs[i]=(Screen.Width-#tApps)/2+2*(i-1) end
-paintutils.drawPixel(tPixs[m],Screen.Height-1,128)
-end
-drawApps(m)
-local desktop=true
-while desktop do
-tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then
-x,y=tEvent[3],tEvent[4]
-if oldx==x and oldy==y then
-for i=1,#tIcons do
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/"..tIcons[i][5].."/Startup.lua") drawApps(m) end
-end
-end
-oldx,oldy=x,y
-elseif tEvent[1]=="mouse_drag" then
-if tEvent[3]<x-7 then
-if type(m)~="number" then m=1 end
-m=m+1
-if m>#tApps then m=#tApps end
-if m~=oldm then drawApps(m) end
-oldm=m
-x,y=tEvent[3],tEvent[4]
-end
-if tEvent[3]>x+7 then
-if type(m)~="number" then m=1 end
-m=m-1
-if m<1 then m=1 end
-if m~=oldm then drawApps(m) end
-oldm=m
-x,y=tEvent[3],tEvent[4]
-end
-end
+Desktop.Running=true
+Desktop.draw=draw; draw=nil
+Desktop.draw()
+while Desktop.Running do
+	local Event={os.pullEventRaw()}
+	if Event[1]=="mouse_click" then
+		Desktop.x,Desktop.y=Event[3],Event[4]
+		if Desktop.oldx==Desktop.x and Desktop.oldy==Desktop.y then
+			for i=1,Desktop.AppsDrawn do 
+			if Desktop.x>=Desktop.App[i].sX and Desktop.x<=Desktop.App[i].sX+4 and Desktop.y>=Desktop.App[i].sY and Desktop.y<=Desktop.App[i].sY+4 then
+				shell.run("Apps/"..Desktop.App[i].name.."/Startup.lua") Desktop.draw()
+			end
+			end
+			Desktop.oldx,Desktop.oldy=Desktop.x,Desktop.y
+		end
+	elseif Event[1]=="mouse_drag" then
+		if Event[3]<Desktop.x-4 then if Desktop.CurrentPage+1<=Desktop.Pages then Desktop.draw(Desktop.CurrentPage+1) end end
+		if Event[3]>Desktop.x+4 then if Desktop.CurrentPage-1>=0 then Desktop.draw(Desktop.CurrentPage-1) end end
+	end
 end
