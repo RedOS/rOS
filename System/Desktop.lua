@@ -54,7 +54,7 @@ while Desktop.Running do
 		Desktop.x,Desktop.y=Event[3],Event[4]
 		if Desktop.oldx==Desktop.x and Desktop.oldy==Desktop.y then
 			for i=1,Desktop.AppsDrawn do
-			local l=(Desktop.Pages-1)*(Desktop.Rows*Desktop.Lines)
+			local l=Desktop.CurrentPage*(Desktop.Rows*Desktop.Lines)
 			if Desktop.x>=Desktop.App[l+i].sX and Desktop.x<=Desktop.App[l+i].sX+4 and Desktop.y>=Desktop.App[l+i].sY and Desktop.y<=Desktop.App[l+i].sY+4 then
 				shell.run("Apps/"..Desktop.App[l+i].name.."/Startup.lua") Desktop.draw()
 			end

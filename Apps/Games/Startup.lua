@@ -54,7 +54,7 @@ while Game.Running do
 		Game.x,Game.y=Event[3],Event[4]
 		if Game.oldx==Game.x and Game.oldy==Game.y then
 			for i=1,Game.AppsDrawn do
-			local l=(Game.Pages-1)*(Game.Rows*Game.Lines)
+			local l=Game.CurrentPage*(Game.Rows*Game.Lines)
 			if Game.x>=Game.App[l+i].sX and Game.x<=Game.App[l+i].sX+4 and Game.y>=Game.App[l+i].sY and Game.y<=Game.App[l+i].sY+4 then
 				shell.run("Apps/Games/Content/"..Game.App[l+i].name.."/Startup.lua") Game.draw()
 			end
