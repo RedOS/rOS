@@ -28,28 +28,10 @@ local data = json.decode(http.get("https://api.github.com/repos/RedOS/rOS/git/tr
 if data.message and data.message:find("API rate limit exceeded") then error("Out of API calls, try again later") end
 if data.message and data.message == "Not found" then error("Invalid repository",2) else
 	for k,v in pairs(data.tree) do
-		-- Make directories
 		if v.type == "tree" then
 			fs.makeDir(fs.combine(path,v.path))
 			if not hide_progress then
 			end
-		end
-	end
-	local drawProgress
-	if async and not silent then
-		local _, y = term.getCursorPos()
-		local wide, _ = term.getSize()
-		term.setCursorPos(1, y)
-		term.write("[")
-		term.setCursorPos(wide - 6, y)
-		term.write("]")
-		drawProgress = function(done, max)
-			local value = done / max
-			term.setCursorPos(2,y)
-			term.write(("="):rep(math.floor(value * (wide - 8))))
-			local percent = math.floor(value * 100) .. "%"
-			term.setCursorPos(wide - percent:len(),y)
-			term.write(percent)
 		end
 	end
 	local filecount = 0
@@ -57,17 +39,15 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 	local paths = {}
 	local failed = {}
 	for k,v in pairs(data.tree) do
-		-- Send all HTTP requests (async)
 		if v.type == "blob" then
 			v.path = v.path:gsub("%s","%%20")
-			local url = "https://raw.github.com/"..args[1].."/"..args[2].."/"..args[3].."/"..v.path,fs.combine(path,v.path)
+			local url = "https://raw.github.com/RedOS/rOS/master/"..v.path,fs.combine(path,v.path)
 			if async then
 				http.request(url)
 				paths[url] = fs.combine(path,v.path)
 				filecount = filecount + 1
 			else
 				download(url, fs.combine(path, v.path))
-				if not silent then print(fs.combine(path, v.path)) end
 			end
 		end
 	end
@@ -76,9 +56,7 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 		if e == "http_success" then
 			save(b.readAll(),paths[a])
 			downloaded = downloaded + 1
-			if not silent then drawProgress(downloaded,filecount) end
 		elseif e == "http_failure" then
-			-- Retry in 3 seconds
 			failed[os.startTimer(3)] = a
 		elseif e == "timer" and failed[a] then
 			http.request(failed[a])
