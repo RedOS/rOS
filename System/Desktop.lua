@@ -1,11 +1,11 @@
 Desktop={}
 Desktop.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
 Desktop.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
-Desktop.Pages=math.ceil(Desktop.Icons/(Desktop.Rows*Desktop.Lines))-1
 local function draw(number)
 Desktop.App={}
 Desktop.Applications=fs.list("Apps/")
 Desktop.Icons=#Desktop.Applications
+Desktop.Pages=math.ceil(Desktop.Icons/(Desktop.Rows*Desktop.Lines))-1
 Desktop.x=0
 Desktop.y=0
 Desktop.oldx=0
