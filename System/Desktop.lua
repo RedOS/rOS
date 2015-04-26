@@ -54,9 +54,10 @@ while Desktop.Running do
 	if Event[1]=="mouse_click" then
 		Desktop.x,Desktop.y=Event[3],Event[4]
 		if Desktop.oldx==Desktop.x and Desktop.oldy==Desktop.y then
-			for i=1,Desktop.AppsDrawn do 
-			if Desktop.x>=Desktop.App[i].sX and Desktop.x<=Desktop.App[i].sX+4 and Desktop.y>=Desktop.App[i].sY and Desktop.y<=Desktop.App[i].sY+4 then
-				shell.run("Apps/"..Desktop.App[i].name.."/Startup.lua") Desktop.draw()
+			for i=1,Desktop.AppsDrawn do
+			local l=Desktop.Pages*(Desktop.Rows*Desktop.Lines)
+			if Desktop.x>=Desktop.App[Desktop.Pages*(l+i].sX and Desktop.x<=Desktop.App[+li].sX+4 and Desktop.y>=Desktop.App[l+i].sY and Desktop.y<=Desktop.App[l+i].sY+4 then
+				shell.run("Apps/"..Desktop.App[l+i].name.."/Startup.lua") Desktop.draw()
 			end
 			end
 			Desktop.oldx,Desktop.oldy=Desktop.x,Desktop.y

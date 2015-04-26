@@ -165,7 +165,7 @@ modem.transmit(CHAT_CHANNEL,CHAT_CHANNEL,user..": "..msg)
 msg="&fYou: ".."&5"..msg.."&f"
 for i=2,17 do tChatHistory[i-1]=tChatHistory[i] end tChatHistory[17]=msg
 local xpos,ypos=term.getCursorPos()
-term.setCursorPos(2,Screen.Height-1)
+term.setCursorPos(2,Screen.Height-2)
 update()
 term.setCursorPos(xpos,ypos)
 end
