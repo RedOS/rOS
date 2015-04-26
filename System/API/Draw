@@ -68,7 +68,7 @@ function clear(color)
 end
 
 function clearLine()
-	x,y=Draw.getCursor()
+	x,y=term.getCursorPos()
 end
 
 function loadIcon(path,bBig)

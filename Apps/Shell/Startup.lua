@@ -1,5 +1,7 @@
 Draw.clear(2^15)
-Draw.isStatusVisible(false)
+Draw.isStatusVisible(true)
+Draw.setStatusColor(32768)
+Draw.status()
 term.setCursorPos(1,1)
 shell.run("rom/programs/shell")
 shell.run("System/Desktop.lua")

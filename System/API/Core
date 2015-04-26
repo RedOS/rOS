@@ -46,7 +46,7 @@ function getData()
 						code=code..event[2]
 						term.setCursorPos(2,4)
 						Draw.clearLine()
-						Draw.write(code,2^15)
+						Draw.cwrite(code,2^15)
 						if #code==5 then setup=false end
 					end
 				end
