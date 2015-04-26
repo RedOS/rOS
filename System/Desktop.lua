@@ -1,3 +1,4 @@
+Core.last="System/Desktop.lua"
 Desktop={}
 Desktop.App={}
 Desktop.Applications=fs.list("Apps/")
