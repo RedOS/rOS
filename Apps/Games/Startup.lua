@@ -1,61 +1,68 @@
-w,h=term.getSize()
-tGames=fs.list("Apps/Games/Content")
-for i=1,#tGames do
-if tGames[i] then
+Game={}
+Game.App={}
+Game.Applications=fs.list("Apps/Games/Content")
+Game.Icons=#Game.Applications
+Game.x=0
+Game.y=0
+Game.oldx=0
+Game.oldy=0
+Game.CurrentPage=0
+Game.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
+Game.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
+Game.Pages=math.ceil(Game.Icons/(Game.Rows*Game.Lines))-1
+local function setPage(number)
+Game.CurrentPage=number
 end
-end
-function drawGames()
-local nIcon=1
-tIcons={}
+local function draw(number)
 Draw.clear(1)
-term.setTextColor(2^15)
-term.setCursorPos(w/2-2,h)
-term.write("Back")
-Draw.setStatusColor(128)
-Draw.isStatusVisible(true)
-Draw.status()
-for n=1,2 do
-for i=1,2 do
-if tGames[(n-1)*2+i] then
-if fs.exists("Apps/Games/Content/"..tGames[(n-1)*2+i].."/icon") then
-tIcon=Draw.loadIcon("Apps/Games/Content/"..tGames[(n-1)*2+i].."/icon")
-else
-tIcon=Draw.loadIcon("System/Images/default")
+local number=number or 0
+if number<0 then number=0 end
+if number>Game.Pages then number=Game.Pages end
+	Game.CurrentPage=number
+	for line=1,Game.Lines do
+		for row=1,Game.Rows do
+			CurrentApp=(number*(Game.Lines*Game.Rows))+(line-1)*Game.Rows+row
+				if Game.Applications[CurrentApp] then
+				Game.App[CurrentApp]={}
+				Game.App[CurrentApp].sX=math.floor(Screen.Width*row/Game.Rows)-Screen.Width/Game.Rows/2
+				Game.App[CurrentApp].sY=line*5-3
+				Game.App[CurrentApp].name=Game.Applications[CurrentApp]
+				term.setCursorPos(Game.App[CurrentApp].sX,Game.App[CurrentApp].sY)
+				if fs.exists("Apps/GamesContent"..Game.App[CurrentApp].name.."/icon")==true then path="Apps/Games/Content"..Game.App[CurrentApp].name.."/icon" else path="System/Images/icon" end
+				Draw.icon(path)
+				term.setBackgroundColor(1)
+				term.setTextColor(32768)
+				term.setCursorPos(((math.floor(Screen.Width*row/Game.Rows)-Screen.Width/Game.Rows/2)+2-#Game.Applications[CurrentApp]/2)>1 and (math.floor(Screen.Width*row/Game.Rows)-Screen.Width/Game.Rows/2)+2-#Game.Applications[CurrentApp]/2 or 1,Game.App[CurrentApp].sY+3)
+				term.write(Game.App[CurrentApp].name)
+			end
+		end
+	end
+	for i=1,Game.Pages+1 do
+		paintutils.drawPixel(Screen.Width/2+2*(i-1)-Game.Pages,Screen.Height-1,(i-1)==Game.CurrentPage and 128 or 256)
+	end
+	Game.AppsDrawn=CurrentApp
+	Draw.setStatusColor(Draw.StatusGlobal)
+	Draw.isStatusVisible(true)
+	Draw.status()
 end
-Draw.icon(tIcon,math.ceil(w/2)*(i-1)+3+(i-1)*4,n*8-4)
-tIcons[nIcon]={}
-tIcons[nIcon][1]=math.ceil(w/2)*(i-1)+4
-tIcons[nIcon][2]=math.ceil(w/2)*(i-1)+11
-tIcons[nIcon][3]=n*8-4
-tIcons[nIcon][4]=n*8-1
-tIcons[nIcon][5]=tGames[(n-1)*2+i]
-nIcon=nIcon+1
-term.setTextColor(2^15)
-sName=nil
-if #tGames[(n-1)*2+i]>12 then sName=tGames[(n-1)*2+i]:sub(1,9).."..." else sName=tGames[(n-1)*2+i] end
-term.setCursorPos(math.ceil(w/2)*(i-1)+(12/#sName)*i+i-1,n*8-1)
-term.setBackgroundColor(1)
-term.write(sName)
-term.setBackgroundColor(32768)
-term.setTextColor(1)
-end
-end
-end
-end
-nStatusTimer=os.startTimer(60/72)
-drawGames()
-local games=true
-while games do
-tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then
-x,y=tEvent[3],tEvent[4]
-if oldx==x and oldy==y then
-for i=1,#tIcons do
-if x>=w/2-2 and x<=w/2+2 and y==h then games=false shell.run("System/Desktop.lua") end
-if x>=tIcons[i][1] and x<=tIcons[i][2] and y>=tIcons[i][3] and y<=tIcons[i][4] then shell.run("Apps/Games/Content/"..tIcons[i][5].."/Startup.lua") end
-drawGames()
-end
-end
-oldx,oldy=x,y
-end
+Game.Running=true
+Game.draw=draw; draw=nil
+Game.draw()
+while Game.Running do
+	local Event={os.pullEventRaw()}
+	if Event[1]=="mouse_click" then
+		Game.x,Game.y=Event[3],Event[4]
+		if Game.oldx==Game.x and Game.oldy==Game.y then
+			for i=1,Game.AppsDrawn do
+			local l=Game.Pages*(Game.Rows*Game.Lines)
+			if Game.x>=Game.App[Game.Pages*(l+i].sX and Game.x<=Game.App[+li].sX+4 and Game.y>=Game.App[l+i].sY and Game.y<=Game.App[l+i].sY+4 then
+				shell.run("Apps/Games/Content"..Game.App[l+i].name.."/Startup.lua") Game.draw()
+			end
+			end
+			Game.oldx,Game.oldy=Game.x,Game.y
+		end
+	elseif Event[1]=="mouse_drag" then
+		if Event[3]<Game.x-4 then if Game.CurrentPage+1<=Game.Pages then Game.draw(Game.CurrentPage+1) end end
+		if Event[3]>Game.x+4 then if Game.CurrentPage-1>=0 then Game.draw(Game.CurrentPage-1) end end
+	end
 end
