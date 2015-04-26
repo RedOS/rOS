@@ -28,7 +28,7 @@ if number>Game.Pages then number=Game.Pages end
 				Game.App[CurrentApp].sY=line*5-3
 				Game.App[CurrentApp].name=Game.Applications[CurrentApp]
 				term.setCursorPos(Game.App[CurrentApp].sX,Game.App[CurrentApp].sY)
-				if fs.exists("Apps/GamesContent"..Game.App[CurrentApp].name.."/icon")==true then path="Apps/Games/Content"..Game.App[CurrentApp].name.."/icon" else path="System/Images/icon" end
+				if fs.exists("Apps/Games/Content"..Game.App[CurrentApp].name.."/icon")==true then path="Apps/Games/Content/"..Game.App[CurrentApp].name.."/icon" else path="System/Images/icon" end
 				Draw.icon(path)
 				term.setBackgroundColor(1)
 				term.setTextColor(32768)
@@ -54,9 +54,9 @@ while Game.Running do
 		Game.x,Game.y=Event[3],Event[4]
 		if Game.oldx==Game.x and Game.oldy==Game.y then
 			for i=1,Game.AppsDrawn do
-			local l=Game.Pages*(Game.Rows*Game.Lines)
-			if Game.x>=Game.App[Game.Pages*(l+i].sX and Game.x<=Game.App[l+i].sX+4 and Game.y>=Game.App[l+i].sY and Game.y<=Game.App[l+i].sY+4 then
-				shell.run("Apps/Games/Content"..Game.App[l+i].name.."/Startup.lua") Game.draw()
+			local l=(Game.Pages-1)*(Game.Rows*Game.Lines)
+			if Game.x>=Game.App[l+i].sX and Game.x<=Game.App[l+i].sX+4 and Game.y>=Game.App[l+i].sY and Game.y<=Game.App[l+i].sY+4 then
+				shell.run("Apps/Games/Content/"..Game.App[l+i].name.."/Startup.lua") Game.draw()
 			end
 			end
 			Game.oldx,Game.oldy=Game.x,Game.y
