@@ -7,6 +7,7 @@ Desktop.y=0
 Desktop.oldx=0
 Desktop.oldy=0
 Desktop.CurrentPage=0
+Desktop.AppsDrawn=0
 Desktop.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
 Desktop.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
 Desktop.Pages=math.ceil(Desktop.Icons/(Desktop.Rows*Desktop.Lines))-1
@@ -34,13 +35,13 @@ if number>Desktop.Pages then number=Desktop.Pages end
 				term.setTextColor(32768)
 				term.setCursorPos(((math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2)+2-#Desktop.Applications[CurrentApp]/2)>1 and (math.floor(Screen.Width*row/Desktop.Rows)-Screen.Width/Desktop.Rows/2)+2-#Desktop.Applications[CurrentApp]/2 or 1,Desktop.App[CurrentApp].sY+3)
 				term.write(Desktop.App[CurrentApp].name)
+				Desktop.AppsDrawn=Desktop.AppsDrawn+1
 			end
 		end
 	end
 	for i=1,Desktop.Pages+1 do
 		paintutils.drawPixel(Screen.Width/2+2*(i-1)-Desktop.Pages,Screen.Height-1,(i-1)==Desktop.CurrentPage and 128 or 256)
 	end
-	Desktop.AppsDrawn=CurrentApp
 	Draw.setStatusColor(Draw.StatusGlobal)
 	Draw.isStatusVisible(true)
 	Draw.status()

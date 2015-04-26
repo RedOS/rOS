@@ -7,6 +7,7 @@ Game.y=0
 Game.oldx=0
 Game.oldy=0
 Game.CurrentPage=0
+Game.AppsDrawn=0
 Game.Rows=(math.floor(Screen.Width/9)*9+6<=Screen.Width and math.ceil(Screen.Width/9) or math.floor(Screen.Width/9))
 Game.Lines=(math.floor(Screen.Height/5)*5+3<=Screen.Height and math.floor(Screen.Height/5) or math.floor(Screen.Height/5)-1)
 Game.Pages=math.ceil(Game.Icons/(Game.Rows*Game.Lines))-1
@@ -34,13 +35,13 @@ if number>Game.Pages then number=Game.Pages end
 				term.setTextColor(32768)
 				term.setCursorPos(((math.floor(Screen.Width*row/Game.Rows)-Screen.Width/Game.Rows/2)+2-#Game.Applications[CurrentApp]/2)>1 and (math.floor(Screen.Width*row/Game.Rows)-Screen.Width/Game.Rows/2)+2-#Game.Applications[CurrentApp]/2 or 1,Game.App[CurrentApp].sY+3)
 				term.write(Game.App[CurrentApp].name)
+				Game.AppsDrawn=Game.AppsDrawn+1
 			end
 		end
 	end
 	for i=1,Game.Pages+1 do
 		paintutils.drawPixel(Screen.Width/2+2*(i-1)-Game.Pages,Screen.Height-1,(i-1)==Game.CurrentPage and 128 or 256)
 	end
-	Game.AppsDrawn=CurrentApp
 	Draw.setStatusColor(Draw.StatusGlobal)
 	Draw.isStatusVisible(true)
 	Draw.status()
