@@ -1,70 +1,56 @@
 Screen.Width,Screen.Height=term.getSize()
+Lock={}
+Lock.Number={}
+Lock.Drag=0
+Lock.Running=true
+Lock.Code=""
+Lock.x=0
+Lock.y=0
 Data=Core.getData()
 Draw.clear(1)
 Draw.setStatusColor(256)
-Draw.isStatusVisible(true)
 Draw.status()
-paintutils.drawImage(paintutils.loadImage("System/Images/keypad"),Screen.Width/2-6,4)
-term.setTextColor(1)
-local nDrag,nLast,lock,kpad=0,3,true,true
-local numbers={"1","2","3","4","5","6","7","8","9","","0",""}
-for i=1,4 do
-for n=1,3 do
-term.setCursorPos(Screen.Width/2+(n-1)*6-5,(4*i)+1)
-write(numbers[(i*3)-3+n])
+for line=1,3 do
+	for row=1,3 do
+		paintutils.drawFilledBox(Screen.Width/2+(row-1)*6-7,4*line,Screen.Width/2+(row-1)*6-5,4*line+2,256)
+		term.setCursorPos(Screen.Width/2+(row-1)*6-6,4*line+1)
+		term.setTextColor(1)
+		local CurrentNumber=(line-1)*3+row
+		term.write(tostring(CurrentNumber))
+		Lock.Number[CurrentNumber]={}
+		Lock.Number[CurrentNumber].sX=math.floor(Screen.Width/2+(row-1)*6-7)
+		Lock.Number[CurrentNumber].sY=math.floor(4*line)
+		Lock.Number[CurrentNumber].number=CurrentNumber
+	end
 end
-end
+paintutils.drawFilledBox(Screen.Width/2-1,16,Screen.Width/2+1,18,256)
+term.setCursorPos(Screen.Width/2,17)
+term.write("0")
+Lock.Number[0]={}
+Lock.Number[0].sX=Screen.Width/2-1
+Lock.Number[0].sY=16
+Lock.Number[0].number=0
 for i=1,5 do
-paintutils.drawPixel(Screen.Width/2+(i*2)-5,2,128)
+	paintutils.drawPixel(Screen.Width/2-6+2*i,2,128)
 end
-local nCode=""
-local try=0
-while kpad do
-tEvent={os.pullEvent()}
-if tEvent[1]=="mouse_click" then
-local num=""
-for i=1,3 do
-for n=1,3 do
-if tEvent[3]>=Screen.Width/2+(n-1)*6-6 and tEvent[3]<=Screen.Width/2+(n-1)*6-4 and tEvent[4]>=4*i and tEvent[4]<=4*i+2 then 
-num=(i-1)*3+n
-end
-end
-end
-if tEvent[3]>=Screen.Width/2-1 and tEvent[3]<Screen.Width/2+1 and tEvent[4]>15 and tEvent[4]<19 then num=0 end
-tostring(num)
-nCodeOld=nCode
-nCode=nCode..num
-os.sleep(.001)
-if #nCodeOld~=#nCode then
-try=try+1
-end
-elseif tEvent[1]=="char" then
-tEvent[2]=tonumber(tEvent[2])
-if type(tEvent[2])=="number" then
-nCodeOld=nCode
-nCode=nCode..tEvent[2]
-if #nCodeOld~=#nCode then
-try=try+1
-end
-end
-end
-if try then
-if try>5 then try=5 end
-for i=1,try do
-paintutils.drawPixel(Screen.Width/2+(i*2)-5,2,32)
-end
-end
-if try==5 then
-if tonumber(nCode)==Data.Code then
-Draw.clear(1)
-kpad=false
-shell.run("System/Desktop.lua")
-else
-for i=1,5 do paintutils.drawPixel(Screen.Width/2+(i*2)-5,2,2^14) end
-os.sleep(.33)
-for i=1,5 do paintutils.drawPixel(Screen.Width/2+(i*2)-5,2,128) end
-try=0
-nCode=""
-end
-end
+while Lock.Running do
+	Event={os.pullEventRaw()}
+	if Event[1]=="mouse_click" then
+		Lock.x,Lock.y=Event[3],Event[4]
+		for number=0,9 do
+			if Lock.x>=Lock.Number[number].sX and Lock.x<=Lock.Number[number].sX+2 and Lock.y>=Lock.Number[number].sY and Lock.y<=Lock.Number[number].sY+2 then Lock.Code=Lock.Code..number end
+		end
+	elseif Event[1]=="char" and type(tonumber(Event[2]))=="number" then Lock.Code=Lock.Code..tostring(Event[2])
+	elseif #Lock.Code==5 then 
+		if tonumber(Lock.Code)==Data.Code then Lock.Runnning=false 
+		shell.run("System/Desktop.lua") else
+			for i=1,2 do 
+				for n=1,5 do 
+					paintutils.drawPixel(Screen.Width/2-6+2*n,2,i==1 and 16384 or 128) 
+				end 
+				if i==1 then os.sleep(1) end 
+			end
+			Lock.Code=""
+		end
+	end
 end
