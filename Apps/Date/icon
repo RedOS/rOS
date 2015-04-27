@@ -14,5 +14,5 @@
     "0000",
     "0000",
   },
-    specialCode = "local a,b,c=Time.date() d,e=term.getCursorPos() term.setCursorPos(d+1,e-2) term.write(#tostring(c)>1 and tostring(c) or '0..tostring(c)')",
+    specialCode = "local a,b,c=Time.date() d,e=term.getCursorPos() term.setCursorPos(d+1,e-2) term.write(#tostring(c)>1 and tostring(c) or '0.'.tostring(c))",
 }
