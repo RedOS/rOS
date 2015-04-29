@@ -1,27 +1,38 @@
-Data=Core.getData()
-paintutils.drawFilledBox((Screen.Width-18)/2,Screen.Height/2-3,(Screen.Width+18)/2,Screen.Height/2+1,256)
-tPos={}
-tPos.x,tPos.y,tPos.z=nil,nil,nil
-if Data.bModem and peripheral.find("modem") then tPos.x,tPos.y,tPos.z=gps.locate() end
-if tPos.x and tPos.y and tPos.z then
-tPos.x=math.floor(tPos.x)
-tPos.y=math.floor(tPos.y)
-tPos.z=math.floor(tPos.z)
-term.setTextColor(1)
-term.setCursorPos((Screen.Width-8)/2+2,Screen.Height/2-2)
-print("X="..tPos.x," ")
-term.setCursorPos((Screen.Width-8)/2+2,Screen.Height/2-1)
-print("Y="..tPos.y," ")
-term.setCursorPos((Screen.Width-8)/2+2,Screen.Height/2)
-print("Z="..tPos.z," ")
-else
-term.setCursorPos((Screen.Width-18)/2+1,Screen.Height/2-1)
-print("Can't get position")
+Locate={}
+Locate.Pos={}
+Locate.Loading=true
+Locate.Running=true
+local function loading()
+	local table={"/","-","\\","|",}
+	while Locate.Loading do
+		for i=1,4 do
+			if Locate.Loading then
+			term.setCursorPos(Screen.Width/2,Screen.Height/2)
+			term.write(table[i])
+			os.sleep(.33)
+			end
+		end
+	end
 end
-local app=true
-while app do
-tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then
-app=false
+local function locate()
+	Locate.Pos={gps.locate()} or nil
+	if #Locate.Pos>0 then
+		paintutils.drawFilledBox(Screen.Width/2-2,Screen.Height/2-1,Screen.Width/2+2,Screen.Height/2+1,1)
+		for i=1,3 do
+			term.setCursorPos(Screen.Width/2-2,Screen.Height/2-2+i)
+			term.write(math.floor(Locate.Pos[i]))
+		end
+	else
+		paintutils.drawFilledBox(Screen.Width/2-4,Screen.Height/2-1,Screen.Width/2+4,Screen.Height/2+1,1)
+		term.setCursorPos(Screen.Width/2-2,Screen.Height/2)
+		term.write("Error")
+	end
+	Locate.Loading=false
 end
+term.setTextColor(32768)
+paintutils.drawFilledBox(Screen.Width/2-1,Screen.Height/2-1,Screen.Width/2+1,Screen.Height/2+1,1)
+while Locate.Running do
+	parallel.waitForAll(loading,locate)
+	Event={os.pullEventRaw()}
+	if Event[1]==("mouse_click" or "key") then Locate.Running=false end
 end
