@@ -1,19 +1,18 @@
-local on="$5&0 I$0&f"
-local off="$e&0I $0&f"
-local function round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
-end
-local function revert(value)
-if value==true then return false else return true end
-end
-local function getSize(path)
+Settings={}
+Settings.Groups=textutils.unserialize(fs.open("Apps/Settings/Table.lua","r").readAll())
+Settings.Format={On=32,Off=16384}
+Settings.Big=Screen.Width>29 and true or false
+Settings.Buttons={}
+Settings.CurrentPage=0
+Settings.x=0
+Settings.y=0
+Settings.Running=true
+fs.getSizeFolder = function(path)
   local size = 0
   for _, file in ipairs(fs.list(path)) do
   if file~="rom" then
     if fs.isDir(fs.combine(path, file)) then
-      --# if it is a directory, recurse.
-      size = size + getSize(fs.combine(path, file))
+      size = size + fs.getSizeFolder(fs.combine(path, file))
     else
       size = size + fs.getSize(fs.combine(path, file))
     end
@@ -21,122 +20,130 @@ local function getSize(path)
   end
   return size
 end
-fs.getSpaceLimit = function(_path, _space, _final)
-local final = true
-if(_final ~= nil) then
-final = _final
-end 
-local space = 0
-if(_space ~= nil) then
-space = _space
+local function handleType(Type,Value,Action)
+	local ox,oy=term.getCursorPos()
+	if Type=="bool" then
+		if type(Value)=="string" then Value=loadstring(Value)() end
+		term.setCursorPos(Screen.Width-1,oy)
+		term.setTextColor(1)
+		term.setBackgroundColor(Value and Settings.Format.On or Settings.Format.Off)
+		term.write(Value and "I" or "O")
+		local size=#Settings.Buttons[Settings.CurrentPage]+1
+		Settings.Buttons[Settings.CurrentPage][size]={}
+		Settings.Buttons[Settings.CurrentPage][size].sX=Screen.Width-2
+		Settings.Buttons[Settings.CurrentPage][size].eX=Screen.Width
+		Settings.Buttons[Settings.CurrentPage][size].y=oy
+		Settings.Buttons[Settings.CurrentPage][size].Action=loadstring(Action)
+	elseif Type=="string" then
+		if type(Value)=="string" then Value=loadstring(Value)() end
+		paintutils.drawLine(Settings.Big and 20 or 2,oy+1,Screen.Width-2,oy+1,256)
+		term.setTextColor(1)
+		term.setCursorPos(Settings.Big and 21 or 3,oy+1)
+		term.write(Value)
+		local size=#Settings.Buttons[Settings.CurrentPage]+1
+		Settings.Buttons[Settings.CurrentPage][size]={}
+		Settings.Buttons[Settings.CurrentPage][size].sX=Settings.Big and 20 or 2
+		Settings.Buttons[Settings.CurrentPage][size].eX=Screen.Width-2
+		Settings.Buttons[Settings.CurrentPage][size].y=oy+1
+		Settings.Buttons[Settings.CurrentPage][size].Action=loadstring(Action)
+	elseif Type=="static" then
+		if type(Value)=="string" then Value=loadstring(Value)() end
+		term.setTextColor(32768)
+		term.setBackgroundColor(1)
+		term.setCursorPos(Screen.Width-#Value,oy)
+		term.write(Value)
+	elseif Type=="number" then
+		if type(Value)=="string" then Value=loadstring(Value)() end
+		term.setCursorPos(Screen.Width-#Value,oy)
+		term.setTextColor(32768)
+		term.setBackgroundColor(1)
+		term.write(Value)
+		local size=#Settings.Buttons[Settings.CurrentPage]+1
+		Settings.Buttons[Settings.CurrentPage][size]={}
+		Settings.Buttons[Settings.CurrentPage][size].sX=Screen.Width-2
+		Settings.Buttons[Settings.CurrentPage][size].eX=Screen.Width
+		Settings.Buttons[Settings.CurrentPage][size].y=oy
+		Settings.Buttons[Settings.CurrentPage][size].Action=loadstring(Action)
+	elseif Type=="list" then
+		for n=1,#Value do
+			term.setCursorPos(Settings.Big and 21 or 3,oy+n)
+			term.setTextColor(32768)
+			term.setBackgroundColor(1)
+			term.write(Value[n].Name..":")
+			local code=tostring(loadstring(Value[n].Code)())
+			term.setCursorPos(Screen.Width-#code,oy+n)
+			term.setTextColor(256)
+			term.write(code)
+		end
+	end
 end
-local sDir = ""
-if _path ~= nil then sDir = _path end
-local tContent = fs.list( sDir )
-for i, j in pairs( tContent ) do
-local sPath = fs.combine( sDir, j )
-if fs.isDir( sPath ) then
-if(sPath ~= "rom") then
-space = space + 512
-space = fs.getSpaceLimit(sPath, space, false)
+local function draw(settings)
+	if settings==0 then settings=nil end
+	Settings.CurrentPage=settings or 0
+	Draw.clear(1)
+	Draw.setStatusColor(1)
+	Draw.status()
+	term.setCursorPos(Screen.Width/2-2,Screen.Height)
+	term.setTextColor(16384)
+	term.setBackgroundColor(1)
+	term.write("Exit")
+	if not settings or (settings and Settings.Big) then
+		if Settings.Big then term.setTextColor(32768) for i=1,Screen.Height do term.setCursorPos(18,i) term.write("|") end end
+		term.setBackgroundColor(1)
+		for i=1,#Settings.Groups do
+			Settings.Buttons[i]={}
+			Settings.Buttons[i].sX=2
+			Settings.Buttons[i].eX=#Settings.Groups[i].Name+1
+			Settings.Buttons[i].y=i+1
+			Settings.Buttons[i].Page=i
+			term.setTextColor(32768)
+			term.setCursorPos(2,i+1)
+			term.write(Settings.Groups[i].Name)
+			term.setCursorPos(Settings.Big and 16 or Screen.Width-1,i+1)
+			term.setTextColor(256)
+			term.write(">")
+		end
+	end
+	if settings then
+		paintutils.drawFilledBox(Settings.Big and 19 or 1,1,Screen.Width,Screen.Height,1)
+		term.setCursorPos(math.ceil((Screen.Width-#Settings.Groups[settings].Name)/2),1)
+		term.setTextColor(2048)
+		term.write(Settings.Groups[settings].Name)
+		term.setCursorPos(Settings.Big and 19 or 2,2)
+		term.setTextColor(256)
+		term.write("< Back")
+		Settings.Buttons[Settings.CurrentPage][1]={sX=Settings.Big and 19 or 2,eX=Settings.Big and 25 or 6,y=2,Action=Settings.Draw}
+		if Settings.Groups[settings].Items then
+		for i=1,#Settings.Groups[settings].Items do
+			term.setCursorPos(Settings.Big and 20 or 2,i+3)
+			term.setTextColor(32768)
+			term.setBackgroundColor(1)
+			term.write(Settings.Groups[settings].Items[i].Type=="space" and "" or Settings.Groups[settings].Items[i].Name)
+			if Settings.Groups[settings].Items[i].Value then handleType(Settings.Groups[settings].Items[i].Type,Settings.Groups[settings].Items[i].Value,Settings.Groups[settings].Items[i].Action) end
+		end
+		end
+	end
 end
-else
-space = space + fs.getSize(sPath)
-end 
-end
-if(final == true) then
-return space + fs.getFreeSpace(_path)
-else
-return space
-end
-end
-local function getSpace(number,round)
-if number<1024 then
-unit=" B"
-else
-local units={" kB"," MB"," GB"," TB"," PB"}
-for i=1,5 do
-if number/1024^i < 768 then
-number=number/1024^i
-unit=units[i]
-break
-end
-end
-end
-return number, unit
-end
-Data=Core.getData()
-nUsed,sUsedUnit=getSpace(getSize("/"))
-nFree,sFreeUnit=getSpace(fs.getSpaceLimit("/")-getSize("/"))
-local settings=true
-Draw.clear(1)
-Draw.isStatusVisible(true)
-Draw.setStatusColor(1)
-Draw.status()
-term.setBackgroundColor(1)
-paintutils.drawLine(7,4,Screen.Width-4,4,256)
-term.setCursorPos(8,4)
-print(os.getComputerLabel())
-term.setBackgroundColor(1)
-term.setCursorPos(2,4)
-Draw.cprint("&fName")
-term.setCursorPos(1,6)
-Draw.cprint(" OS Version "..Data.Version.."\n &8Update&f")
-term.setCursorPos(Screen.Width-2,8)
-Draw.cprint("\n HTTP ")
-term.setCursorPos(Screen.Width-2,9)
-Draw.cprint(http and on or off.."$0")
-Draw.cprint(" Modem ")
-term.setCursorPos(Screen.Width-2,10)
-Draw.cprint(Data.bModem==true and on or off.."$0")
-Draw.cprint(" Notifications ")
-term.setCursorPos(Screen.Width-2,11)
-Draw.cprint(Data.Notification==true and on or off.."$0")
-Draw.cprint(" Use AM/PM ")
-term.setCursorPos(Screen.Width-2,12)
-Draw.cprint(Data.H24==false and on or off.."$0")
-print("\n "..round(nFree,2)..sFreeUnit.." Available")
-print(" "..round(nUsed,2)..sUsedUnit.." Used")
-term.setCursorPos((Screen.Width-4)/2,Screen.Height)
-write("Back")
-while settings do
-tEvent={os.pullEventRaw()}
-if tEvent[1]=="mouse_click" then
-if tEvent[4]==4 then
-paintutils.drawLine(7,4,Screen.Width-4,4,256)
-term.setCursorPos(8,4)
-label=read()
-os.setComputerLabel(label)
-term.setCursorPos(8,4)
-Draw.cprint(label.."$0")
-change=true
-elseif tEvent[4]==10 then
-Data.bModem=revert(Data.bModem)
-term.setCursorPos(1,10)
-Draw.cprint("$0&f Modem ")
-term.setCursorPos(Screen.Width-2,10)
-Draw.cprint(Data.bModem==true and on or off.."$0")
-elseif tEvent[4]==11 then
-Data.Notification=revert(Data.Notification)
-term.setCursorPos(1,11)
-Draw.cprint("$0&f Notifications ")
-term.setCursorPos(Screen.Width-2,11)
-Draw.cprint(Data.Notification==true and on or off.."$0")
-elseif tEvent[4]==12 then
-Data.H24=revert(Data.H24)
-term.setCursorPos(1,12)
-Draw.cprint("$0&f Use AM/PM ")
-term.setCursorPos(Screen.Width-2,12)
-Draw.cprint(Data.H24==false and on or off.."$0")
-elseif tEvent[4]==7 then
-shell.run("Apps/Update/Startup.lua")
-elseif tEvent[4]==Screen.Height then
-settings=false
-f=fs.open("System/Config.lua","w")
-f.write(textutils.serialize(Data))
-f.close()
-shell.run("System/Desktop.lua")
-end
-f=fs.open("System/Config.lua","w") f.write(textutils.serialize(Data)) f.close()
-end
+Settings.Draw=draw; draw=nil
+Settings.Draw()
+while Settings.Running do
+	Event={os.pullEventRaw()}
+	if Event[1]=="mouse_click" then
+		Settings.x,Settings.y=Event[3],Event[4]
+		if Settings.CurrentPage==0 then
+			for i=1,#Settings.Buttons do
+				if Settings.CurrentPage==0 then if Settings.x>=Settings.Buttons[i].sX and Settings.x<=Settings.Buttons[i].eX and Settings.y==Settings.Buttons[i].y then Settings.Draw(Settings.Buttons[i].Page) end end
+			end
+		else
+			for n=1,#Settings.Buttons[Settings.CurrentPage] do
+				local i=Settings.CurrentPage
+				if Settings.Buttons[i] then
+					if Settings.Buttons[i][n] then
+						if Settings.x>=Settings.Buttons[i][n].sX and Settings.x<=Settings.Buttons[i][n].eX and Settings.y==Settings.Buttons[i][n].y then Settings.Buttons[i][n].Action() Settings.x,Settings.y=0,0 Settings.Draw(Settings.CurrentPage) end
+					end
+				end
+			end
+		end
+		if Settings.CurrentPage==0 and Settings.x>=Screen.Width/2-2 and Settings.x<=Screen.Width/2+2 and Settings.y==Screen.Height then Settings.Running=false end
+	end
 end
