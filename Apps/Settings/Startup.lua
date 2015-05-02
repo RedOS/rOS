@@ -84,9 +84,9 @@ local function draw(settings)
 	Draw.setStatusColor(1)
 	Draw.status()
 	term.setCursorPos(Screen.Width/2-2,Screen.Height)
-	term.setTextColor(16384)
-	term.setBackgroundColor(1)
-	term.write("Exit")
+	term.setTextColor(1)
+	term.setBackgroundColor(16384)
+	term.write(" Exit ")
 	if not settings or (settings and Settings.Big) then
 		if Settings.Big then term.setTextColor(32768) for i=1,Screen.Height do term.setCursorPos(18,i) term.write("|") end end
 		term.setBackgroundColor(1)

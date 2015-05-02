@@ -1,64 +1,52 @@
-local list = {}
-local notes=true
-local maxX,maxY = term.getSize()
-function listtomon()
-        if list then
+if not fs.exists("Apps/Notes/Table.lua") then local Notes={} Notes.List={} Notes.List[1]="" f=fs.open("Apps/Notes/Table.lua","w") f.write(textutils.serialize(Notes.List)) f.close() end
+Notes={}
+Notes.List=textutils.unserialize(fs.open("Apps/Notes/Table.lua","r").readAll())
+Notes.Running=true
+Notes.Draw=function()
+Notes.Removed=0
+Draw.clear(1)
+Draw.setStatusColor(1)
+Draw.status()
+if Notes.List[1]=="" then
+	term.setCursorPos(Screen.Width/2-6/2,2)
+	term.setTextColor(256)
+	term.setBackgroundColor(1)
+	term.write("Empty")
+end
+for lines=1,Screen.Height-2 do
+	if Notes.List[lines] then
+		term.setTextColor(32768)
 		term.setBackgroundColor(1)
-		term.setTextColor(2^15)
-        term.setCursorPos(2,3)
-                for k,v in pairs(list) do
-                        Draw.cprint("&b"..k.."&f "..v)
-                        x,y = term.getCursorPos()
-                        term.setCursorPos(x+1,y)
-                end
-        end
+		term.setCursorPos(2,1+lines-Notes.Removed)
+		if Notes.List[lines]=="" then Notes.Removed=Notes.Removed+1
+		else
+		term.write(Notes.List[lines])
+		end
+	end
 end
-local function saveAll()
-        save = fs.open("Apps/Notes/notes","w")
-        save.write(textutils.serialize(list))
-        save.close()
+term.setCursorPos(Screen.Width/2-3,Screen.Height)
+term.setTextColor(1)
+term.setBackgroundColor(16384)
+term.write(" Exit ")
 end
-local function loadAll()
-        if fs.exists("Apps/Notes/notes") then
-                load = fs.open("Apps/Notes/notes","r")
-                list = textutils.unserialize(load.readAll())
-                load.close()
-        end
-end
-function drawScreen()
-        loadAll()
-        Draw.clear(1)
-		Draw.setStatusColor(128)
-		Draw.isStatusVisible(true)
-		Draw.status()
-        term.setCursorPos(1,1)
-        term.setBackgroundColor(1)
-		term.setTextColor(2^15)
-        listtomon()
-end
-drawScreen()
-while notes do
-listtomon()
-print("Use: del <id> add <text>\n or exit")
-ax,ay=term.getCursorPos()
-term.setCursorPos(2,ay)
-input = read()
-print(" ")
-if string.sub(input,0,3) == "del" then
-key = string.sub(input,5)
-for k,v in pairs(list) do
-if tostring(k) == key then
-list[k] = nil
-break
-end
-end
-saveAll()
-elseif string.sub(input,0,3) == "add" then
-table.insert(list, string.sub(input,5))
-saveAll()
-elseif string.sub(input,0,4) == "exit" then
-notes=false
-saveAll()
-end
-drawScreen()
+Notes.Draw()
+while Notes.Running do
+	Event={os.pullEvent()}
+	if Event[1]=="mouse_click" then
+		term.setCursorPos(1,1)
+		term.write(Event[3])
+		Notes.x,Notes.y=Event[3],Event[4]
+		if Notes.y==Screen.Height then
+			Notes.Running=false
+			f=fs.open("Apps/Notes/Table.lua","w")
+			f.write(textutils.serialize(Notes.List))
+			f.close()
+		else
+			term.setCursorPos(5,Notes.List[Notes.y-1+Notes.Removed] and Notes.y or #Notes.List+2-Notes.Removed)
+			term.setTextColor(32768)
+			term.setBackgroundColor(1)
+			Notes.List[Notes.List[Notes.y-1+Notes.Removed] and Notes.y-1+Notes.Removed or #Notes.List+2-Notes.Removed]=read()
+			Notes.Draw()
+		end
+	end
 end
