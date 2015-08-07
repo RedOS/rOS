@@ -1,138 +1,45 @@
 Data={["version"]="1.0",["name"]="Draw",}
 
-BgColor=32768
-TextColor=1
+center=true
 StatusGlobal=256
-isVisible=true
-sColor=1
-statusTime="center"
-Cursor={1,1}
 
-function isStatusVisible(bool)
-if bool==true then Draw.isVisible=true else Draw.isVisible=false end
+function isVisible(bool)
+	Core.Status.setVisible(bool)
+	status()
 end
 
-function setStatusColor(nColor)
-Draw.sColor=nColor
+function setStatusColor(color)
+	term.redirect(Core.Status)
+	term.setBackgroundColor(color)
+	status()
 end
-oterm={}
-oterm.setBackgroundColor=term.setBackgroundColor
-oterm.setTextColor=term.setTextColor
-function term.setBackgroundColor(nColor)
-oterm.setBackgroundColor(nColor)
-Draw.BgColor=nColor
-end
-function term.setTextColor(nColor)
-oterm.setTextColor(nColor)
-Draw.TextColor=nColor
-end
-
 
 function status()
-	local _term=term.current()
-	term.redirect(Core.parentTerm)
-	local _bClr=Draw.BgColor
-	local _tClr=Draw.TextColor
-	if Draw.isVisible then
-	ox,oy=term.getCursorPos()
-	local Data=Core.getData()
-	Data.Time=string.format("  %02d:%02d %s",Time.get(os.time(),Data.H24))
-	if Draw.statusTime~="right" then 
-	paintutils.drawLine(1,1,Screen.Width,1,Draw.sColor)
-	end
-	term.setTextColor(Draw.sColor==1 and 32768 or 1)
-	if Draw.statusTime=="right" then
-	term.setCursorPos((Screen.Width-#Data.Time+1),1)
-	elseif Draw.statusTime=="left" then
-	term.setCursorPos(2,1)
-	else
-	term.setCursorPos((Screen.Width-3-#Data.Time/2)/2,1)
-	end
-	write(Data.Time)
-	if Draw.statusTime~="right" then
-	term.setCursorPos(Screen.Width-((Data.bModem and 2 or 0) + (Data.Notification and 2 or 0)) +2,1)
-	write((Data.bModem and "M " or "")..(Data.Notification and "N " or ""))
-	end
-	term.setCursorPos(ox,oy)
-	term.setBackgroundColor(_bClr)
-	term.setTextColor(_tClr)
-	end
-	term.redirect(_term)
-end
-
-function clear(color)
-	local color=color or Draw.BgColor
-	term.setBackgroundColor(color)
-	term.clear()
-	term.setCursorPos(1,1)
-end
-
-function clearLine()
-	x,y=term.getCursorPos()
-end
-
-function icon(path)
-if fs.exists(path) then
-	f=fs.open(path,"r")
-	local iconData=textutils.unserialize(f.readAll())
-	f.close()
-	if iconData.text and iconData.bColor and iconData.tColor then
-		local cursorx,cursory=term.getCursorPos()
-		for line=1,3 do
-		for row=1,4 do
-			if #iconData.bColor[line]>=row then term.setBackgroundColor(2 ^ tonumber(iconData.bColor[line]:sub(row,row),16)) end
-			if #iconData.tColor[line]>=row then term.setTextColor(2 ^ tonumber(iconData.tColor[line]:sub(row,row),16)) end
-			if #iconData.text[line]>=row then term.write(iconData.text[line]:sub(row,row)) end
+	term.redirect(Core.Status)
+	if Core.Status.isVisible and Core.Status.isVisible() then
+		if term.getBackgroundColor()==1 then term.setTextColor(32768) else term.setTextColor(1) end
+		term.clear()
+		term.setCursorPos(1,1)
+		term.setCursorBlink(false)
+		if Draw.center then
+			term.write(Time.Date(Core.getData("FormatDate")))
+			term.setCursorPos(Screen.Width/2-math.floor((#Time.FormatTime(Core.getData("H24"))-1)/2),1)
+			term.write(Time.FormatTime(Core.getData("H24")))
+			local string=(Core.getData("Modem") and "M" or "")..(Core.getData("Notifications") and " N" or "")
+			term.setCursorPos(Screen.Width-#string,1)
+			term.write(string)
+		else
+			if term.getBackgroundColor()==1 then clr="05010e" else clr="010101" end
+			term.blit(" L R S",clr,string.rep(Screen.Colors[term.getBackgroundColor()],6))
+			term.setCursorPos(Screen.Width/2-3,1)
+			if term.getBackgroundColor()==1 then a="0f" else a="00" end
+			if term.getBackgroundColor()==256 then b="07" else b="08" end
+			term.blit(" M H N",(Core.getData("Modem") and a or b)..(Core.getData("H24") and a or b)..(Core.getData("Notifications") and a or b),string.rep(Screen.Colors[term.getBackgroundColor()],6))
+			term.setCursorPos(Screen.Width-#Time.FormatTime(Core.getData("H24")),1)
+			term.write(Time.FormatTime(Core.getData("H24")))
 		end
-		term.setCursorPos(cursorx,cursory+line)
-		end
-		if iconData.specialCode then loadstring(iconData.specialCode)() end
 	end
-end
-end
-
-function cCode(h)
-        if term.isColor() and term.isColor then
-                return 2 ^ (tonumber(h, 16) or 0)
-        else
-                if h == "f" then
-                        return colors.black
-                else
-                        return colors.white
-                end
-        end
-end
-function cwrite(text)
-        text = tostring(text)
-        local i = 0
-        while true  do
-                i = i + 1
-                if i > #text then break end
-                
-                local c = text:sub(i, i)
-
-                if c == "\\" then
-                        if text:sub(i+1, i+1) == "&" then
-                                write("&")
-                                i = i + 1
-                        elseif text:sub(i+1, i+1) == "$" then
-                                write("$")
-                                i = i + 1
-                        else
-                                write(c)
-                        end
-                elseif c == "&" then
-                        term.setTextColor(cCode(text:sub(i+1, i+1)))
-                        i = i + 1
-                elseif c == "$" then
-                        term.setBackgroundColor(cCode(text:sub(i+1, i+1)))
-                        i = i + 1
-                else
-                        write(c)
-                end
-        end
-        return
-end
-function cprint(text)
-cwrite(text.."\n")
+	term.redirect(Core.Window)
+	Core.Window.restoreCursor()
+	Core.Window.setCursorBlink(Core.Window.CursorBlink)
 end

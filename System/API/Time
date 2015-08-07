@@ -1,61 +1,68 @@
 Data={["version"]="1.0",["name"]="Time",}
 
-function get(nTime,b24)
-	local sTOD=""
-	if not b24 then
-        if nTime >= 12 then
-           sTOD = "PM"
-        else
-           sTOD = "AM"
-        end
-        if nTime >= 13 then
-            nTime = nTime - 12
-        end
-	end
-    local Hour = math.floor(nTime)
-    local Minute = math.floor((nTime - Hour)*60)
-	return Hour,Minute,sTOD
+function Timestamp()
+    return os.day()*24000+os.time()
 end
 
-function date(nTime,format,tPack)
-local nTime=nTime or os.day()
-day={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}
-_mon={"Jan ","Feb ","Mar ","Apr ","May ","June ","July ","Aug ","Sept ","Oct ","Nov ","Dec "}
-dNum=(nTime-math.floor(nTime/7)*7)+1
-dayName=day[dNum]
-local function isLeapYear(year)
-return year % 4 == 0 and (year % 100 > 0 or year % 400 == 0)
+function Time()
+    return Timestamp()%24000
 end
-local function nTimeInYear(year)
-if isLeapYear(year) then
-return 366
+
+function Day()
+    return math.floor(Timestamp()/24000)
 end
-return 365
-end 
-local year=0
-local mon=1
-while nTime >= nTimeInYear(year) do
-nTime=nTime - nTimeInYear(year);
-year=year + 1;
+
+function FormatTime(H24)
+    H24 = H24 or false
+    local t=math.floor(Time())
+    local h=tostring((not H24 and (t>12 and t-12 or t) or t))
+    local m=tostring(math.floor((Time()-t)*60))
+    local s=(#h==2 and h or "0"..h)..":"..(#m==2 and m or "0"..m)..(H24 and "" or (t>12 and " PM" or " AM"))
+    return s
 end
-local _temp={ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
-if isLeapYear(year) then
-_temp[2]=29
+
+function Date(format,timestamp)
+    Date = {}
+    Date.Days = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}
+    Date.Monthname = {"January","February","March","April","May","June","July","August","September","October","November","December"}
+    Date.Month = {31,28,31,30,31,30,31,31,30,31,30,31}
+    Date.cDay = timestamp and math.floor(timestamp/24000) or Day()
+    Date.Year = math.floor(1459*Date.cDay/532900)
+    if Date.Year%4 == 0 and Date.Year%100 ~= 0 then Date.Month[2]=29 else Date.Month[2]=28 end
+    Date.Mindays=0
+    for i=1,12 do
+        if (Date.cDay-365*Date.Year)-Date.Mindays+1<=Date.Month[i] then
+            Date.Month = i
+            Date.Day = (Date.cDay-365*Date.Year)-Date.Mindays+1
+            Date.DayE = Date.Day-math.floor(Date.Day/10)*10
+            break
+        end
+        Date.Mindays = Date.Mindays+Date.Month[i]
+    end
+    Date.String=string.gsub(format,"f:month",Date.Monthname[Date.Month])
+    Date.String=string.gsub(Date.String,"f:day",Date.Days[Date.cDay-math.floor(Date.cDay/7)*7+1])
+    Date.String=string.gsub(Date.String,"f:dy",Date.Days[Date.cDay-math.floor(Date.cDay/7)*7+1]:sub(1,3))
+    Date.String=string.gsub(Date.String,"f:mon",Date.Monthname[Date.Month]:sub(1,3))
+    Date.String=string.gsub(Date.String,"f:mm",(#tostring(Date.Month)==2 and Date.Month or "0"..Date.Month))
+    Date.String=string.gsub(Date.String,"f:dd",(#tostring(Date.Day)==2 and Date.Day or "0"..Date.Day))
+    Date.String=string.gsub(Date.String,"f:yy",(#tostring(Date.Month)==2 and Date.Year or (Date.Year<2 and "0"..Date.Year or string.sub(Date.Year,-1,-2))))
+    Date.String=string.gsub(Date.String,"f:m",Date.Month)
+    Date.String=string.gsub(Date.String,"f:d",Date.Day)
+    Date.String=string.gsub(Date.String,"f:y",Date.Year)
+    Date.String=string.gsub(Date.String,"f:x",(Date.DayE==1 and "st" or Date.DayE==2 and "nd" or Date.DayE==3 and "rd" or Date.DayE>3 and "th"))
+    return Date.String
 end
-while nTime >= _temp[mon] do
-nTime=nTime - _temp[mon];
-nTime=nTime+1
-mon=mon + 1;
+
+function GetTimestamp(date)
+    local months = {31,28,31,30,31,30,31,31,30,31,30,31}
+    local day,month,year = string.match(date,"(%d+).(%d+).(%d*)")
+    local a=0
+    for i=1,month-1 do a=a+months[i] end
+    return (day-1)*24000+a*24000+(year and year*365*24000 or 0)
 end
-mont=_mon[mon]
-if string=="data" then
-string=dayName..", "..mont.." "..nTime
-return string
-else
-if format then
-return string.format(format,mont,nTime)
-else
-return year,mont,nTime,dayName,dNum,mon
-end
-end
+
+function GetDayName(timestamp)
+    days = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}
+    cday = timestamp and math.floor(timestamp/24000) or Day()
+    return days[cday-math.floor(cday/7)*7+1]
 end

@@ -1,35 +1,45 @@
 {
   {
     Name = "General",
-	Items = {
-	  {Name = "Modem", Type = "bool", Value = "return Core.getData().bModem", Action = "Core.invertData('bModem')",},
-	  {Name = "24h time format", Type = "bool",Value = "return Core.getData().H24", Action = "Core.invertData('H24')",},
-	  {Type = "space",},
-	  {Name = "Info", Type = "list", Value = { 
-	    {Name = "ID", Code = "return os.getComputerID()"}, 
-		{Name = "Label", Code = "return os.getComputerLabel() or 'Not set'"}, 
-		{Name = "Version", Code = "return Core.getData().Version or 'Unknown'"}, 
-		{Name = "HTTP", Code = "return http and 'Enabled' or 'Disabled'"}, 
-	    }, 
-	  },
+    Type = "group",
+    Action = function() Settings.Objects=Parse.render(Settings.Objects[Settings.y-1].children,Settings.env) end,
+    Children = {
+      {Name = "General", Type = "header", Value = function() return "< Back" end, Action = function() Settings.Objects=nil Settings.Objects=Parse.render(Settings.Table,Settings.env) end,},
+      {Name = "Modem", Type = "bool", Value = function() return Core.getData('Modem') end, Action = function() Core.setData('Modem',not Core.getData('Modem')) end,},
+      {Name = "24h time format", Type = "bool",Value = function() return Core.getData('H24') end, Action = function() Core.setData('H24',not Core.getData('H24')) end,},
+      {Name = "Color mode", Type = "bool",Value = function() return Core.getData('ColorMode') end, Action = function() Core.setData('ColorMode',not Core.getData('ColorMode')) Core.Window.updateColors() Core.Status.updateColors() end,},
+      {Type = "space",},
+      {Name = "Info", Type = "list", Value = { 
+        {Name = "ID", Value = function() return os.getComputerID() end,}, 
+        {Name = "Label", Value = function() return os.getComputerLabel() or 'Not set' end,}, 
+        {Name = "Version", Value = function() return Core.getData('Version') or 'Unknown' end,}, 
+        {Name = "HTTP", Value = function() return http and 'Enabled' or 'Disabled' end,},},
+      },
     },
   },
   {
-    Name = "Notifications",
-  },
-  {
     Name = "Usage",
-	Items = {
-	  {Name = "Free space", Type = "static", Value = "local u={' B',' kB',' MB',' GB',' TB',' PB'} for i=1,6 do if fs.getFreeSpace('/')/1024^(i-1)<1024 then return tostring(math.floor(fs.getFreeSpace('/')/1024^(i-1)))..u[i] end end",},
-	  {Name = "Used space", Type = "static", Value = "local u={' B',' kB',' MB',' GB',' TB',' PB'} for i=1,6 do if fs.getSizeFolder('Apps')/1024^(i-1)<1024 then return tostring(math.floor(fs.getSizeFolder('/')/1024^(i-1)))..u[i] end end",},
-	},
+    Type = "group",
+    Action = function() Settings.Objects=Parse.render(Settings.Objects[Settings.y-1].children,Settings.env) end,
+    Children = {
+      {Name = "Usage", Type = "header", Value = function() return "< Back" end, Action = function() Settings.Objects=nil Settings.Objects=Parse.render(Settings.Table,Settings.env) end},
+      {Name = "Free space", Type = "static", Value = function() return parseSize(fs.getFreeSpace('/')) end,},
+      {Name = "Used space", Type = "static", Value = function() return parseSize(fs.getSizeFolder('/')) end,},
+      {Type = "space",},
+      {Name = "Apps", Type = "static", Value = function() return parseSize(fs.getSizeFolder('Apps')) end,},
+      {Name = "System", Type = "static", Value = function() return parseSize(fs.getSizeFolder('System')-fs.getSizeFolder('System/API/')) end,},
+      {Name = "APIs", Type = "static", Value = function() return parseSize(fs.getSizeFolder('System/API/')) end,},
+    },
   },
   {
-    Name = "Private",
-	Items = {
-	  {Name = "Label", Type = "string", Value = "k,v=term.getCursorPos(); return (os.getComputerLabel() and os.getComputerLabel() or '')", Action = "paintutils.drawLine(Screen.Width>29 and 20 or 2,v+1,Screen.Width-2,v+1,256) term.setCursorPos(Screen.Width>29 and 21 or 3,v+1) term.setBackgroundColor(256) term.setTextColor(1) os.setComputerLabel(read())",},
-	  {Type = "space",},
-	  {Type = "space",},
-	},
+    Name = "Private", 
+    Type = "group",
+    Action = function() Settings.Objects=Parse.render(Settings.Objects[Settings.y-1].children,Settings.env) end,
+    Children = {
+     {Name = "Private", Type = "header", Value = function() return "< Back" end, Action = function() Settings.Objects=nil Settings.Objects=Parse.render(Settings.Table,Settings.env) end,},
+      {Name = "Label", Type = "string", Value = function() return os.getComputerLabel() or 'Not set' end, Action = function() term.setCursorPos(3,Settings.y) term.write(string.rep(" ",Screen.Width-4),1,128) term.setCursorPos(3,Settings.y) local l=read() os.setComputerLabel(#l>0 and l or nil) end,},
+      {Type = "space",},
+      {Type = "space",},
+    },
   },
 }

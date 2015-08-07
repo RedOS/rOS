@@ -5,18 +5,16 @@ Lock.Running=true
 Lock.Code=""
 Lock.x=0
 Lock.y=0
-Data=Core.getData()
-Draw.clear(1)
 Draw.setStatusColor(256)
-Draw.status()
+term.setCursorBlink(false)
+if not runned then runned=true  local c={32768,128,256,1,256,128} for i=1,6 do os.sleep(.1) term.clear(c[i]) end else term.clear(128) end
 for line=1,4 do
 	for row=1,3 do
-		paintutils.drawFilledBox(Screen.Width/2+(row-1)*6-7,4*line,Screen.Width/2+(row-1)*6-5,4*line+2,(line==4 and row~=2) and 1 or 256)
+		paintutils.drawFilledBox(Screen.Width/2+(row-1)*6-7,4*line,Screen.Width/2+(row-1)*6-5,4*line+2,(line==4 and row~=2) and 128 or 256)
 		term.setCursorPos(Screen.Width/2+(row-1)*6-6,4*line+1)
-		term.setTextColor(1)
 		if not (line==4 and row~=2) then
 		local CurrentNumber=(line==4 and row==2) and 0 or (line-1)*3+row
-		term.write(tostring(CurrentNumber))
+		term.write(tostring(CurrentNumber),1,256)
 		Lock.Number[CurrentNumber]={}
 		Lock.Number[CurrentNumber].sX=math.floor(Screen.Width/2+(row-1)*6-7)
 		Lock.Number[CurrentNumber].sY=math.floor(4*line)
@@ -26,10 +24,10 @@ for line=1,4 do
 end
 local function Check()
 if #Lock.Code==5 then 
-	if tonumber(Lock.Code)==Data.Code then Lock.Runnning=false shell.run("System/Desktop.lua") else
+	if tonumber(Lock.Code)==Core.getData("Code") then Lock.Runnning=false shell.run("System/Desktop.lua") else
 		for i=1,2 do 
 			for n=1,5 do 
-				paintutils.drawPixel(Screen.Width/2-6+2*n,2,i==1 and 16384 or 128) 
+				paintutils.drawPixel(Screen.Width/2-6+2*n,2,i==1 and 16384 or 1) 
 			end 
 			if i==1 then os.sleep(1) end 
 		end
@@ -39,7 +37,7 @@ end
 end
 Lock.Check=Check
 for i=1,5 do
-	paintutils.drawPixel(Screen.Width/2-6+2*i,2,128)
+	paintutils.drawPixel(Screen.Width/2-6+2*i,2,1)
 end
 while Lock.Running do
 	Event={os.pullEventRaw()}

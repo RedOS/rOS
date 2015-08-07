@@ -1,6 +1,5 @@
-Data={["version"]="1.0",["name"]="Core",}
+Dat={["version"]="1.0",["name"]="Core",}
 
-DataChange=true
 parentTerm=term.current()
 local Process,W,H={},term.getSize()
 
@@ -9,17 +8,39 @@ function launch(tEnv,sProgramPath,...)
     Process.title=fs.getName(sProgramPath)
 	Process.path=fs.getDir(sProgramPath)
 	Process.aPath=sProgramPath
-    Process.window=window.create(parentTerm,1,2,W,H-1,true)
+    Process.window=Screen.Create(parentTerm,1,2,W,H-1,true)
     Process.co = coroutine.create( function()
         os.run(tEnv,sProgramPath,unpack(ProgramArgs))
     end )
 	term.redirect(Process.window)
 	Core.thread=Process.co
-	Core.window=Process.window
+	Core.Window=Process.window
 	coroutine.resume(Process.co)
 end
 
-function getData()
+function setData(value,v)
+	f=fs.open("System/Config.lua","r")
+			data=f.readAll()
+			f.close()
+			Data=textutils.unserialize(data)
+			f.close()
+	if type(Data[value])~="nil" then
+		Data[value]=v
+		f=fs.open("System/Config.lua","w")
+		f.write(textutils.serialize(Data))
+		f.close()
+	end
+end
+
+f=fs.open("System/Config.lua","r")
+data=f.readAll()
+f.close()
+Data=textutils.unserialize(data)
+f=fs.open("System/Version.lua","r")
+Data.Version=f.readAll()
+f.close()
+
+function getData(value)
 	if Core then
 		if fs.exists("System/Config.lua") then
 			f=fs.open("System/Config.lua","r")
@@ -29,7 +50,7 @@ function getData()
 			f=fs.open("System/Version.lua","r")
 			Data.Version=f.readAll()
 			f.close()
-			return Data
+			return Data[value]
 		else
 			local setup=true
 				Draw.clear(1)

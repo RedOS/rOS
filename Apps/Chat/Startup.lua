@@ -15,7 +15,7 @@ local function update(Message)
 			term.setCursorPos(2,i)
 			term.setTextColor(32768)
 			term.setBackgroundColor(1)
-			Draw.cwrite(Chat.History[i])
+			term.write(Chat.History[i])
 	end
 	term.setCursorPos(2,Screen.Height)
 	paintutils.drawLine(1,Screen.Height,Screen.Width,Screen.Height,256)
@@ -39,12 +39,12 @@ while Chat.Running do
 	end
 end
 end
-Draw.clear(1)
 Draw.setStatusColor(1)
 Draw.status()
+term.clear(1)
 term.setTextColor(256)
 term.setCursorPos(2,Screen.Height-1)
-term.write("Enter your nickname")
+term.write("Enter your nickname",256,1)
 paintutils.drawLine(1,Screen.Height,Screen.Width,Screen.Height,256)
 term.setCursorPos(2,Screen.Height)
 term.setTextColor(1)

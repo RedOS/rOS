@@ -26,8 +26,8 @@ tiles[19] = {"262k", 16}
 tiles[20] = {"524k", 32}
 size = 4
 score = 0
-if fs.exists("Apps/Games/Content/2048/hiscore") then
-f=fs.open("Apps/Games/Content/2048/hiscore","r")
+if fs.exists("Apps/Games/2048/hiscore") then
+f=fs.open("Apps/Games/2048/hiscore","r")
 hiscore = tonumber(f.readAll())
 f.close()
 else
@@ -168,7 +168,6 @@ end
 
 function drawHome()
   term.clear()
-  paintutils.drawImage(paintutils.loadImage("Apps/Games/Content/2048/bg"),2,2)
 end
 
 function table.reverse(tab)
@@ -206,28 +205,27 @@ function newGame()
   term.setCursorPos(9,18)
   term.setBackgroundColor(1)
   term.setTextColor(2^15)
-  paintutils.drawFilledBox(w/2-5,h/2-2,w/2+5,h/2+2,256)
-  term.setCursorPos(w/2-4,h/2-1)
+  paintutils.drawFilledBox(Screen.Width/2-5,Screen.Height/2-2,Screen.Width/2+5,Screen.Height/2+2,256)
+  term.setCursorPos(Screen.Width/2-4,Screen.Height/2-1)
   term.setTextColor(1)
   term.write("Game over")
-  term.setCursorPos(w/2-4,h/2)
+  term.setCursorPos(Screen.Width/2-4,Screen.Height/2)
   print("New Game?")
-  term.setCursorPos(w/2-4,h/2+1)
+  term.setCursorPos(Screen.Width/2-4,Screen.Height/2+1)
   print("Yes")
-  term.setCursorPos(w/2+1,h/2+1)
+  term.setCursorPos(Screen.Width/2+1,Screen.Height/2+1)
   print("No")
   while true do
     local event, key = os.pullEvent("key")
     if event=="key" then
-      if key==keys.y then return true end
-      if key==keys.n then return false end
+      if key==keys.y or keys.z then break end
     end
   end
 end
 
 drawHome()
 
-os.sleep(2)
+os.sleep(0.1)
 while true do
   createBoard()
   while canMove() do
@@ -251,10 +249,9 @@ while true do
   end
   drawBoard()
   if not newGame() then
-f=fs.open("Apps/Games/Content/2048/hiscore","w")
+f=fs.open("Apps/Games/2048/hiscore","w")
 f.write(hiscore)
 f.close()
-shell.run("Apps/Games/Startup.lua")
     break
   end
 end

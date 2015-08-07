@@ -1,0 +1,118 @@
+function render(Table,env)
+ 	local Objects={}
+ 	Objects.s=0
+ 	Objects.Table=Table
+	term.clear(1)
+	term.setTextColor(1)
+	term.setBackgroundColor(32768)
+	term.setCursorPos(Screen.Width/2-3,Screen.Height)
+	term.write(" Exit ",1,16384)
+	term.setCursorPos(1,1)
+	for i=1,#Table do
+		if Table[i].Type=="group" then
+			Objects[i] = {}
+			Objects[i].size = {sX=Table[i].sX or 2,eX=Table[i].eX or 2+#Table[i].Name,sY=Table[i].sY or 1+i+Objects.s,eY=Table[i].eY or 1+i+Objects.s,}
+			Objects[i].name = Table[i].Name
+			Objects[i].type = "group"
+			Objects[i].action = Table[i].Action or function() Parse.render(Objects[i].children) end
+			Objects[i].children = Table[i].Children or {}
+			Objects[i].color = Table[i].Color or 32768
+			Objects[i].background = Table[i].Background or 1
+			Objects[i].colorF = Table[i].ColorField or 256
+			Objects[i].backgroundF = Table[i].BackgroundField or 1
+			setfenv(Objects[i].action,env)
+			term.setCursorPos(Objects[i].size.sX,Objects[i].size.sY)
+			term.write(Objects[i].name,Objects[i].color,Objects[i].background)
+			term.setCursorPos(Screen.Big and 20 or Screen.Width-2,Objects[i].size.sY)
+			term.write(">",Objects[i].colorF,Objects[i].backgroundF)
+		elseif Table[i].Type=="bool" then
+			Objects[i] = {}
+			Objects[i].size = {sX=Table[i].sX or 2,eX=Table[i].eX or 2+#Table[i].Name,sY=Table[i].sY or 1+i+Objects.s,eY=Table[i].eY or 1+i+Objects.s,}
+			Objects[i].name = Table[i].Name
+			Objects[i].type = "bool"
+			Objects[i].value = Table[i].Value
+			Objects[i].action = Table[i].Action
+			Objects[i].color = Table[i].Color or 32768
+			Objects[i].background = Table[i].Background or 1
+			Objects[i].colorOn = Table[i].ColorOn or 1
+			Objects[i].backgroundOn = Table[i].BackgroundOn or 32
+			Objects[i].colorOff = Table[i].ColorOff or 1
+			Objects[i].backgroundOff = Table[i].BackgroundOff or 16384
+			setfenv(Objects[i].value,env)
+			setfenv(Objects[i].action,env)
+			term.setCursorPos(Objects[i].size.sX,Objects[i].size.sY)
+			term.write(Objects[i].name,Objects[i].color,Objects[i].background)
+			term.setCursorPos(Screen.Width-2,Objects[i].size.sY)
+			term.write(Objects[i].value() and "I" or "X",Objects[i].value() and Objects[i].colorOn or Objects[i].colorOff,Objects[i].value() and Objects[i].backgroundOn or Objects[i].backgroundOff)
+		elseif Table[i].Type=="string" then
+			Objects.s=Objects.s+1
+			Objects[i] = {}
+			Objects[i].size = {sX=Table[i].sX or 2,eX=Table[i].eX or Screen.Width-2,sY=Table[i].sY or 1+i+Objects.s,eY=Table[i].eY or 1+i+Objects.s,}
+			Objects[i].name = Table[i].Name
+			Objects[i].type = "string"
+			Objects[i].value = Table[i].Value
+			Objects[i].action = Table[i].Action
+			Objects[i].color = Table[i].Color or 32768
+			Objects[i].background = Table[i].Background or 1
+			Objects[i].colorF = Table[i].ColorField or 1
+			Objects[i].backgroundF = Table[i].BackgroundField or 128
+			setfenv(Objects[i].value,env)
+			setfenv(Objects[i].action,env)
+			term.setCursorPos(Objects[i].size.sX,Objects[i].size.sY-1)
+			term.write(Objects[i].name..":",Objects[i].color,Objects[i].background)
+			term.setCursorPos(Objects[i].size.sX,Objects[i].size.sY)
+			term.write(" "..Objects[i].value()..string.rep(" ",Screen.Width-4-#Objects[i].value()),Objects[i].colorF,Objects[i].backgroundF)
+		elseif Table[i].Type=="static" then
+			Objects[i] = {}
+			Objects[i].size = {sX=Table[i].sX or 2,eX=Table[i].eX or 2+#Table[i].Name,sY=Table[i].sY or 1+i+Objects.s,eY=Table[i].eY or 1+i+Objects.s,}
+			Objects[i].name = Table[i].Name
+			Objects[i].type = "static"
+			Objects[i].value = Table[i].Value
+			Objects[i].action = Table[i].Action or nil
+			Objects[i].color = Table[i].Color or 32768
+			Objects[i].background = Table[i].Background or 1
+			Objects[i].colorF = Table[i].ColorField or 32768
+			Objects[i].backgroundF = Table[i].BackgroundField or 1
+			setfenv(Objects[i].value,env)
+			Objects[i].valueV = Objects[i].value()
+			if Objects[i].action then setfenv(Objects[i].action,env) end
+			term.setCursorPos(Objects[i].size.sX,Objects[i].size.sY)
+			term.write(Objects[i].name,Objects[i].color,Objects[i].background)
+			term.setCursorPos(Screen.Width-1-#Objects[i].valueV,Objects[i].size.sY)
+			term.write(Objects[i].valueV,Objects[i].colorF,Objects[i].backgroundF)
+		elseif Table[i].Type=="list" then
+			Objects[i] = {}
+			Objects[i].value = Table[i].Value
+			Objects[i].size = {sX=Table[i].sX or 2,eX=Table[i].eX or 2+#Table[i].Name,sY=Table[i].sY or 1+i+Objects.s,eY=Table[i].eY or 1+i+#Objects[i].value+Objects.s,}
+			Objects[i].name = Table[i].Name
+			term.setCursorPos(Objects[i].size.sX,Objects[i].size.sY)
+			term.write(Objects[i].name,32768,1)
+			for n=1,#Objects[i].value do
+				local func = Objects[i].value[n].Value
+				setfenv(func,env)
+				term.setCursorPos(Objects[i].size.sX+1,Objects[i].size.sY+n)
+				term.write(Objects[i].value[n].Name..":",32768,1)
+				term.setCursorPos(Screen.Width-#tostring(func())-1,Objects[i].size.sY+n)
+				term.write(func(),256,1)
+			end
+			Objects.s=Objects.s+#Objects[i].value
+		elseif Table[i].Type=="header" then
+			Objects[i] = {}
+			Objects[i].size = {sX=Table[i].sX or 2,eX=Table[i].eX or 8,sY=Table[i].sY or 1+i+Objects.s,eY=Table[i].eY or 1+i+Objects.s,}
+			Objects[i].name = Table[i].Name
+			Objects[i].value = Table[i].Value
+			Objects[i].action = Table[i].Action or function() end
+			Objects[i].color = Table[i].Color or 2048
+			Objects[i].background = Table[i].Background or 1
+			setfenv(Objects[i].value,env)
+			setfenv(Objects[i].action,env)
+			term.setCursorPos(Objects[i].size.sX,Objects[i].size.sY)
+			term.write(Objects[i].value(),256,Objects[i].background)
+			term.setCursorPos(Screen.Width/2-math.ceil((#Objects[i].name-1)/2),Objects[i].size.sY)
+			term.write(Objects[i].name,Objects[i].color,Objects[i].background)
+		elseif Table[i].Type=="space" then
+			term.setCursorPos(1,2+i)
+		end
+	end
+	return Objects
+end

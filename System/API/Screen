@@ -1,4 +1,283 @@
-Data={["version"]="1.0",["name"]="Screen",}
+Data = {version="1.0",name="Screen",}
 
-Width,Height=term.getSize()
-Height=Height+1
+Width,Height = term.getSize()
+Big=Width>29 and true or false
+Colors={
+[1]="0",
+[2]="1",
+[4]="2",
+[8]="3",
+[16]="4",
+[32]="5",
+[64]="6",
+[128]="7",
+[256]="8",
+[512]="9",
+[1024]="a",
+[2048]="b",
+[4096]="c",
+[8192]="d",
+[16384]="e",
+[32768]="f",
+}
+
+BWColors={
+["0"]="0",
+["1"]="8",
+["2"]="8",
+["3"]="0",
+["4"]="0",
+["5"]="8",
+["6"]="0",
+["7"]="7",
+["8"]="8",
+["9"]="7",
+["a"]="7",
+["b"]="f",
+["c"]="f",
+["d"]="7",
+["e"]="f",
+["f"]="f",
+}
+
+function Create(parent,x,y,width,height)
+	if not parent or not x or not y or not width or not height then error("Missing arg") else
+		local Window = {}
+		Window.Width = width or parent.Width
+		Window.Height = height or parent.Height
+		Window.TextColor = 1;
+		Window.BackgroundColor = 32768;
+		Window.CursorX = 1;
+		Window.CursorY = 1;
+		Window.x = x;
+		Window.y = y;
+		Window.hasColors = parent.isColor()
+		Window.Visible = true
+		Window.CursorBlink = true
+		Window.Display = {}
+		Window.Parent = parent
+		for h=1,Window.Height do
+			Window.Display[h]={text=string.rep(" ",Window.Width),color=string.rep("0",Window.Width),background=string.rep("f",Window.Width)}
+		end
+
+		local function redrawLine(line)
+			if Window.Display[line] then
+				parent.setCursorPos(Window.x,Window.y+line-1)
+				if #Window.Display[line].text == #Window.Display[line].color and #Window.Display[line].color == #Window.Display[line].background then
+					Window.Display[line].text = Window.Display[line].text:sub(1,Window.Width)
+					Window.Display[line].color = Window.Display[line].color:sub(1,Window.Width)
+					Window.Display[line].background = Window.Display[line].background:sub(1,Window.Width)
+					if Window.hasColors then
+						parent.blit(Window.Display[line].text,Window.Display[line].color,Window.Display[line].background)
+					elseif not Window.hasColors then
+						local newLine=Window.Display[line]
+						local c,b = "",""
+						for i=1,Window.Width do
+							 charB = newLine.background:sub(i,i):gsub(newLine.background:sub(i,i),BWColors[newLine.background:sub(i,i)])
+							b=b..charB
+							 charC = newLine.color:sub(i,i):gsub(newLine.color:sub(i,i),BWColors[newLine.color:sub(i,i)])
+							if charB == charC and newLine.text:sub(i,i) ~= " " then
+								if charC == "f" then
+									 charC = "0"
+								else
+									 charC = "f"
+								end
+							end 
+							c=c..charC
+						end
+						if Window.Visible then
+							parent.blit(newLine.text,c,b)
+						end
+					end
+				end
+			end
+		end
+
+		local function redraw()
+			for h=1,Window.Height do
+				redrawLine(h)
+			end
+		end
+
+		local function updateCursorBlink()
+	        parent.setCursorBlink( Window.CursorBlink )
+	    end
+
+	    local function updateCursorColor()
+	    	parent.setTextColor(Window.TextColor)
+	    end
+
+  	  local function updateCursorPos()
+    	    if Window.CursorX >= 1 and Window.CursorY >= 1 and
+    	       Window.CursorX <= Window.Width and Window.CursorY <= Window.Height then
+    	        parent.setCursorPos(Window.x + Window.CursorX - 1, Window.y + Window.CursorY - 1)
+     	   else
+     	       parent.setCursorPos( 0, 0 )
+     	   end
+    	end
+
+		function Window.blit(text,color,background)
+			local l_start = Window.CursorX
+			local l_end = Window.CursorX + #text
+			if Window.CursorY >= 1 and Window.CursorY <= Window.Height+Window.y and Window.CursorX >= 1 and Window.CursorX <= Window.Width+Window.x then
+				local line=Window.Display[Window.CursorY]
+				if line then
+					if l_start == 1 and l_end == Window.Width then
+						line.text = text
+						line.color = color
+						line.background = background
+					elseif l_end > Window.Width+1 then
+						line.text = line.text:sub(1,l_start-1)..text:sub(1,Window.Width - l_start + 1)
+						line.color = line.color:sub(1,l_start-1)..color:sub(1,Window.Width - l_start + 1)
+						line.background = line.background:sub(1,l_start-1)..background:sub(1,Window.Width - l_start + 1)
+					elseif l_start < 1 then
+						line.text = text:sub(-l_start,#text)..line.text:sub(l_end,Window.Width)
+						line.color = color:sub(-l_start,#clor)..line.color:sub(l_end,Window.Width)
+						line.background = background:sub(-l_start,#background)..line.background:sub(l_end,Window.Width)
+					else
+						line.text = line.text:sub(1,l_start-1)..text..line.text:sub(l_end,Window.Width)
+						line.color = line.color:sub(1,l_start-1)..color..line.color:sub(l_end,Window.Width)
+						line.background = line.background:sub(1,l_start-1)..background..line.background:sub(l_end,Window.Width)
+					end
+					Window.Display[Window.CursorY] = line
+					redrawLine(Window.CursorY)
+					Window.CursorX = l_end
+					updateCursorColor()
+					updateCursorPos()
+				end
+			end
+		end
+
+		function Window.getSize()
+			return Window.Width,Window.Height
+		end
+
+		function Window.getBackgroundColor()
+			return Window.BackgroundColor
+		end
+
+		function Window.getTextColor()
+			return Window.TextColor
+		end
+
+		function Window.getCursorPos()
+			return Window.CursorX,Window.CursorY
+		end
+
+		function Window.getPosition()
+			return Window.x, Window.y
+		end
+
+		function Window.isColor()
+			return Window.hasColors
+		end
+
+		function Window.isVisible()
+			return Window.Visible
+		end
+
+		function Window.current()
+			return Window
+		end
+
+		function Window.updateColors()
+			Window.hasColors = Core.getData("ColorMode")
+			Window.redraw()
+		end
+
+		function Window.setBackgroundColor(color)
+			if Colors[color] then Window.BackgroundColor=color end
+		end
+
+		function Window.setTextColor(color)
+			if Colors[color] then Window.TextColor=color end
+		end
+
+    function Window.setCursorPos( x, y )
+        Window.CursorX = math.floor( x )
+        Window.CursorY = math.floor( y )
+        if Window.Visible then
+            updateCursorPos()
+        end
+    end
+
+		function Window.setCursorBlink(bool)
+			if type(bool) == "boolean" then
+	     	   Window.CursorBlink = bool
+	     	   updateCursorBlink()
+	   		end
+	    end
+
+		function Window.clear(color)
+			local color = color or Window.BackgroundColor
+			Window.Display = {}
+			for h=1,Window.Height do
+				Window.Display[h]={text=string.rep(" ",Window.Width),color=string.rep(Colors[Window.TextColor],Window.Width),background=string.rep(Colors[color],Window.Width)}
+			end
+			redraw()
+		end
+
+		function Window.clearLine(number,color)
+			local color = color or Window.BackgroundColor
+			local number = number or Window.CursorY
+			if number>=1 and number<=Window.Height then
+				Window.Display[number]={text=string.rep(" ",Window.Width),color=string.rep(Colors[Window.TextColor],Window.Width),background=string.rep(Colors[color],Window.Width)}
+				redrawLine(number)
+			end
+		end
+
+		function Window.redraw()
+			redraw()
+		end
+
+		function Window.write(text,color,background)
+			local text = tostring(text) or ""
+			local color = color or Window.TextColor
+			local background = background or Window.BackgroundColor
+			Window.setTextColor(color)
+			Window.setBackgroundColor(background)
+			Window.blit(text,string.rep(Colors[color],#text),string.rep(Colors[background],#text))
+		end
+
+		function Window.scroll(lines)
+			if type(lines)=="number" then
+				if lines>=1 and lines<Window.Height then
+					for i=1,Window.Height do
+						if Window.Display[lines+i] then
+							Window.Display[i] = Window.Display[lines+i]
+						elseif i<=Window.Height+1 then
+							Window.clearLine(i)
+						end
+					end
+				else
+					Window.clear()
+				end
+				redraw()
+				updateCursorColor()
+				updateCursorPos()
+			end
+		end
+
+		function Window.restoreCursor()
+			updateCursorBlink()
+			updateCursorPos()
+			updateCursorColor()
+		end
+
+		function Window.setVisible(bool)
+			if Window.Visible ~= bool then
+				Window.Visible = bool
+				if Window.Visible then
+					redraw()
+				end
+			end
+		end
+
+		Window.isColour = Window.isColor
+		Window.setBackgroundColour = Window.setBackgroundColor
+		Window.setTextColour = Window.setTextColor
+		Window.getBackgroundColour = Window.getBackgroundColor
+		Window.getTextColour = Window.getTextColor
+		return Window
+	end
+end

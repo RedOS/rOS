@@ -31,8 +31,9 @@ local function locate()
 end
 term.setTextColor(32768)
 paintutils.drawFilledBox(Screen.Width/2-1,Screen.Height/2-1,Screen.Width/2+1,Screen.Height/2+1,1)
+parallel.waitForAll(loading,locate)
 while Locate.Running do
-	parallel.waitForAll(loading,locate)
+	
 	Event={os.pullEventRaw()}
 	if Event[1]==("mouse_click" or "key") then Locate.Running=false end
 end

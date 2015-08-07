@@ -12,9 +12,9 @@
 function drawBrowser(sPath,bMode,selected)
 if fs.exists(sPath) and fs.isDir(sPath) then 
 tFiles=fs.list(sPath)
-if #tFiles==0 then tFiles[1]="$0&8Folder is empty&f" end
+if #tFiles==0 then tFiles[1]="Folder is empty" end
 else
-tFiles={"$0&8Folder not found&f"}
+tFiles={"Folder not found"}
 end
 if not bMode then
 for i=1,#tFiles do
@@ -30,41 +30,37 @@ end
 cleanHistory(tHistory)
 if nHistory<1 then nHistory=1 end
 if nHistory>#tHistory then nHistory=#tHistory end
-Draw.clear(1)
+term.clear(1)
 paintutils.drawFilledBox(1,1,Screen.Width,2,256)
+Draw.isVisible(true)
 Draw.setStatusColor(256)
-Draw.isStatusVisible(true)
-Draw.status()
 term.setCursorPos(2,1)
 if #sPath>Screen.Width-10 then sLocalPath=sPath:sub(1,Screen.Width-13).."..." else sLocalPath=sPath end
-Draw.cwrite("$0&8 < > $8   $0 "..sLocalPath.." $8&f")
-term.setCursorPos(2,4)
+term.blit(" < >     "..sLocalPath.."  ","888888888"..string.rep("8",#sLocalPath).."ff","000008880"..string.rep("0",#sLocalPath).."08")
+term.setCursorPos(3,1)
 if nHistory>1 and nHistory==#tHistory then
-term.setCursorPos(3,1)
-Draw.cwrite("$0&b< &8>&f")
+term.blit("< > ","b08f","0008")
 elseif nHistory>1 and nHistory~=#tHistory then
-term.setCursorPos(3,1)
-Draw.cwrite("$0&b< >&f")
+term.blit("< > ","b0bf","0008")
 elseif nHistory==1 and #tHistory>1 then
-term.setCursorPos(3,1)
-Draw.cwrite("$0&8< &b>&f")
+term.blit("< > ","80bf","0008")
 end
 nSize=Screen.Height-5
 term.setCursorPos(1,4)
 if nSize>#tFiles then nSize=#tFiles end
 for i=1,nSize do
 if tFiles[i+nScroll] then
-if fs.isDir(sPath..tFiles[i+nScroll]) then term.setCursorPos(1,3+i) Draw.cwrite("$4&0_") else term.setCursorPos(1,3+i) Draw.cwrite("$8&0_") end
+if fs.isDir(sPath..tFiles[i+nScroll]) then term.setCursorPos(1,3+i) term.write("_",1,16) else term.setCursorPos(1,3+i) term.write("_",1,256) end
 term.setCursorPos(2,i+3)
 if tFiles[i+nScroll]==selected then
-Draw.cwrite("$0&b "..tFiles[i+nScroll])
+term.write(" "..tFiles[i+nScroll],2048,1)
 else
-Draw.cwrite("$0&f "..tFiles[i+nScroll])
+term.write(" "..tFiles[i+nScroll],32768,1)
 end
 end
 end
 term.setCursorPos(Screen.Width/2-2,Screen.Height)
-Draw.cwrite("$0&8Exit")
+term.write("Exit",256,1)
 end
 files=true
 drawBrowser(sPath)
@@ -84,7 +80,7 @@ end
 elseif x>10 and x<=#sLocalPath+10 and y==1 then
 paintutils.drawLine(10,1,#sLocalPath+11,1,1)
 term.setCursorPos(11,1)
-Draw.cwrite("$0&8")
+term.write("",256,1)
 sPath=read(nil,tHistory)
 if sPath:sub(-1,-1)~="/" then sPath=sPath.."/" end
 drawBrowser(sPath)
