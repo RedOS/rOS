@@ -1,7 +1,6 @@
 Draw.setStatusColor(Draw.StatusGlobal)
-Draw.isStatusVisible(true)
 Draw.status()
-Draw.clear(1)
+term.clear(1)
 term.setCursorPos(Screen.Width/2-4,Screen.Height/2)
 term.setTextColor(32768)
 term.setBackgroundColor(1)
